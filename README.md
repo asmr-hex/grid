@@ -19,8 +19,12 @@
    $ cd /usr/local/lib && sudo ln -s ../../lib/libSystem.B.dylib libgcc_s.10.5.dylib
    ```
 
+### Sequencing Code
+Use RtMidi lib adn build scheduler.... -__-
 
 ### Resources
 * [Molisam](https://github.com/AskBre/Molisam) - sampler using libmonome, ([demo](https://llllllll.co/t/introducing-molisam-simple-monome-live-sampler-written-i-c/4249))
 * [libmonome public header](https://github.com/monome/libmonome/blob/master/public/monome.h)
 * [monome osc protocol](https://monome.org/docs/osc/)
+* [ALSA](https://www.alsa-project.org/alsa-doc/alsa-lib/seq.html) - use this for midi sequencing.
+* [Example Sequencer with pyRtMidi](https://github.com/SpotlightKid/python-rtmidi/blob/master/examples/sequencer/sequencer.py)

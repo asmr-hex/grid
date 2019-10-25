@@ -1,10 +1,8 @@
-#include "grid.hh"
+#include "controller.hh"
 
 int main() {
-  Grid grid;
-
-  grid.init();
-  grid.start();
+  Controller controller = Controller();
+  controller.start();
   
   return 0;
 }

@@ -7,9 +7,7 @@
 class Grid {
 public:
   Grid();
-  void init();
-  void start();
-
+  void discover();
 private:
 
   monome_t *monome;
