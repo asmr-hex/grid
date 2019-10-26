@@ -1,15 +1,16 @@
-#include "controller.hh"
+#include "controller.hpp"
 
-Controller::Controller() {
-  // read in configuration
+// Controller::Controller() {
+//   // read in configuration
 
-  // discover all connected devices
+//   // discover all connected devices
 
-  // load patches
-}
+//   // load patches
+// }
 
 void Controller::start() {
   // enable callbacks for device input
 
-  // begin event loop
+  // begin sequencer
+  this->sequencer = new Sequencer();
 }

@@ -1,24 +1,60 @@
-CC=clang++ -std=c++11
+CXX := g++ -std=c++11
+CXXFLAGS := 
+LDFLAGS := -L/usr/lib
+LIBS := -lmonome -lboost
+INCLUDE := -Isrc/
+BUILD := ./build
+OBJ_DIR := $(BUILD)/objects
+BIN_DIR := $(BUILD)/bin
+TARGET := grid
 SRC=src/*.cpp
 
-IDIR=/usr/include/rtaudio
-LDIR=/usr/local/lib
+OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
-DEPS=src/*.h $(IDIR)/*.h
-LIBS=-lrtaudio -lmonome
+all: build $(APP_DIR)/$(TARGET)
 
-CFLAGS=-I$(IDIR) -L$(LDIR)
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
-all: grid
+$(APP_DIR)/$(TARGET): $(OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS)
 
-debug: CFLAGS+=-ggdb3 -Wall
-debug: grid
+.PHONY: all build clean debug release
 
-Molisam:$(OBJ) $(DEPS)
-$(CC) -o $@ $(SRC) $(CFLAGS) $(LIBS)
+build:
+	@mkdir -p $(BIN_DIR)
+	@mkdir -p $(OBJ_DIR)
 
-run:
-./grid
+debug: CXXFLAGS += -DDEBUG -g
+debug: all
+
+release: CXXFLAGS += -O2
+release: all
 
 clean:
-rm grid
+	-@rm -rvf $(BUILD)/
+
+
+# IDIR=/usr/include/rtaudio
+# LDIR=/usr/local/lib
+
+# DEPS=src/*.h $(IDIR)/*.h
+# LIBS=-lrtaudio -lmonome
+
+# CFLAGS=-I$(IDIR) -L$(LDIR)
+
+# all: grid
+
+# debug: CFLAGS+=-ggdb3 -Wall
+# debug: grid
+
+# Molisam:$(OBJ) $(DEPS)
+# $(CC) -o $@ $(SRC) $(CFLAGS) $(LIBS)
+
+# run:
+# ./grid
+
+# clean:
+# rm grid

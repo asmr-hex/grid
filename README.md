@@ -18,6 +18,11 @@
    $ # on OSX, you may need to symlink the dynamic gcc if xcode was updated -__-
    $ cd /usr/local/lib && sudo ln -s ../../lib/libSystem.B.dylib libgcc_s.10.5.dylib
    ```
+* [Boost](https://www.boost.org/doc/libs/1_71_0/more/getting_started/unix-variants.html) - using Boost threads for multi-platform compatibility
+  ```shell
+  $ brew install boost  # on osx
+  $ ????                # on raspbian
+  ```
 
 ### Sequencing Code
 Use RtMidi lib adn build scheduler.... -__-
