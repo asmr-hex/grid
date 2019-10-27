@@ -2,7 +2,7 @@
 
 int main() {
   Controller controller = Controller();
-  // controller.start();
+  controller.start();
   
   return 0;
 }

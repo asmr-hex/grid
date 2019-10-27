@@ -1,13 +1,13 @@
 CXX := g++ -std=c++11
-CXXFLAGS := 
-LDFLAGS := -L/usr/lib
-LIBS := -lmonome -lboost
+CXXFLAGS := -Wall #-Wextra -Werror
+LDFLAGS := -L/usr/local/include -L/usr/local/lib 
+LIBS := -lmonome -lboost_thread-mt
 INCLUDE := -Isrc/
 BUILD := ./build
 OBJ_DIR := $(BUILD)/objects
 BIN_DIR := $(BUILD)/bin
 TARGET := grid
-SRC=src/*.cpp
+SRC := $(wildcard src/*cpp)
 
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
@@ -19,7 +19,7 @@ $(OBJ_DIR)/%.o: %.cpp
 
 $(BIN_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS)
 
 .PHONY: all build clean debug release
 
@@ -32,6 +32,9 @@ debug: all
 
 release: CXXFLAGS += -O2
 release: all
+
+run:
+	@$(BIN_DIR)/$(TARGET)
 
 clean:
 	-@rm -rvf $(BUILD)/

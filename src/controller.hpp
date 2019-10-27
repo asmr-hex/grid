@@ -8,7 +8,7 @@
 
 class Controller {
 public:
-  Controller();
+  // Controller();
   void start();
   
 private:
