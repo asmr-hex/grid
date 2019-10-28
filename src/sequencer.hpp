@@ -1,9 +1,13 @@
 #ifndef SEQUENCER_H
 #define SEQUENCER_H
 
+#include <chrono>
 #include <iostream>
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
+
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::microseconds Microseconds;
 
 class Sequencer {
 public:
@@ -17,8 +21,10 @@ private:
   void run_dispatcher();
 
   int tick_count;
+  Microseconds tick_period;
+  
   float bpm;
-  int ppqn;
+  float ppqn;
 
   boost::thread dispatcher_thread;
 };

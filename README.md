@@ -33,3 +33,4 @@ Use RtMidi lib adn build scheduler.... -__-
 * [monome osc protocol](https://monome.org/docs/osc/)
 * [ALSA](https://www.alsa-project.org/alsa-doc/alsa-lib/seq.html) - use this for midi sequencing.
 * [Example Sequencer with pyRtMidi](https://github.com/SpotlightKid/python-rtmidi/blob/master/examples/sequencer/sequencer.py)
+* [Real Time Clocks for Audio Synthesis SO](https://stackoverflow.com/questions/48448491/c-precise-44100hz-clock-for-real-time-audio-synthesis) - describes how to use c++ high resolution clocks for high precision timing events.
