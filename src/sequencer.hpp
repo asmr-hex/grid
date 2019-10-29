@@ -28,6 +28,8 @@ private:
   void run_dispatcher();
   void dispatch_event_loop();
   void dispatch();
+  void dispatch_osc(step_event);
+  void dispatch_midi(step_event);
   void enqueue_next_step();
 
   int tick_count;
@@ -36,7 +38,7 @@ private:
   float bpm;
   float ppqn;
 
-  std::queue <int> next_step_events;
+  std::queue <step_event> next_step_events;
   boost::thread dispatcher_thread;
 
   RtMidiOut *midiout;

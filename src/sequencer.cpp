@@ -90,9 +90,30 @@ void Sequencer::run_dispatcher() {
 }
 
 void Sequencer::dispatch() {
-  
+  while (!next_step_events.empty()) {
+    step_event event = next_step_events.front();
+
+    switch (event.protocol) {
+    case OSC:
+      dispatch_osc(event);
+      break;
+    case MIDI:
+      dispatch_midi(event);
+      break;
+    }
+
+    next_step_events.pop();
+  }
 }
 
 void Sequencer::enqueue_next_step() {
+  
+}
+
+void Sequencer::dispatch_osc(step_event event) {
+  
+}
+
+void Sequencer::dispatch_midi(step_event event) {
   
 }
