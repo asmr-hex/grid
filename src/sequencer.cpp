@@ -35,14 +35,16 @@ void Sequencer::dispatch() {
     auto tick = Clock::now();
     auto tock = tick + tick_period;
 
-    while (tick < tock) {
-      // do nothing. just spin?
+    // while (tick < tock) {
+    //   // do nothing. just spin?
 
-      // TODO: cleep for 3/4 the tick_duration to not churn cpu but wake up in time
-      // incase we are preempted -__-
-      tick = Clock::now();
-    }
+    //   // TODO: cleep for 3/4 the tick_duration to not churn cpu but wake up in time
+    //   // incase we are preempted -__-
+    //   tick = Clock::now();
+    // }
 
+    boost::this_thread::sleep(boost::posix_time::microseconds(tick_period.count()));
+    
     std::cout << "tick "<< tick_count << std::endl;
     tick_count++;
   }
