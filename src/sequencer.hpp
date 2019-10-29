@@ -6,9 +6,16 @@
 #include <iostream>
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
+#include <RtMidi.h>
 
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::microseconds Microseconds;
+
+enum Protocol { MIDI, OSC };
+
+struct step_event {
+  Protocol protocol;  
+};
 
 class Sequencer {
 public:
@@ -18,8 +25,10 @@ public:
   void pause();
   void schedule();
 private:
-  void dispatch();
   void run_dispatcher();
+  void dispatch_event_loop();
+  void dispatch();
+  void enqueue_next_step();
 
   int tick_count;
   Microseconds tick_period;
@@ -27,8 +36,10 @@ private:
   float bpm;
   float ppqn;
 
-std:queue <int> next_step_events;
+  std::queue <int> next_step_events;
   boost::thread dispatcher_thread;
+
+  RtMidiOut *midiout;
 };
 
 #endif

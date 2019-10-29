@@ -23,6 +23,11 @@
   $ brew install boost  # on osx
   $ ????                # on raspbian
   ```
+* [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/) - portable, cross-platform real time midi
+  ```shell
+  $ brew install rtmidi  # on osx
+  $ ????                 # on raspbian
+  ```
 
 ### Sequencing Code
 Use RtMidi lib adn build scheduler.... -__-

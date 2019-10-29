@@ -20,13 +20,35 @@ Sequencer::Sequencer() {
   tick_count = 0;
   tick_period = Microseconds(static_cast<int>(((60 * 1000 * 1000)/bpm) * ppqn));
 
+  try {
+    midiout = new RtMidiOut();
+  } catch ( RtMidiError &error ) {
+    error.printMessage();
+    exit( EXIT_FAILURE );
+  }
+
+  unsigned int nPorts = midiout->getPortCount();
+  std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
+
+  std::string portName;
+  for ( unsigned int i=0; i<nPorts; i++ ) {
+    try {
+      portName = midiout->getPortName(i);
+    }
+    catch (RtMidiError &error) {
+      error.printMessage();
+    }
+    std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
+  }
+  std::cout << '\n';
+  
   run_dispatcher();
 
   // do we need to do this? i guess this just makes use wait rather than exit immediately
   dispatcher_thread.join();
 }
 
-void Sequencer::dispatch() {
+void Sequencer::dispatch_event_loop() {
   std::cout << "running dispatch thread" << std::endl;
   
   // we will spin in this loop forever.
@@ -34,8 +56,10 @@ void Sequencer::dispatch() {
     auto tick = Clock::now();
     
     // dispatch events for this step.
+    dispatch();
 
     // queue events for next step.
+    enqueue_next_step();
     
     auto tock = Clock::now();
     Microseconds remaining_usec = tick_period - std::chrono::duration_cast<Microseconds>(tock - tick);
@@ -62,5 +86,13 @@ void Sequencer::dispatch() {
 }
 
 void Sequencer::run_dispatcher() {
-  dispatcher_thread = boost::thread(&Sequencer::dispatch, this);
+  dispatcher_thread = boost::thread(&Sequencer::dispatch_event_loop, this);
+}
+
+void Sequencer::dispatch() {
+  
+}
+
+void Sequencer::enqueue_next_step() {
+  
 }
