@@ -1,6 +1,7 @@
 #ifndef SEQUENCER_H
 #define SEQUENCER_H
 
+#include <queue>
 #include <chrono>
 #include <iostream>
 #include <boost/thread.hpp>
@@ -26,6 +27,7 @@ private:
   float bpm;
   float ppqn;
 
+std:queue <int> next_step_events;
   boost::thread dispatcher_thread;
 };
 

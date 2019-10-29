@@ -22,9 +22,8 @@ Sequencer::Sequencer() {
 
   run_dispatcher();
 
+  // do we need to do this? i guess this just makes use wait rather than exit immediately
   dispatcher_thread.join();
-
-  std::cout << "done" << std::endl;
 }
 
 void Sequencer::dispatch() {
@@ -33,7 +32,15 @@ void Sequencer::dispatch() {
   // we will spin in this loop forever.
   while (true) {
     auto tick = Clock::now();
-    auto tock = tick + tick_period;
+    
+    // dispatch events for this step.
+
+    // queue events for next step.
+    
+    auto tock = Clock::now();
+    Microseconds remaining_usec = tick_period - std::chrono::duration_cast<Microseconds>(tock - tick);
+    
+    // auto tock = tick + tick_period;
 
     // while (tick < tock) {
     //   // do nothing. just spin?
@@ -43,14 +50,15 @@ void Sequencer::dispatch() {
     //   tick = Clock::now();
     // }
 
-    boost::this_thread::sleep(boost::posix_time::microseconds(tick_period.count()));
+    // sleep for tick period.
+    // NOTE: this might suffer from scheduling woes if this thread gets preempted.
+    // in that case, a hybrid sleep/tightloop spin approach might be called for. this
+    // would churn the cpu a bit, but prevent event timing glitches.
+    boost::this_thread::sleep(boost::posix_time::microseconds(remaining_usec.count()));
     
     std::cout << "tick "<< tick_count << std::endl;
     tick_count++;
   }
-  
-  // boost::posix_time::seconds t(2);
-  // boost::this_thread::sleep(t);
 }
 
 void Sequencer::run_dispatcher() {
