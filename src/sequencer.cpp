@@ -95,6 +95,7 @@ void Sequencer::dispatch() {
 
     switch (event.protocol) {
     case OSC:
+      // led x, y, set on/off and also intensity is basically it...
       dispatch_osc(event);
       break;
     case MIDI:
@@ -115,5 +116,5 @@ void Sequencer::dispatch_osc(step_event event) {
 }
 
 void Sequencer::dispatch_midi(step_event event) {
-  
+  midiout.sendMessage();
 }
