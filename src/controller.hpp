@@ -18,4 +18,16 @@ private:
   Knobs* knobs;
 };
 
+/*
+  Interfaces:
+    grid
+    keyboard
+    knobs
+    glove
+  Instruments:
+    ms-20
+    sp404
+    gr-1
+ */
+
 #endif

@@ -16,7 +16,7 @@
  */
 Sequencer::Sequencer() {
   bpm = 120.0;
-  ppqn = 1;
+  ppqn = 64;
   tick_count = 0;
   tick_period = Microseconds(static_cast<int>(((60 * 1000 * 1000)/bpm) * ppqn));
 

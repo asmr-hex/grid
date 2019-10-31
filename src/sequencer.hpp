@@ -11,12 +11,6 @@
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::microseconds Microseconds;
 
-enum Protocol { MIDI, OSC };
-
-struct step_event {
-  Protocol protocol;  
-};
-
 class Sequencer {
 public:
   Sequencer();
