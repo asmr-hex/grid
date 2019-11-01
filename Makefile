@@ -8,6 +8,7 @@ OBJ_DIR  := $(BUILD)/objects
 BIN_DIR  := $(BUILD)/bin
 TARGET   := grid
 SRC      := $(wildcard src/*cpp)
+CONF     := ./conf/sequencer.yml
 
 # create list of object files to compile
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
@@ -44,7 +45,7 @@ release: all
 
 # run the compiled binary. compile the binary if not done so already.
 run: build $(BIN_DIR)/$(TARGET)
-	@$(BIN_DIR)/$(TARGET)
+	@$(BIN_DIR)/$(TARGET) $(CONF)
 
 # clean up
 clean:

@@ -8,7 +8,7 @@
 
 class MS20 : public Instrument {
 public:
-  MS20() {
+  MS20() : Instrument() {
     std::cout << "YAY MS20 was created!" << std::endl;
   };
 };

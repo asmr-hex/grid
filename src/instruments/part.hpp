@@ -13,6 +13,18 @@ class Part {
 public:
   Part(int id) : id(id) {
     // load part file if it exists.
+
+    // TODO remove this test
+    ppqn = 1;
+    length = 4;
+    step_event_t se1 = { OSC, 0x0000, std::vector<unsigned char>(0x00FF) };
+    step_event_t se2 = { OSC, 0x0100, std::vector<unsigned char>(0x00FF) };
+    std::map<event_uid_t, step_event_t> m1;
+    m1[0x0000] = se1;
+    std::map<event_uid_t, step_event_t> m2;
+    m1[0x0001] = se2;
+    sequence[0] = m1;
+    sequence[2*constants::PPQN] = m2;
   };
 
   void load(int new_part_idx) {

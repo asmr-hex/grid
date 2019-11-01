@@ -25,9 +25,7 @@ Sequencer::Sequencer(std::string config_path) : config_path(config_path) {
   ppqn        = constants::PPQN;
   tick_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)ppqn)));
   tick_count  = 0; // TODO (coco|31.10.19) remove this...
-
-  // std::cout << (((60 * 1000 * 1000)/bpm) * (float)ppqn) << std::endl;
-  
+ 
   configure();
 
   initialize_instruments();
@@ -37,9 +35,6 @@ Sequencer::Sequencer(std::string config_path) : config_path(config_path) {
 
 void Sequencer::start() {
   run_dispatcher();
-
-  // do we need to do this? i guess this just makes use wait rather than exit immediately
-  dispatcher_thread.join();
 }
 
 void Sequencer::configure() {
@@ -64,6 +59,14 @@ void Sequencer::connect_io() {
   // connect to midi out
   connect_to_midi_out();
 
+  // connect to monome grid
+  if( !(monome = monome_open("/dev/tty.usbserial-m1000843")) ) {
+    std::cout << "Could not connect to monome grid!\n";
+    exit( EXIT_FAILURE );
+  }
+  std::cout << "CONNECTED TO MONOME!\n";
+  
+  // TODO: connect to midi in controllers (as in subscribe callbacks to them)
 }
 
 /*
@@ -114,11 +117,8 @@ void Sequencer::dispatch_event_loop() {
     auto tick = Clock::now();
     
     // dispatch events for this step.
-    //dispatch();
-
-    // queue events for next step.
-    //enqueue_next_step();
-    
+    dispatch();
+ 
     auto tock = Clock::now();
     Microseconds remaining_usec = tick_period - std::chrono::duration_cast<Microseconds>(tock - tick);
     
@@ -152,34 +152,62 @@ void Sequencer::dispatch_event_loop() {
 void Sequencer::run_dispatcher() {
   dispatcher_thread = boost::thread(&Sequencer::dispatch_event_loop, this);
 
+  // do we need to do this? i guess this just makes use wait rather than exit immediately
+  dispatcher_thread.join();
 }
 
-// void Sequencer::dispatch() {
-//   while (!next_step_events.empty()) {
-//     step_event event = next_step_events.front();
+void Sequencer::dispatch() {
+  std::vector<step_event_t> current_step_events = fetch_next_step_events();
 
-//     switch (event.protocol) {
-//     case OSC:
-//       // led x, y, set on/off and also intensity is basically it...
-//       dispatch_osc(event);
-//       break;
-//     case MIDI:
-//       dispatch_midi(event);
-//       break;
-//     }
+  for (step_event_t event : current_step_events) {
+    switch (event.protocol) {
+    case OSC:
+      // led x, y, set on/off and also intensity is basically it...
+      dispatch_osc(event);
+      break;
+    case MIDI:
+      dispatch_midi(event);
+      break;
+    } 
+  }
+}
 
-//     next_step_events.pop();
-//   }
-// }
+std::vector<step_event_t> Sequencer::fetch_next_step_events() {
+  std::vector<step_event_t> current_step_events;
+  for ( auto it : instruments ) {
+    Instrument *instrument = it.second;
+    Part* part = instrument->get_current_part();
+    
+    std::vector<step_event_t> new_step_events = part->advance();
+    current_step_events.insert(current_step_events.end(),
+                               new_step_events.begin(),
+                               new_step_events.end());
+  }
 
-// void Sequencer::enqueue_next_step() {
-  
-// }
+  return current_step_events;
+}
 
-// void Sequencer::dispatch_osc(step_event event) {
-  
-// }
+void Sequencer::dispatch_osc(step_event_t event) {
+  // parse command and coordinates from event uid
+  osc_command_t command = (osc_command_t)(event.id >> 8);
+  unsigned int x = event.id >> 4;
+  unsigned int y = event.id & 0x0F;
 
-// void Sequencer::dispatch_midi(step_event event) {
-//   midiout.sendMessage();
-// }
+  switch (command) {
+  case led_on:
+    monome_led_on(monome, x, y);
+    break;
+  case led_off:
+    monome_led_off(monome, x, y);
+    break;
+  case led_brightness:
+    monome_led_level_set(monome, x, y, (unsigned int)(event.data[0]));
+    break;
+  default:
+    std::cout << "Unrecognized OSC command " << command << std::endl;
+  }
+}
+
+void Sequencer::dispatch_midi(step_event_t event) {
+  midiout->sendMessage(&event.data);
+}

@@ -12,6 +12,7 @@
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
 
+#include "types.hpp"
 #include "config.hpp"
 #include "instruments/instrument.hpp"
 // #include "controllers/controller.hpp"
@@ -44,22 +45,18 @@ private:
   void connect_to_midi_out();
   void run_dispatcher();
   void dispatch_event_loop();
-  // void dispatch();
-  // void dispatch_osc(step_event);
-  // void dispatch_midi(step_event);
-  // void enqueue_next_step();
+  void dispatch();
+  void dispatch_osc(step_event_t);
+  void dispatch_midi(step_event_t);
+  std::vector<step_event_t> fetch_next_step_events();
 
   std::map<std::string, Instrument*> instruments;
   // std::map<Controller> controllers;
+
+  std::vector<step_event_t> current_step_events;
   
   int tick_count;
   Microseconds tick_period;
-
-
-  
-
-  // std::queue <step_event> next_step_events;
-  
 
   RtMidiOut *midiout;
 };

@@ -2,6 +2,7 @@
 #define TYPES_H
 
 #include <map>
+#include <vector>
 
 // TODO (coco|1.11.19) eventually support NRPN commands (particularly for ER-1)
 
@@ -9,18 +10,18 @@
   unique identifier of an event.
 
   for midi events:
-    0x0000<status byte><data 1 byte>
+    0x<status byte><data 1 byte>
   where,
     "status byte" is the command + channel
     "data 1 byte" is a 0-127 value (such as pitch)
 
   for osc events:
-    0x0000<command byte><location byte>
+    0x<command byte><location byte>
   where,
     "command byte" is on (0x00), off (0x01), or brightness (0x02)
     "location byte" is the x and y coordinates, e.g. 0x<x><y>, on the monome
  */
-typedef unsigned int event_uid_t; 
+typedef unsigned short event_uid_t; 
 
 /*
   protocol to use for this event.
@@ -47,16 +48,12 @@ enum playback_t { playing, stopped, paused, muted, solo };
 /*
   step event type.
 
-  this type is able to wrap both midi and osc events. the raw bytes of
-  the message is encoded in the data field.
-
-  for midi this looks like,
-    0x00<status byte><data byte 1><data byte 2>
+  data is a vector of bytes.
  */
 struct step_event_t {
   protocol_t protocol;
   event_uid_t id;
-  int data;
+  std::vector<unsigned char> data;
 };
 
 /*
