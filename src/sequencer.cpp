@@ -23,8 +23,10 @@ Sequencer::Sequencer(std::string config_path) : config_path(config_path) {
   // set defaults and constants
   bpm         = defaults::BPM;
   ppqn        = constants::PPQN;
-  tick_period = Microseconds(static_cast<int>(((60 * 1000 * 1000)/bpm) * (float)ppqn));
+  tick_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)ppqn)));
   tick_count  = 0; // TODO (coco|31.10.19) remove this...
+
+  // std::cout << (((60 * 1000 * 1000)/bpm) * (float)ppqn) << std::endl;
   
   configure();
 
@@ -35,6 +37,9 @@ Sequencer::Sequencer(std::string config_path) : config_path(config_path) {
 
 void Sequencer::start() {
   run_dispatcher();
+
+  // do we need to do this? i guess this just makes use wait rather than exit immediately
+  dispatcher_thread.join();
 }
 
 void Sequencer::configure() {
@@ -49,10 +54,10 @@ void Sequencer::configure() {
 
 void Sequencer::initialize_instruments() {
   InstrumentFactory factory = InstrumentFactory();
-  instruments["ms20"] = factory.create("ms20");
-  // for (std::string instrument : config.instruments) {
-  //   instruments[instrument] = GlobalInstrumentFactory[instrument]();
-  // }
+
+  for (std::string instrument : config.instruments) {
+    instruments[instrument] = factory.create(instrument);
+  }
 }
 
 void Sequencer::connect_io() {
@@ -131,6 +136,7 @@ void Sequencer::dispatch_event_loop() {
     // NOTE: this might suffer from scheduling woes if this thread gets preempted.
     // in that case, a hybrid sleep/tightloop spin approach might be called for. this
     // would churn the cpu a bit, but prevent event timing glitches.
+
     boost::this_thread::sleep(boost::posix_time::microseconds(remaining_usec.count()));
     
     std::cout << "tick "<< tick_count << std::endl;
@@ -146,8 +152,6 @@ void Sequencer::dispatch_event_loop() {
 void Sequencer::run_dispatcher() {
   dispatcher_thread = boost::thread(&Sequencer::dispatch_event_loop, this);
 
-  // do we need to do this? i guess this just makes use wait rather than exit immediately
-  dispatcher_thread.join();
 }
 
 // void Sequencer::dispatch() {
