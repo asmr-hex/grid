@@ -1,0 +1,8 @@
+bpm: 120.0
+instruments:
+  - er-1
+  - ms20
+  - sp404
+controllers:
+  - nanokey
+  - glove

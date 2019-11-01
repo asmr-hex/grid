@@ -1,5 +1,9 @@
-#include "sequencer.hpp"
 #include <chrono>
+
+#include <yaml-cpp/yaml.h>
+
+#include "consts.hpp"
+#include "sequencer.hpp"
 
 /*
     min bpm should be like 10 bpm
@@ -14,12 +18,48 @@
     avg ppqn would be like 16 ppqn
     meaning the avg clock speed will be 1 tick every 28.8 ms
  */
-Sequencer::Sequencer() {
-  bpm = 120.0;
-  ppqn = 64;
-  tick_count = 0;
-  tick_period = Microseconds(static_cast<int>(((60 * 1000 * 1000)/bpm) * ppqn));
+Sequencer::Sequencer(std::string config_path) : config_path(config_path) {
+  // set defaults and constants
+  bpm         = defaults::BPM;
+  ppqn        = constants::PPQN;
+  tick_period = Microseconds(static_cast<int>(((60 * 1000 * 1000)/bpm) * (float)ppqn));
+  tick_count  = 0; // TODO (coco|31.10.19) remove this...
+  
+  configure();
 
+  initialize_instruments();
+  
+  connect_io();
+}
+
+void Sequencer::start() {
+  run_dispatcher();
+}
+
+void Sequencer::configure() {
+  // read in yaml configuration file
+  YAML::Node conf = YAML::LoadFile(config_path);
+
+  // assign to config struct
+  config.bpm = conf["bpm"].as<float>();
+  config.instruments = conf["instruments"].as< std::vector<std::string> >();
+  config.controllers = conf["controllers"].as< std::vector<std::string> >();
+}
+
+void Sequencer::initialize_instruments() {
+  
+}
+
+void Sequencer::connect_io() {
+  // connect to midi out
+  connect_to_midi_out();
+
+}
+
+/*
+  Connects to an available midi out port.
+ */
+void Sequencer::connect_to_midi_out() {
   try {
     midiout = new RtMidiOut();
   } catch ( RtMidiError &error ) {
@@ -27,25 +67,33 @@ Sequencer::Sequencer() {
     exit( EXIT_FAILURE );
   }
 
-  unsigned int nPorts = midiout->getPortCount();
-  std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
+  // TODO (coco|31.10.19) maybe add better debugging for port counting later.
+  // unsigned int nPorts = midiout->getPortCount();
+  // std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
 
-  std::string portName;
-  for ( unsigned int i=0; i<nPorts; i++ ) {
-    try {
-      portName = midiout->getPortName(i);
-    }
-    catch (RtMidiError &error) {
-      error.printMessage();
-    }
-    std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
+  // std::string portName;
+  // for ( unsigned int i=0; i<nPorts; i++ ) {
+  //   try {
+  //     portName = midiout->getPortName(i);
+  //   }
+  //   catch (RtMidiError &error) {
+  //     error.printMessage();
+  //   }
+  //   std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
+  // }
+  // std::cout << '\n';
+
+  // make sure there are ports available
+  unsigned int n_ports = midiout->getPortCount();
+  if ( n_ports == 0 ) {
+    std::cout << "No ports available!\n";
+    delete midiout;
+    exit( EXIT_FAILURE );
   }
-  std::cout << '\n';
-  
-  run_dispatcher();
 
-  // do we need to do this? i guess this just makes use wait rather than exit immediately
-  dispatcher_thread.join();
+  // great, lets just connect to the first port available
+  // TODO (coco|31.10.19) eventually maybe we want to be able to select the port.
+  midiout->openPort(0);
 }
 
 void Sequencer::dispatch_event_loop() {
@@ -56,10 +104,10 @@ void Sequencer::dispatch_event_loop() {
     auto tick = Clock::now();
     
     // dispatch events for this step.
-    dispatch();
+    //dispatch();
 
     // queue events for next step.
-    enqueue_next_step();
+    //enqueue_next_step();
     
     auto tock = Clock::now();
     Microseconds remaining_usec = tick_period - std::chrono::duration_cast<Microseconds>(tock - tick);
@@ -85,36 +133,44 @@ void Sequencer::dispatch_event_loop() {
   }
 }
 
+/*
+  Begins sequencer event dispatcher in separate thread.
+
+  Currently blocks.
+ */
 void Sequencer::run_dispatcher() {
   dispatcher_thread = boost::thread(&Sequencer::dispatch_event_loop, this);
+
+  // do we need to do this? i guess this just makes use wait rather than exit immediately
+  dispatcher_thread.join();
 }
 
-void Sequencer::dispatch() {
-  while (!next_step_events.empty()) {
-    step_event event = next_step_events.front();
+// void Sequencer::dispatch() {
+//   while (!next_step_events.empty()) {
+//     step_event event = next_step_events.front();
 
-    switch (event.protocol) {
-    case OSC:
-      // led x, y, set on/off and also intensity is basically it...
-      dispatch_osc(event);
-      break;
-    case MIDI:
-      dispatch_midi(event);
-      break;
-    }
+//     switch (event.protocol) {
+//     case OSC:
+//       // led x, y, set on/off and also intensity is basically it...
+//       dispatch_osc(event);
+//       break;
+//     case MIDI:
+//       dispatch_midi(event);
+//       break;
+//     }
 
-    next_step_events.pop();
-  }
-}
+//     next_step_events.pop();
+//   }
+// }
 
-void Sequencer::enqueue_next_step() {
+// void Sequencer::enqueue_next_step() {
   
-}
+// }
 
-void Sequencer::dispatch_osc(step_event event) {
+// void Sequencer::dispatch_osc(step_event event) {
   
-}
+// }
 
-void Sequencer::dispatch_midi(step_event event) {
-  midiout.sendMessage();
-}
+// void Sequencer::dispatch_midi(step_event event) {
+//   midiout.sendMessage();
+// }

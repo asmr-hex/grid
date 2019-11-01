@@ -2,7 +2,7 @@ CXX      := g++ -std=c++11
 CXXFLAGS := -Wall #-Wextra -Werror
 #LDFLAGS := -L/usr/local/include -L/usr/local/lib
 #INCLUDE := -Isrc/
-LIBS     := -lmonome -lboost_thread-mt -lrtmidi
+LIBS     := -lmonome -lboost_thread-mt -lrtmidi -lyaml-cpp
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects
 BIN_DIR  := $(BUILD)/bin

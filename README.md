@@ -28,6 +28,11 @@
   $ brew install rtmidi  # on osx
   $ ????                 # on raspbian
   ```
+* [yaml-cpp](https://github.com/jbeder/yaml-cpp) - a yaml serialization library
+  ```shell
+  $ brew install yaml-cpp  # on osx
+  $ ????                   on raspbian
+  ```
 
 ### Sequencing Code
 Use RtMidi lib adn build scheduler.... -__-
