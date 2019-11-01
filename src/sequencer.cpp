@@ -4,6 +4,7 @@
 
 #include "consts.hpp"
 #include "sequencer.hpp"
+#include "instruments/factory.hpp"
 
 /*
     min bpm should be like 10 bpm
@@ -47,7 +48,11 @@ void Sequencer::configure() {
 }
 
 void Sequencer::initialize_instruments() {
-  
+  InstrumentFactory factory = InstrumentFactory();
+  instruments["ms20"] = factory.create("ms20");
+  // for (std::string instrument : config.instruments) {
+  //   instruments[instrument] = GlobalInstrumentFactory[instrument]();
+  // }
 }
 
 void Sequencer::connect_io() {

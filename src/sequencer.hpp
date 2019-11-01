@@ -7,12 +7,13 @@
 #include <chrono>
 #include <iostream>
 
+#include <monome.h>
 #include <RtMidi.h>
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
 
 #include "config.hpp"
-// #include "instruments/instrument.hpp"
+#include "instruments/instrument.hpp"
 // #include "controllers/controller.hpp"
 
 typedef std::chrono::high_resolution_clock Clock;
@@ -28,6 +29,8 @@ public:
 private:
   std::string config_path;
   sequencer_config_t config;
+
+  monome_t *monome;
   
   int ppqn;  // pulse per quarter note - global granularity
   float bpm; // beats per minute
@@ -46,7 +49,7 @@ private:
   // void dispatch_midi(step_event);
   // void enqueue_next_step();
 
-  // std::map<Instrument> instruments;
+  std::map<std::string, Instrument*> instruments;
   // std::map<Controller> controllers;
   
   int tick_count;
