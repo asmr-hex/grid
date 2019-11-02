@@ -34,6 +34,10 @@ Sequencer::Sequencer(std::string config_path) : config_path(config_path) {
 }
 
 void Sequencer::start() {
+  // start listening to monome grid
+  listen_to_monome();
+
+  // start output dispatcher loop
   run_dispatcher();
 }
 
@@ -139,10 +143,45 @@ void Sequencer::dispatch_event_loop() {
 
     boost::this_thread::sleep(boost::posix_time::microseconds(remaining_usec.count()));
     
-    std::cout << "tick "<< tick_count << std::endl;
+    // std::cout << "tick "<< tick_count << std::endl;
     tick_count++;
   }
 }
+
+void Sequencer::listen_to_monome() {
+  dispatcher_thread = boost::thread(&Sequencer::monome_register_callback, this);
+}
+
+void Sequencer::monome_register_callback() {
+  monome_register_handler(monome, MONOME_BUTTON_DOWN, this->monome_callback, this);
+  monome_register_handler(monome, MONOME_BUTTON_UP, this->monome_callback, this);
+
+  monome_event_loop(monome);
+}
+
+void Sequencer::monome_callback(const monome_event_t *e, void *data) {
+  Sequencer *sequencer = (Sequencer*)data;
+  
+  switch (e->event_type) {
+  case MONOME_BUTTON_UP:
+    if (e->grid.x == 0 && e->grid.y == 7) {
+      sequencer->shift_enabled = !sequencer->shift_enabled;
+      if (sequencer->shift_enabled) {
+        monome_led_on(sequencer->monome, e->grid.x, e->grid.y);  
+      } else {
+        monome_led_off(sequencer->monome, e->grid.x, e->grid.y);  
+      }
+    }
+    std::cout << "BUTTON UP: x=" << e->grid.x << ", y=" << e->grid.y << std::endl;
+    break;
+  case MONOME_BUTTON_DOWN:
+    std::cout << "BUTTON DOWN: x=" << e->grid.x << ", y=" << e->grid.y << std::endl;
+    break;
+  default:
+    break;
+  }
+}
+
 
 /*
   Begins sequencer event dispatcher in separate thread.

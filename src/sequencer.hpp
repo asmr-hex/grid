@@ -37,6 +37,7 @@ private:
   float bpm; // beats per minute
 
   boost::thread dispatcher_thread;
+  boost::thread monome_listener_thread;
   
   void configure();
   void initialize_instruments();
@@ -50,6 +51,12 @@ private:
   void dispatch_midi(step_event_t);
   std::vector<step_event_t> fetch_next_step_events();
 
+  void listen_to_monome();
+  void monome_register_callback();
+  static void monome_callback(const monome_event_t *, void *);
+
+  bool shift_enabled = false;
+  
   std::map<std::string, Instrument*> instruments;
   // std::map<Controller> controllers;
 

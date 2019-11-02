@@ -21,7 +21,7 @@
     "command byte" is on (0x00), off (0x01), or brightness (0x02)
     "location byte" is the x and y coordinates, e.g. 0x<x><y>, on the monome
  */
-typedef unsigned short event_uid_t; 
+typedef unsigned short event_uid_t;
 
 /*
   protocol to use for this event.
