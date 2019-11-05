@@ -12,6 +12,7 @@
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
 
+#include "state.hpp"
 #include "types.hpp"
 #include "config.hpp"
 #include "instruments/instrument.hpp"
@@ -55,7 +56,7 @@ private:
   void monome_register_callback();
   static void monome_callback(const monome_event_t *, void *);
 
-  bool shift_enabled = false;
+  State * state;
   
   std::map<std::string, Instrument*> instruments;
   // std::map<Controller> controllers;

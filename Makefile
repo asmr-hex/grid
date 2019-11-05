@@ -49,4 +49,4 @@ run: build $(BIN_DIR)/$(TARGET)
 
 # clean up
 clean:
-	-@rm -rvf $(BUILD)/
+	-@rm -rvf $(BUILD)

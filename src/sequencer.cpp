@@ -161,25 +161,27 @@ void Sequencer::monome_register_callback() {
 
 void Sequencer::monome_callback(const monome_event_t *e, void *data) {
   Sequencer *sequencer = (Sequencer*)data;
+
+  sequencer->state->update(e);
   
-  switch (e->event_type) {
-  case MONOME_BUTTON_UP:
-    if (e->grid.x == 0 && e->grid.y == 7) {
-      sequencer->shift_enabled = !sequencer->shift_enabled;
-      if (sequencer->shift_enabled) {
-        monome_led_on(sequencer->monome, e->grid.x, e->grid.y);  
-      } else {
-        monome_led_off(sequencer->monome, e->grid.x, e->grid.y);  
-      }
-    }
-    std::cout << "BUTTON UP: x=" << e->grid.x << ", y=" << e->grid.y << std::endl;
-    break;
-  case MONOME_BUTTON_DOWN:
-    std::cout << "BUTTON DOWN: x=" << e->grid.x << ", y=" << e->grid.y << std::endl;
-    break;
-  default:
-    break;
-  }
+  // switch (e->event_type) {
+  // case MONOME_BUTTON_UP:
+  //   if (e->grid.x == 0 && e->grid.y == 7) {
+  //     sequencer->shift_enabled = !sequencer->shift_enabled;
+  //     if (sequencer->shift_enabled) {
+  //       monome_led_on(sequencer->monome, e->grid.x, e->grid.y);  
+  //     } else {
+  //       monome_led_off(sequencer->monome, e->grid.x, e->grid.y);  
+  //     }
+  //   }
+  //   std::cout << "BUTTON UP: x=" << e->grid.x << ", y=" << e->grid.y << std::endl;
+  //   break;
+  // case MONOME_BUTTON_DOWN:
+  //   std::cout << "BUTTON DOWN: x=" << e->grid.x << ", y=" << e->grid.y << std::endl;
+  //   break;
+  // default:
+  //   break;
+  // }
 }
 
 
