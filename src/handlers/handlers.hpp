@@ -5,7 +5,9 @@
 
 #include <monome.h>
 
-#include "handler_fn.hpp"
+#include "types.hpp"
+#include "../io/io.hpp"
+#include "../state/state.hpp"
 
 
 class EventHandlers {

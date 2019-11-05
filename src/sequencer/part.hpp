@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "types.hpp"
-#include "../consts.hpp"
+#include "constants.hpp"
 
 
 class Part {

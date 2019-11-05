@@ -3,7 +3,14 @@
 
 class State {
 public:
-  
+  struct {
+    bool shift_enabled;
+    
+  } sequencer;
+
+  struct {
+    
+  } instruments;
 };
 
 #endif

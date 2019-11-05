@@ -3,7 +3,9 @@
 
 #include <boost/thread.hpp>
 
-#include "handlers/handlers.hpp"
+#include "state.hpp"
+#include "../io/io.hpp"
+#include "../handlers/handlers.hpp"
 
 
 class StateMachine {

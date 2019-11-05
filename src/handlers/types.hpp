@@ -5,8 +5,8 @@
 
 #include <monome.h>
 
-#include "../state.hpp"
-#include "../../io/io.hpp"
+#include "../io/io.hpp"
+#include "../state/state.hpp"
 
 
 typedef void (*midi_handler)(IO *, State*, std::vector<unsigned char> *);
