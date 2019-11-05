@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "sequencer.hpp"
+#include "controller.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -9,8 +9,8 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  Sequencer *sequencer = new Sequencer(argv[1]);
-  sequencer->start();
+  Controller *controller = new Controller(argv[1]);
+  controller->run();
   
   return 0;
 }
