@@ -5,8 +5,11 @@
 
 #include <monome.h>
 
+#include "../state.hpp"
+#include "../../io/io.hpp"
 
-typedef void (*midi_handler)(double, std::vector<unsigned char> *, void *);
-typedef void (*monome_handler)(const monome_event_t *, void *);
+
+typedef void (*midi_handler)(IO *, State*, std::vector<unsigned char> *);
+typedef void (*monome_handler)(IO *, State*, const monome_event_t *);
 
 #endif

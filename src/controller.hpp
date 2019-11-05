@@ -4,6 +4,8 @@
 #include <string>
 
 #include "io/io.hpp"
+#include "state/state_machine.hpp"
+#include "sequencer/scheduler.hpp"
 
 
 class Controller {
@@ -17,9 +19,7 @@ private:
   IO *io;
   Config config;
   StateMachine state_machine;
-  
-  Sequencer sequencer;
-  Instruments instruments;
+  Scheduler scheduler;
 };
 
 #endif
