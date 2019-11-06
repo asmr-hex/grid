@@ -10,12 +10,12 @@
 
 class IO {
 public:
-  IO() {
+  void connect() {
     connect_to_midi_out();
 
     connect_to_midi_in();
 
-    connect_to_monome();
+    connect_to_monome();    
   };
   
   Input  input;

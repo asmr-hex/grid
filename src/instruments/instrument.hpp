@@ -22,11 +22,8 @@ public:
     return parts[current_part_idx];
   };
   
-  virtual void update_state(monome_event_t *) = 0;
-private:
+protected:
   std::string id;
-
-  State *state;
 
   int current_part_idx;
   std::vector<Part*> parts;

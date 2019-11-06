@@ -1,16 +1,27 @@
 #ifndef SEQUENCER_H
 #define SEQUENCER_H
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <boost/thread.hpp>
 
 #include "types.hpp"
 #include "../io/io.hpp"
 #include "../state/state.hpp"
+#include "../instruments/instrument.hpp"
 
 
 class Scheduler {
 public:
-
+  Scheduler(IO *io, State *state, std::map<std::string, Instrument *> instrument_map) : io(io), state(state) {
+    // put instrument map values into vector
+    for( auto it = instrument_map.begin(); it != instrument_map.end(); ++it ) {
+      instruments.push_back( it->second );
+    }
+  };
+  
   void run() {
     dispatcher_thread = boost::thread(&Scheduler::dispatch_event_loop, this);
     dispatcher_thread.join(); // TODO: do we need to block here?
@@ -18,13 +29,13 @@ public:
 private:
   IO *io;
   State *state;
+  std::vector<Instrument *> instruments;
   boost::thread dispatcher_thread;
 
   std::vector<step_event_t> fetch_next_step_events() {
     std::vector<step_event_t> current_step_events;
     
-    for ( auto it : instruments ) {
-      Instrument *instrument = it.second;
+    for ( Instrument *instrument : instruments ) {
       Part* part = instrument->get_current_part();
     
       std::vector<step_event_t> new_step_events = part->advance();
@@ -84,7 +95,7 @@ private:
       dispatch();
  
       auto tock = Clock::now();
-      Microseconds remaining_usec = state->tick_period - std::chrono::duration_cast<Microseconds>(tock - tick);
+      Microseconds remaining_usec = state->sequencer.step_period - std::chrono::duration_cast<Microseconds>(tock - tick);
     
       boost::this_thread::sleep(boost::posix_time::microseconds(remaining_usec.count()));
   }
