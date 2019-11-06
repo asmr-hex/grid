@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "../sequencer/constants.hpp"
 #include "../sequencer/types.hpp"
 #include "../instruments/er1.hpp"
 #include "../instruments/gr1.hpp"
@@ -17,11 +18,17 @@ class State {
 public:
   State(std::map<std::string, Instrument *> instrument_map) {
     initialize_instruments(instrument_map);
+
+    // TODO initialize state
+    sequencer.active_instrument = "sp404";
+    float bpm = 120.0;
+    sequencer.step_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)constants::PPQN)));
   };
   
   struct {
     bool shift_enabled;
     Microseconds step_period;
+    std::string active_instrument;
   } sequencer;
 
   struct {

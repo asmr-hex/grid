@@ -23,7 +23,7 @@ public:
   };
   
 protected:
-  std::string id;
+  std::string name;
 
   int current_part_idx;
   std::vector<Part*> parts;

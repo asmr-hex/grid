@@ -15,12 +15,10 @@
 
 class Scheduler {
 public:
-  Scheduler(IO *io, State *state, std::map<std::string, Instrument *> instrument_map) : io(io), state(state) {
-    // put instrument map values into vector
-    for( auto it = instrument_map.begin(); it != instrument_map.end(); ++it ) {
-      instruments.push_back( it->second );
-    }
-  };
+  Scheduler(IO *io, State *state, std::map<std::string, Instrument *> instruments) :
+    io(io),
+    state(state),
+    instruments(instruments){};
   
   void run() {
     dispatcher_thread = boost::thread(&Scheduler::dispatch_event_loop, this);
@@ -29,16 +27,21 @@ public:
 private:
   IO *io;
   State *state;
-  std::vector<Instrument *> instruments;
+  std::map<std::string, Instrument *> instruments;
   boost::thread dispatcher_thread;
 
   std::vector<step_event_t> fetch_next_step_events() {
     std::vector<step_event_t> current_step_events;
     
-    for ( Instrument *instrument : instruments ) {
+    for (auto it : instruments) {
+      std::string name = it.first;
+      Instrument * instrument = it.second;
       Part* part = instrument->get_current_part();
-    
-      std::vector<step_event_t> new_step_events = part->advance();
+
+      // determine whether this is the current instrument on display.
+      bool instrument_is_displayed = name == state->sequencer.active_instrument ? true : false;
+      
+      std::vector<step_event_t> new_step_events = part->advance(instrument_is_displayed);
       current_step_events.insert(current_step_events.end(),
                                  new_step_events.begin(),
                                  new_step_events.end());

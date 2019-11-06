@@ -1,6 +1,6 @@
 bpm: 120.0
 instruments:
-  - ms20
+  - sp404
 controllers:
   - nanokey
   - glove
