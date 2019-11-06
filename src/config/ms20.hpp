@@ -14,6 +14,10 @@ public:
   MS20Config(YAML::Node conf, std::string config_path) : BaseConfig(config_path) {
     parse(conf);
   };
+
+  static std::string name() {
+    return "ms20";
+  };
 private:
   void parse(YAML::Node conf) {
     // get mapping node

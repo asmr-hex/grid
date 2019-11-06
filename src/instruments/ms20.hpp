@@ -7,10 +7,6 @@
 class MS20 : public Instrument {
 public:
   MS20() : Instrument() {};
-
-  static std::string name() {
-    return "ms20";
-  }
 };
 
 #endif

@@ -7,10 +7,6 @@
 class GR1 : public Instrument {
 public:
   GR1() : Instrument() {};
-
-  static std::string name() {
-    return "gr1";
-  }
 };
 
 #endif

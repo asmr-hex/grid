@@ -14,6 +14,10 @@ public:
   GR1Config(YAML::Node conf, std::string config_path) : BaseConfig(config_path) {
     parse(conf);
   };
+
+  static std::string name() {
+    return "gr1";
+  }
 private:
   void parse(YAML::Node conf) {
     // get mapping node

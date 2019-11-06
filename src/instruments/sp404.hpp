@@ -7,10 +7,6 @@
 class SP404 : public Instrument {
 public:
   SP404() : Instrument() {};
-
-  static std::string name() {
-    return "sp404";
-  }
 };
 
 #endif
