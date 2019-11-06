@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_MAPPING
-#define CONTROLLER_MAPPING
+#ifndef MAPPING_TYPES_H
+#define MAPPING_TYPES_H
 
 struct mapping_range_1d_t {
   unsigned int min;
@@ -14,11 +14,6 @@ struct mapping_range_2d_t {
 struct mapping_coordinates_t {
   unsigned int x;
   unsigned int y;
-};
-
-struct ControllerMapping {
-  mapping_range_2d_t steps;
-  
 };
 
 #endif

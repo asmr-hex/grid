@@ -1,0 +1,15 @@
+instruments:
+  sp404:
+    mapping_file: "sp404_mapping.yml"
+  ms20:
+    mapping_file: "ms20_mapping.yml"
+  gr1:
+    chan: 10
+    mapping_file: "gr1_mapping.yml"
+  er1:
+    mapping_file: "er1_mapping.yml"
+controllers:
+  - nanokey
+  - glove
+mapping:
+  mapping_file: "controller_mapping.yml"

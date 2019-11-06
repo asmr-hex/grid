@@ -8,7 +8,7 @@ OBJ_DIR  := $(BUILD)/objects
 BIN_DIR  := $(BUILD)/bin
 TARGET   := grid
 SRC      := $(wildcard src/*cpp)
-CONF     := ./conf/sequencer.yml
+CONF     := ./conf/config.yml
 
 # create list of object files to compile
 OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
