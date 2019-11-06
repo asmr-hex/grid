@@ -16,7 +16,7 @@ public:
   Part(int id) : id(id) {
     // load part file if it exists.
     active_step = -1; // we want to initialize active_step to -1 whenever we are starting the sequence from the beginning
-    ppqn = 1;
+    ppqn = 64;
     length = 32;
     page = 0;
     

@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include "config.hpp"
+#include "config/config.hpp"
 #include "io/io.hpp"
 #include "state/state_machine.hpp"
 #include "sequencer/scheduler.hpp"
