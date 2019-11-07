@@ -8,16 +8,17 @@
 
 #include "state.hpp"
 #include "../io/io.hpp"
+#include "../config/config.hpp"
 #include "../handlers/handlers.hpp"
 #include "../instruments/instrument.hpp"
 
 
 class StateMachine {
 public:
-  StateMachine(IO *io, std::map<std::string, Instrument *> instruments){
+  StateMachine(IO *io, Config *config, std::map<std::string, Instrument *> instruments){
     state = new State(instruments);
 
-    event_handlers = new EventHandlers(io, state);
+    event_handlers = new EventHandlers(io, state, config);
   };
   
   void listen() {

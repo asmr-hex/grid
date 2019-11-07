@@ -8,12 +8,15 @@
 #include "types.hpp"
 #include "../io/io.hpp"
 #include "../state/state.hpp"
+#include "../config/config.hpp"
+#include "controller/shift.hpp"
 
 
 class EventHandlers {
 public:
-  EventHandlers(IO * io, State *state) : io(io), state(state) {
+  EventHandlers(IO * io, State *state, Config *config) : io(io), state(state), config(config) {
     // TODO instantiate all handlers.
+    monome_handlers.push_back(&shift_handler);
   };
 
   void register_midi_callback() {
@@ -31,7 +34,7 @@ public:
     EventHandlers * handlers = (EventHandlers *)userData;
 
     for (midi_handler fn : handlers->midi_handlers) {
-      fn(handlers->io, handlers->state, message);
+      fn(handlers->io, handlers->state, handlers->config, message);
     }
   };
 
@@ -39,13 +42,14 @@ public:
     EventHandlers * handlers = (EventHandlers *)userData;
     
     for (monome_handler fn : handlers->monome_handlers) {
-      fn(handlers->io, handlers->state, event);
+      fn(handlers->io, handlers->state, handlers->config, event);
     }
   };
   
 private:
   IO *io;
   State *state;
+  Config *config;
 
   std::vector<midi_handler> midi_handlers;
   std::vector<monome_handler> monome_handlers;

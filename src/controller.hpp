@@ -4,8 +4,8 @@
 #include <map>
 #include <string>
 
-#include "config/config.hpp"
 #include "io/io.hpp"
+#include "config/config.hpp"
 #include "state/state_machine.hpp"
 #include "sequencer/scheduler.hpp"
 #include "instruments/instrument.hpp"
@@ -19,7 +19,7 @@ public:
 
     initialize_instruments();
     
-    state_machine = new StateMachine(&io, instruments);
+    state_machine = new StateMachine(&io, &config, instruments);
 
     scheduler = new Scheduler(&io, state_machine->state, instruments);
   };
