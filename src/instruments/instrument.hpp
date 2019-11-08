@@ -27,7 +27,9 @@ protected:
 
   int current_part_idx;
   std::vector<Part*> parts;
-  
+
+  bool is_playing;
+  bool stop_on_next_measure;
 };
 
 #endif
