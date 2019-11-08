@@ -38,7 +38,7 @@ public:
     parse();
   };
 
-  ControllerMapping *mappings;
+  ControllerMapping mappings;
   std::vector<std::string> instruments;
   std::vector<std::string> controllers;
   
@@ -71,55 +71,55 @@ private:
       YAML::Node coordinates = itr.second;
 
       if (param == "instrument_select") {
-        mappings->instrument_select.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->instrument_select.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->instrument_select.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->instrument_select.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.instrument_select.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.instrument_select.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.instrument_select.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.instrument_select.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "instrument_region") {
-        mappings->instrument_region.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->instrument_region.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->instrument_region.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->instrument_region.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.instrument_region.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.instrument_region.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.instrument_region.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.instrument_region.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "steps") {
-        mappings->steps.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->steps.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->steps.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->steps.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.steps.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.steps.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.steps.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.steps.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "pages") {
-        mappings->pages.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->pages.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->pages.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->pages.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.pages.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.pages.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.pages.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.pages.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "parts") {
-        mappings->parts.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->parts.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->parts.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->parts.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.parts.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.parts.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.parts.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.parts.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "banks") {
-        mappings->banks.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->banks.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->banks.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->banks.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.banks.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.banks.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.banks.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.banks.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "ppqn") {
-        mappings->ppqn.x.min = coordinates["x"]["min"].as<unsigned int>();
-        mappings->ppqn.x.max = coordinates["x"]["max"].as<unsigned int>();
-        mappings->ppqn.y.min = coordinates["y"]["min"].as<unsigned int>();
-        mappings->ppqn.y.max = coordinates["y"]["max"].as<unsigned int>();
+        mappings.ppqn.x.min = coordinates["x"]["min"].as<unsigned int>();
+        mappings.ppqn.x.max = coordinates["x"]["max"].as<unsigned int>();
+        mappings.ppqn.y.min = coordinates["y"]["min"].as<unsigned int>();
+        mappings.ppqn.y.max = coordinates["y"]["max"].as<unsigned int>();
       } else if (param == "shift") {
-        mappings->shift.x = coordinates["x"].as<unsigned int>();
-        mappings->shift.y = coordinates["y"].as<unsigned int>();
+        mappings.shift.x = coordinates["x"].as<unsigned int>();
+        mappings.shift.y = coordinates["y"].as<unsigned int>();
       } else if (param == "play_stop") {
-        mappings->play_stop.x = coordinates["x"].as<unsigned int>();
-        mappings->play_stop.y = coordinates["y"].as<unsigned int>();
+        mappings.play_stop.x = coordinates["x"].as<unsigned int>();
+        mappings.play_stop.y = coordinates["y"].as<unsigned int>();
       } else if (param == "record") {
-        mappings->record.x = coordinates["x"].as<unsigned int>();
-        mappings->record.y = coordinates["y"].as<unsigned int>();
+        mappings.record.x = coordinates["x"].as<unsigned int>();
+        mappings.record.y = coordinates["y"].as<unsigned int>();
       } else if (param == "last_step") {
-        mappings->last_step.x = coordinates["x"].as<unsigned int>();
-        mappings->last_step.y = coordinates["y"].as<unsigned int>();
+        mappings.last_step.x = coordinates["x"].as<unsigned int>();
+        mappings.last_step.y = coordinates["y"].as<unsigned int>();
       } else if (param == "tempo") {
-        mappings->tempo.x = coordinates["x"].as<unsigned int>();
-        mappings->tempo.y = coordinates["y"].as<unsigned int>();
+        mappings.tempo.x = coordinates["x"].as<unsigned int>();
+        mappings.tempo.y = coordinates["y"].as<unsigned int>();
       }
     }
   };

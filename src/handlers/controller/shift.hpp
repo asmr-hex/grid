@@ -10,8 +10,8 @@
 
 void shift_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
-  if (event->grid.x != config->mappings->shift.x && event->grid.y != config->mappings->shift.y) return;
-
+  if (event->grid.x != config->mappings.shift.x && event->grid.y != config->mappings.shift.y) return;
+  
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
     monome_led_on(io->output.monome, event->grid.x, event->grid.y);
