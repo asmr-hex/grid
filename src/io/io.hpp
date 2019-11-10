@@ -30,22 +30,6 @@ private:
       exit( EXIT_FAILURE );
     }
 
-    // TODO (coco|31.10.19) maybe add better debugging for port counting later.
-    // unsigned int nPorts = midiout->getPortCount();
-    // std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
-    
-    // std::string portName;
-    // for ( unsigned int i=0; i<nPorts; i++ ) {
-    //   try {
-    //     portName = midiout->getPortName(i);
-    //   }
-    //   catch (RtMidiError &error) {
-    //     error.printMessage();
-    //   }
-    //   std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
-    // }
-    // std::cout << '\n';
-    
     // make sure there are ports available
     unsigned int n_ports = output.midi->getPortCount();
     if ( n_ports == 0 ) {
@@ -54,9 +38,23 @@ private:
       exit( EXIT_FAILURE );
     }
 
+    // TODO (coco|31.10.19) maybe add better debugging for port counting later.
+    std::string portName;
+    for ( unsigned int i=0; i<n_ports; i++ ) {
+      try {
+        portName = output.midi->getPortName(i);
+      }
+      catch (RtMidiError &error) {
+        error.printMessage();
+      }
+      std::cout << "  Output Port #" << i+1 << ": " << portName << '\n';
+    }
+    std::cout << '\n';
+    
+    
     // great, lets just connect to the first port available
     // TODO (coco|31.10.19) eventually maybe we want to be able to select the port.
-    output.midi->openPort(0);    
+    output.midi->openPort(1);
   };
 
   void connect_to_midi_in() {

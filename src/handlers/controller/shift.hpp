@@ -113,4 +113,36 @@ void ppqn_handler(IO *io, State *state, Config *config, const monome_event_t *ev
   }
 }
 
+void step_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    config->mappings.steps.x.min <= event->grid.x && event->grid.x <= config->mappings.steps.x.max &&
+    config->mappings.steps.y.min <= event->grid.y && event->grid.y <= config->mappings.steps.y.max;
+  if (!relevant) return;
+
+  switch (event->event_type) {
+  case MONOME_BUTTON_UP:
+    // get step index
+    unsigned int step = config->mappings.steps.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
+    Part *current_part = state->get_current_part();
+
+    if (current_part->is_step_on(step)) {
+      // turn this step off!
+
+      // remove stop from part
+      current_part->remove_step(step);
+
+      monome_led_off(io->output.monome, event->grid.x, event->grid.y);
+    } else {
+      // turn this step on!!
+
+      // TODO add step to part
+      current_part->add_step(step);
+      
+      monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+    }
+    break;
+  }
+}
+
 #endif

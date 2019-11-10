@@ -1,17 +1,17 @@
 instrument_select:
   x:
-    min: 0
-    max: 0
+    min: 7
+    max: 7
   y:
-    min: 3
-    max: 6
+    min: 2
+    max: 7
 instrument_region:
   x:
-    min: 1
+    min: 8
     max: 15
   y:
-    min: 3
-    max: 6
+    min: 2
+    max: 7
 steps:
   x:
     min: 0
@@ -29,24 +29,24 @@ pages:
 parts:
   x:
     min: 0
-    max: 7
+    max: 6
   y:
     min: 2
     max: 2
 banks:
   x:
-    min: 8
-    max: 15
+    min: 0
+    max: 6
   y:
-    min: 2
-    max: 2
+    min: 3
+    max: 3
 ppqn:
   x:
-    min: 8
-    max: 14
+    min: 0
+    max: 6
   y:
-    min: 7
-    max: 7
+    min: 4
+    max: 4
 shift:
   x: 0
   y: 7

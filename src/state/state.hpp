@@ -4,8 +4,9 @@
 #include <map>
 #include <string>
 
-#include "../sequencer/constants.hpp"
+#include "../sequencer/part.hpp"
 #include "../sequencer/types.hpp"
+#include "../sequencer/constants.hpp"
 
 #include "../config/er1.hpp"
 #include "../config/gr1.hpp"
@@ -49,6 +50,14 @@ public:
 
   std::map<std::string, Instrument *> instruments_by_name;
 
+  Instrument *get_current_instrument() {
+    return instruments_by_name[sequencer.active_instrument];
+  };
+
+  Part *get_current_part() {
+    return get_current_instrument()->get_current_part();
+  };
+  
 private:
   void initialize_instruments() {
     for (auto it : instruments_by_name) {
