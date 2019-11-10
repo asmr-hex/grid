@@ -26,8 +26,8 @@ public:
 
   mapping_coordinates_t get_coordinates_from_sequential_index(unsigned int idx) {
     return {
-            idx % get_width(),
-            idx / get_width(),
+            (idx % get_width()) + x.min,
+            (idx / get_width()) + y.min,
     };
   };
   
