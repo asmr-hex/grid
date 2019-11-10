@@ -18,6 +18,7 @@ public:
     // TODO instantiate all handlers.
     monome_handlers.push_back(&shift_handler);
     monome_handlers.push_back(&play_stop_handler);
+    monome_handlers.push_back(&ppqn_handler);
   };
 
   void register_midi_callback() {

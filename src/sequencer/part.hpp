@@ -71,14 +71,15 @@ public:
 
     return next_events;
   };
+
+  int ppqn;
+  int page;
+  int length;
+  bool unsaved;
   
 private:
   int id;
-  int ppqn;
-  int length;
   int active_step;
-  int page;
-  bool unsaved;
   sequence_t sequence;
   playback_t playback;
 
@@ -91,7 +92,7 @@ private:
     step += ppqn;
 
     // if the active step is now greater than the last step, circle back
-    if (step > (length * constants::PPQN) - 1) {
+    if (step > (length * constants::PPQN_MAX) - 1) {
       step = 0;
     }
 
@@ -104,7 +105,7 @@ private:
     // escape immediately if this is not the currently active isntrument.
     if (!instrument_is_displayed) return next_ui_events;
 
-    int hardware_step = active_step / constants::PPQN;
+    int hardware_step = active_step / constants::PPQN_MAX;
 
     if (step_visible_in_ui(hardware_step)) {
       // this step is visible.
@@ -118,7 +119,7 @@ private:
     }
 
     // now lets look at the next step
-    hardware_step = get_next_step(active_step) / constants::PPQN;
+    hardware_step = get_next_step(active_step) / constants::PPQN_MAX;
 
     if (step_visible_in_ui(hardware_step)) {
       unsigned int *r = get_grid_coordinates_of(hardware_step);

@@ -43,7 +43,7 @@ banks:
 ppqn:
   x:
     min: 8
-    max: 11
+    max: 14
   y:
     min: 7
     max: 7

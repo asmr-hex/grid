@@ -28,7 +28,7 @@ public:
     // TODO initialize state
     sequencer.active_instrument = "sp404";
     float bpm = 120.0;
-    sequencer.step_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)constants::PPQN)));
+    sequencer.step_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)constants::PPQN_MAX)));
   };
   
   struct {
