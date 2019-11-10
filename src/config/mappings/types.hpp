@@ -32,13 +32,13 @@ public:
   };
   
   unsigned int get_width() {
-    if (width == 0) width = x.max - x.min;
+    if (width == 0) width = x.max - x.min + 1;
 
     return width;
   };
 
   unsigned int get_height() {
-    if (height == 0) height = y.max - y.min;
+    if (height == 0) height = y.max - y.min + 1;
 
     return height;    
   };

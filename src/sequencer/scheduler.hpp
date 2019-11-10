@@ -97,7 +97,7 @@ private:
 
       if (state->sequencer.playback.is_playing) {
         // only dispatch if we are currently playing.
-        dispatch();   
+        dispatch();
       }
  
       auto tock = Clock::now();

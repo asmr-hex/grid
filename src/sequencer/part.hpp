@@ -15,11 +15,11 @@ class Part {
 public:
   Part(int id) : id(id) {
     // load part file if it exists.
-    active_step = -1; // we want to initialize active_step to -1 whenever we are starting the sequence from the beginning
-    ppqn = 2;
+    ppqn = 8;
     length = 32;
     page = 0;
-    default_note = "C4";
+    default_note = "C5";
+    active_step = 0; // we want to initialize active_step to -1 whenever we are starting the sequence from the beginning
     
     // TODO remove this test
     // step_event_t se1 = { OSC, 0x0000, std::vector<unsigned char>(0x00FF) };
@@ -55,9 +55,6 @@ public:
     // if ppqn = 2, we want ste_size = 2;
     // etc.
     
-    // advance to next step
-    active_step = get_next_step(active_step);
-
     try {
       // TODO: we will need to refactor this to come up with a way to
       // gracefully handle midi off events when we change sequence length!
@@ -75,6 +72,9 @@ public:
       // this step is empty. carry on.
     }
 
+    // advance to next step
+    active_step = get_next_step(active_step);
+    
     return next_events;
   };
 
@@ -134,7 +134,7 @@ private:
 
     // if the active step is now greater than the last step, circle back
     if (step > (length * constants::PPQN_MAX) - 1) {
-      step = -1;
+      step = 0;
     }
 
     return step;
@@ -189,7 +189,7 @@ private:
   };
 
   step_idx_t get_fine_step_index(unsigned int coarse_step_index) {
-    return (coarse_step_index * constants::PPQN_MAX) - 1;
+    return coarse_step_index * constants::PPQN_MAX;
   };
 };
 
