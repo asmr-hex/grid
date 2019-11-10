@@ -11,5 +11,4 @@ instruments:
 controllers:
   - nanokey
   - glove
-mapping:
-  mapping_file: "controller_mapping.yml"
+mapping_file: "controller_mapping.yml"

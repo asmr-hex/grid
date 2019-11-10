@@ -4,14 +4,14 @@ instrument_select:
     max: 0
   y:
     min: 3
-    max: 6;
+    max: 6
 instrument_region:
   x:
     min: 1
     max: 15
   y:
     min: 3
-    max: 6;
+    max: 6
 steps:
   x:
     min: 0

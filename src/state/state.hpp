@@ -23,14 +23,12 @@
 class State {
 public:
   State(std::map<std::string, Instrument *> instrument_map) : instruments_by_name(instrument_map) {
-    initialize_instruments(instrument_map);
+    initialize_instruments();
 
     // TODO initialize state
     sequencer.active_instrument = "sp404";
     float bpm = 120.0;
     sequencer.step_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)constants::PPQN)));
-
-    initialize_instruments()
   };
   
   struct {

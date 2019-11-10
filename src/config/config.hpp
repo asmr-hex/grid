@@ -65,7 +65,7 @@ private:
   void parse_mappings(YAML::Node conf) {
     YAML::Node mapping = get_mapping_node(conf);
     assert(mapping.IsMap());
-
+    
     for (auto itr : mapping) {
       std::string param = itr.first.as<std::string>();
       YAML::Node coordinates = itr.second;

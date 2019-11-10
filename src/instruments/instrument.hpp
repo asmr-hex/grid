@@ -21,15 +21,15 @@ public:
   Part *get_current_part() {
     return parts[current_part_idx];
   };
+
+  bool is_playing;
+  bool stop_on_next_measure;
   
 protected:
   std::string name;
 
   int current_part_idx;
   std::vector<Part*> parts;
-
-  bool is_playing;
-  bool stop_on_next_measure;
 };
 
 #endif
