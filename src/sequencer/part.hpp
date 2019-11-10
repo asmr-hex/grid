@@ -73,10 +73,6 @@ public:
       }
     } catch (std::out_of_range &error) {
       // this step is empty. carry on.
-
-      if (active_step == 0) {
-        std::cout << "NOTHING @step=0\n";
-      }
     }
 
     return next_events;
@@ -138,7 +134,7 @@ private:
 
     // if the active step is now greater than the last step, circle back
     if (step > (length * constants::PPQN_MAX) - 1) {
-      step = 0;
+      step = -1;
     }
 
     return step;
