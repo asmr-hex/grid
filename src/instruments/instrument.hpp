@@ -14,15 +14,18 @@
 class Instrument {
 public:
   Instrument(Config *config) : config(config) {
-    current_part_idx = 0;
+    current_part = 0;
+    current_bank = 0;
     // TODO initialize better
     parts.push_back(new Part(0, config));
   };
   
   Part *get_current_part() {
-    return parts[current_part_idx];
+    return parts[current_part];
   };
 
+  int current_part;
+  int current_bank;
   bool is_playing;
   bool stop_on_next_measure;
   
@@ -30,7 +33,6 @@ protected:
   std::string name;
   Config *config;
 
-  int current_part_idx;
   std::vector<Part*> parts;
 };
 

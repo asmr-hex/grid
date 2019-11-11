@@ -64,14 +64,14 @@ public:
     step_idx_t step = get_fine_step_index(coarse_step_idx);
     sequence.remove_step(step);
   };
-  
+
+  int id;
   int ppqn;
   int page;
   int length;
   bool unsaved;
   
 private:
-  int id;
   int active_step;
   event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
   Sequence sequence;

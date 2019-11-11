@@ -9,6 +9,7 @@
 #include "state.hpp"
 #include "../io/io.hpp"
 #include "../config/config.hpp"
+#include "../handlers/utils.hpp"
 #include "../handlers/handlers.hpp"
 #include "../sequencer/constants.hpp"
 #include "../instruments/instrument.hpp"
@@ -38,9 +39,14 @@ private:
     // turn all leds off at first.
     monome_led_all(io->output.monome, 0);
 
+    // get the current instrument and part
+    Instrument *current_instrument = state->get_current_instrument();
+    Part *current_part = state->get_current_part();
+    
     // set current instrument part ppqn led
+    set_led_region_intensity(io, &config->mappings.ppqn, 0);
     unsigned int ppqn_led_offset = 0;
-    switch (state->get_current_part()->ppqn) {
+    switch (current_part->ppqn) {
     case constants::PPQN::One:
       ppqn_led_offset = 0;
       break;
@@ -66,9 +72,20 @@ private:
     mapping_coordinates_t selected_ppqn = config->mappings.ppqn.get_coordinates_from_sequential_index(ppqn_led_offset);
     monome_led_on(io->output.monome, selected_ppqn.x, selected_ppqn.y);
 
-    // TODO set selected sequence led
+    // set selected sequence led
+    set_led_region_intensity(io, &(config->mappings.parts), 0);
+    mapping_coordinates_t selected_part = config->mappings.parts.get_coordinates_from_sequential_index(current_instrument->current_part);
+    monome_led_on(io->output.monome, selected_part.x, selected_part.y);
 
-    // TODO set selected bank led
+    // set selected bank led
+    set_led_region_intensity(io, &(config->mappings.banks), 4);
+    mapping_coordinates_t selected_bank = config->mappings.banks.get_coordinates_from_sequential_index(current_instrument->current_bank);
+    monome_led_on(io->output.monome, selected_bank.x, selected_bank.y);
+
+    // set pages led
+    set_led_region_intensity(io, &(config->mappings.pages), 4);
+    mapping_coordinates_t selected_page = config->mappings.pages.get_coordinates_from_sequential_index(current_part->page);
+    monome_led_on(io->output.monome, selected_page.x, selected_page.y);
   };
 };
 

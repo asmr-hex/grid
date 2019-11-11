@@ -34,6 +34,7 @@ public:
   
   struct {
     bool shift_enabled;
+    bool last_step_enabled;
     Microseconds step_period;
     std::string active_instrument;
     struct {

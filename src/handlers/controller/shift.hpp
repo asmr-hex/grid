@@ -6,6 +6,7 @@
 #include "../../io/io.hpp"
 #include "../../state/state.hpp"
 #include "../../config/config.hpp"
+#include "../../config/mappings/types.hpp"
 #include "../../sequencer/part.hpp"
 
 
@@ -126,6 +127,23 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
     unsigned int step = config->mappings.steps.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
     Part *current_part = state->get_current_part();
 
+    if (state->sequencer.last_step_enabled) {
+      // escape hatch if we are in 'last_step' mode.
+      mapping_coordinates_t last_step_coords;
+
+      // turn off led for old last_step;
+      last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(current_part->length -1);
+      monome_led_off(io->output.monome, last_step_coords.x, last_step_coords.y);
+      
+      // update last step
+      current_part->length = step + 1;
+      last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(step);
+      
+      // turn on led for new last_step;
+      monome_led_on(io->output.monome, last_step_coords.x, last_step_coords.y);
+      return;
+    }
+    
     if (current_part->is_step_on(step)) {
       // turn this step off!
 
@@ -144,5 +162,30 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
     break;
   }
 }
+
+void last_step_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    config->mappings.last_step.x <= event->grid.x && event->grid.x <= config->mappings.last_step.x &&
+    config->mappings.last_step.y <= event->grid.y && event->grid.y <= config->mappings.last_step.y;
+  if (!relevant) return;
+
+  // get last step of current part
+  int last_step = state->get_current_part()->length - 1;
+  mapping_coordinates_t last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(last_step);
+  
+  switch (event->event_type) {
+  case MONOME_BUTTON_DOWN:
+    state->sequencer.last_step_enabled = true;
+    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+    monome_led_on(io->output.monome, last_step_coords.x, last_step_coords.y);
+    break;
+  case MONOME_BUTTON_UP:
+    state->sequencer.last_step_enabled = false;
+    monome_led_off(io->output.monome, event->grid.x, event->grid.y);
+    monome_led_off(io->output.monome, last_step_coords.x, last_step_coords.y);
+    break;
+  }
+};
 
 #endif
