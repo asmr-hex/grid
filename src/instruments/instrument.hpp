@@ -9,15 +9,16 @@
 
 #include "../sequencer/part.hpp"
 #include "../config/config.hpp"
+#include "../io/io.hpp"
 
 
 class Instrument {
 public:
-  Instrument(Config *config) : config(config) {
+  Instrument(Config *config, IO *io) : config(config), io(io) {
     current_part = 0;
     current_bank = 0;
     // TODO initialize better
-    parts.push_back(new Part(0, config));
+    parts.push_back(new Part(0, config, io));
   };
   
   Part *get_current_part() {
@@ -32,6 +33,7 @@ public:
 protected:
   std::string name;
   Config *config;
+  IO *io;
 
   std::vector<Part*> parts;
 };

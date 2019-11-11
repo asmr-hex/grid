@@ -39,7 +39,7 @@ private:
     InstrumentFactory factory = InstrumentFactory();
 
     for (std::string instrument : config.instruments) {
-      instruments[instrument] = factory.create(instrument, &config);
+      instruments[instrument] = factory.create(instrument, &config, &io);
     }
   };
 };

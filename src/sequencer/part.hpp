@@ -11,17 +11,20 @@
 #include "sequence.hpp"
 #include "constants.hpp"
 
+#include "../io/io.hpp"
+
 #include "../config/config.hpp"
 #include "../config/mappings/types.hpp"
+#include "../handlers/utils.hpp"
 
 // TODO feed io to Part so it can render its internal state!
 
 class Part {
 public:
-  Part(int id, Config *config) : id(id), config(config) {
+  Part(int id, Config *config, IO *io) : id(id), config(config), io(io) {
     // load part file if it exists.
     ppqn = 8;
-    length = 32;
+    length = 64;
     default_note = "C5";
     active_step = 0;
   };
@@ -53,23 +56,36 @@ public:
     the sequence.
    */
   void add_step(unsigned int coarse_step_idx) {
+    int abs_coarse_step = get_absolute_step(page.under_edit, coarse_step_idx);
     step_event_t event = midi_note_on(default_note, 0, 127);
-    step_idx_t step = get_fine_step_index(coarse_step_idx);
+    step_idx_t step = get_fine_step_index(abs_coarse_step);
 
     // TODO ....we should probably be using a mutex... -___-
     sequence.add_midi_note_on_event(event, step, 1);
+
+    // add step to rendered steps
+    rendered_steps[page.under_edit].insert(coarse_step_idx);
   };
   
   void remove_step(unsigned int coarse_step_idx) {
-    step_idx_t step = get_fine_step_index(coarse_step_idx);
+    int abs_coarse_step = get_absolute_step(page.under_edit, coarse_step_idx);
+    step_idx_t step = get_fine_step_index(abs_coarse_step);
     sequence.remove_step(step);
+
+    // remove step from rendered steps
+    rendered_steps[page.under_edit].erase(coarse_step_idx);
   };
 
   void render_page(int new_page) {
     if (page.rendered == new_page) return;
 
     page.rendered = new_page;
-    // TODO switch page..
+
+    set_led_region_intensity(io, &config->mappings.steps, 0);
+    for (auto i : rendered_steps[page.rendered]) {
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(i);
+      monome_led_on(io->output.monome, coords.x, coords.y);
+    }
   };
 
   void set_last_step(int coarse_step) {
@@ -96,6 +112,8 @@ private:
   Sequence sequence;
   std::string default_note;
   Config *config;
+  IO *io;
+  std::map<int, std::set<int> > rendered_steps;
 
   int get_next_step(int step) {
     // advance to next step
@@ -115,8 +133,9 @@ private:
 
     int coarse_step = active_step / constants::PPQN_MAX;
 
-    if (step_visible_in_ui(coarse_step) && !is_step_on(coarse_step)) {
-      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(coarse_step);
+    if (is_step_visible(coarse_step) && !is_step_on(coarse_step)) {
+      int page_relative_coarse_step = get_relative_step(page.rendered, coarse_step);
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
       
       // we want to turn this step OFF on the next advance.
       collector->push_back(turn_led_off(coords.x, coords.y));
@@ -125,21 +144,29 @@ private:
     // now lets look at the next step
     coarse_step = get_next_step(active_step) / constants::PPQN_MAX;
 
-    if (step_visible_in_ui(coarse_step)) {
-      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(coarse_step);
+    if (is_step_visible(coarse_step)) {
+      int page_relative_coarse_step = get_relative_step(page.rendered, coarse_step);
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
 
       // we want to turn this step ON on the next advance.
       collector->push_back(turn_led_on(coords.x, coords.y));
     }
   };
 
-  bool step_visible_in_ui(int coarse_step) {
+  bool is_step_visible(int coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
     int min_visible_step = (page.rendered * page_size);
     int max_visible_step = ((page.rendered + 1) * page_size) - 1;
     return min_visible_step <= coarse_step && coarse_step <= max_visible_step;
   };
 
+  int get_absolute_step(int page_i, int page_relative_step) {
+    return (config->mappings.steps.get_area() * page_i) + page_relative_step;
+  }
+
+  int get_relative_step(int page_i, int page_absolute_step) {
+    return page_absolute_step - (config->mappings.steps.get_area() * page_i);
+  }
 };
 
 

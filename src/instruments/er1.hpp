@@ -3,11 +3,12 @@
 
 #include "instrument.hpp"
 #include "../config/config.hpp"
+#include "../io/io.hpp"
 
 
 class ER1 : public Instrument {
 public:
-  ER1(Config *config) : Instrument(config) {};
+  ER1(Config *config, IO *io) : Instrument(config, io) {};
 };
 
 #endif

@@ -7,6 +7,7 @@
 #include "er1.hpp"
 #include "gr1.hpp"
 
+#include "../io/io.hpp"
 #include "../config/config.hpp"
 
 
@@ -19,21 +20,21 @@ public:
     add<GR1>("gr1");
   };
 
-  Instrument *create(std::string name, Config *config) {
-    return constructor_map[name](config);
+  Instrument *create(std::string name, Config *config, IO *io) {
+    return constructor_map[name](config, io);
   };
   
 private:
   /*
     this is a map of instrument constructors keyed by their string names.
   */
-  std::map<std::string, Instrument*(*)(Config *)> constructor_map;
+  std::map<std::string, Instrument*(*)(Config *, IO *)> constructor_map;
 
   /*
     a template function for instantiating derived instrument classes.
   */
-  template<typename T> static Instrument *construct(Config *config) {
-    return new T(config);
+  template<typename T> static Instrument *construct(Config *config, IO *io) {
+    return new T(config, io);
   };
 
   /*

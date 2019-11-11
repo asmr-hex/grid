@@ -3,11 +3,12 @@
 
 #include "instrument.hpp"
 #include "../config/config.hpp"
+#include "../io/io.hpp"
 
 
 class SP404 : public Instrument {
 public:
-  SP404(Config *config) : Instrument(config) {};
+  SP404(Config *config, IO *io) : Instrument(config, io) {};
 };
 
 #endif
