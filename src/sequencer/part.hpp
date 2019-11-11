@@ -20,28 +20,15 @@ public:
     length = 32;
     page = 0;
     default_note = "C5";
-    active_step = 0; // we want to initialize active_step to -1 whenever we are starting the sequence from the beginning
-    
-    // TODO remove this test
-    // step_event_t se1 = { OSC, 0x0000, std::vector<unsigned char>(0x00FF) };
-    // step_event_t se2 = { OSC, 0x0100, std::vector<unsigned char>(0x00FF) };
-    // std::map<event_uid_t, step_event_t> m1;
-    // m1[0x0000] = se1;
-    // std::map<event_uid_t, step_event_t> m2;
-    // m2[0x0001] = se2;
-    // sequence[0] = m1;
-    // sequence[1*constants::PPQN] = m2;
+    active_step = 0;
   };
 
   std::vector<step_event_t> advance(bool instrument_is_displayed) {
     std::vector<step_event_t> next_events;
 
     // should we display the step in the ui?
-    std::vector<step_event_t> ui_events = get_next_ui_step_events(instrument_is_displayed);
-    for (step_event_t e : ui_events) {
-      next_events.push_back(e);
-    }
-    
+    collect_next_ui_step_events(instrument_is_displayed, &next_events);
+
     // TODO if playback is not playing, do not advance.
 
     // get all next events
@@ -99,11 +86,9 @@ private:
     return step;
   };
   
-  std::vector<step_event_t> get_next_ui_step_events(bool instrument_is_displayed) {
-    std::vector<step_event_t> next_ui_events;
-
+  void collect_next_ui_step_events(bool instrument_is_displayed, std::vector<step_event_t> *collector) {
     // escape immediately if this is not the currently active isntrument.
-    if (!instrument_is_displayed) return next_ui_events;
+    if (!instrument_is_displayed) return;
 
     int hardware_step = active_step / constants::PPQN_MAX;
 
@@ -115,7 +100,7 @@ private:
       unsigned int y = r[1];
       
       // we want to turn this step off on the next advance.
-      next_ui_events.push_back(turn_led_off(x, y));
+      collector->push_back(turn_led_off(x, y));
     }
 
     // now lets look at the next step
@@ -127,10 +112,8 @@ private:
       unsigned int y = r[1];
 
       // we want to turn this step off on the next advance.
-      next_ui_events.push_back(turn_led_on(x, y));      
+      collector->push_back(turn_led_on(x, y));      
     }
-
-    return next_ui_events;
   };
 
   bool step_visible_in_ui(int hardware_step) {
