@@ -8,14 +8,15 @@
 #include <monome.h>
 
 #include "../sequencer/part.hpp"
+#include "../config/config.hpp"
 
 
 class Instrument {
 public:
-  Instrument() {
+  Instrument(Config *config) : config(config) {
     current_part_idx = 0;
     // TODO initialize better
-    parts.push_back(new Part(0));
+    parts.push_back(new Part(0, config));
   };
   
   Part *get_current_part() {
@@ -27,6 +28,7 @@ public:
   
 protected:
   std::string name;
+  Config *config;
 
   int current_part_idx;
   std::vector<Part*> parts;

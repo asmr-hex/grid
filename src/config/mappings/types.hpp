@@ -42,10 +42,17 @@ public:
 
     return height;
   };
+
+  unsigned int get_area() {
+    if (area == 0) area = get_width() * get_height();
+
+    return area;
+  }
   
 private:
   unsigned int width;
   unsigned int height;
+  unsigned int area;
 };
 
 #endif

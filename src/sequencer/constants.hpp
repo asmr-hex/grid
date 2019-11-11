@@ -14,9 +14,6 @@ namespace constants {
   };
   
   const int PPQN_MAX            = PPQN::SixtyFour;  // pulse per quarter note globally
-  const int SEQUENCE_PAGE_SIZE  = 32;  // number of steps in sequence page
-  const int SEQUENCE_COL_SIZE   = 16;  // TODO get rid of this and use calculated from mapping
-  const int SEQUENCE_ROW_SIZE   =  2;  // TODO get rid of this and use calculated from mapping
 }
 
 #endif

@@ -11,10 +11,13 @@
 #include "sequence.hpp"
 #include "constants.hpp"
 
+#include "../config/config.hpp"
+#include "../config/mappings/types.hpp"
+
 
 class Part {
 public:
-  Part(int id) : id(id) {
+  Part(int id, Config *config) : id(id), config(config) {
     // load part file if it exists.
     ppqn = 8;
     length = 32;
@@ -73,6 +76,7 @@ private:
   event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
   Sequence sequence;
   std::string default_note;
+  Config *config;
 
   int get_next_step(int step) {
     // advance to next step
@@ -90,44 +94,31 @@ private:
     // escape immediately if this is not the currently active isntrument.
     if (!instrument_is_displayed) return;
 
-    int hardware_step = active_step / constants::PPQN_MAX;
+    int coarse_step = active_step / constants::PPQN_MAX;
 
-    if (step_visible_in_ui(hardware_step) && !is_step_on(hardware_step)) {
-      // this step is visible.
-
-      unsigned int *r = get_grid_coordinates_of(hardware_step);
-      unsigned int x = r[0];
-      unsigned int y = r[1];
+    if (step_visible_in_ui(coarse_step) && !is_step_on(coarse_step)) {
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(coarse_step);
       
-      // we want to turn this step off on the next advance.
-      collector->push_back(turn_led_off(x, y));
+      // we want to turn this step OFF on the next advance.
+      collector->push_back(turn_led_off(coords.x, coords.y));
     }
 
     // now lets look at the next step
-    hardware_step = get_next_step(active_step) / constants::PPQN_MAX;
+    coarse_step = get_next_step(active_step) / constants::PPQN_MAX;
 
-    if (step_visible_in_ui(hardware_step)) {
-      unsigned int *r = get_grid_coordinates_of(hardware_step);
-      unsigned int x = r[0];
-      unsigned int y = r[1];
+    if (step_visible_in_ui(coarse_step)) {
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(coarse_step);
 
-      // we want to turn this step off on the next advance.
-      collector->push_back(turn_led_on(x, y));      
+      // we want to turn this step ON on the next advance.
+      collector->push_back(turn_led_on(coords.x, coords.y));
     }
   };
 
-  bool step_visible_in_ui(int hardware_step) {
-    int min_visible_step = (page * constants::SEQUENCE_PAGE_SIZE);
-    int max_visible_step = (page * constants::SEQUENCE_PAGE_SIZE) + constants::SEQUENCE_PAGE_SIZE;
-    return min_visible_step <= hardware_step && hardware_step <= max_visible_step;
-  };
-
-  // TODO remove this in favor of get_coordinates_from_sequential_index
-  unsigned int *get_grid_coordinates_of(int hardware_step) {
-    unsigned int xy[2];
-    xy[0] = hardware_step % constants::SEQUENCE_COL_SIZE;
-    xy[1] = hardware_step / constants::SEQUENCE_COL_SIZE;
-    return xy;
+  bool step_visible_in_ui(int coarse_step) {
+    unsigned int page_size = config->mappings.steps.get_area();
+    int min_visible_step = (page * page_size);
+    int max_visible_step = ((page + 1) * page_size) - 1;
+    return min_visible_step <= coarse_step && coarse_step <= max_visible_step;
   };
 
 };
