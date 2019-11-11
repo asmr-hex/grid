@@ -131,15 +131,15 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
       // escape hatch if we are in 'last_step' mode.
       mapping_coordinates_t last_step_coords;
 
-      // turn off led for old last_step;
-      last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(current_part->length -1);
+      // turn off led for old last_step; TODO make Part handle this! (in render_last_step)
+      last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(current_part->get_last_step());
       monome_led_off(io->output.monome, last_step_coords.x, last_step_coords.y);
       
       // update last step
-      current_part->length = step + 1;
+      current_part->set_last_step(step);
       last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(step);
       
-      // turn on led for new last_step;
+      // turn on led for new last_step; TODO make Part handle this! (in render_last_step)
       monome_led_on(io->output.monome, last_step_coords.x, last_step_coords.y);
       return;
     }
@@ -166,26 +166,67 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
 void last_step_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
-    config->mappings.last_step.x <= event->grid.x && event->grid.x <= config->mappings.last_step.x &&
-    config->mappings.last_step.y <= event->grid.y && event->grid.y <= config->mappings.last_step.y;
+    event->grid.x == config->mappings.last_step.x &&
+    event->grid.y == config->mappings.last_step.y;
   if (!relevant) return;
 
   // get last step of current part
-  int last_step = state->get_current_part()->length - 1;
+  Part *current_part = state->get_current_part();
+  int last_step = current_part->length - 1;
   mapping_coordinates_t last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(last_step);
+  mapping_coordinates_t last_step_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(current_part->page.last_step);
+  mapping_coordinates_t page_being_edited_coords = config->mappings.pages.get_coordinates_from_sequential_index(current_part->page.under_edit);
   
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
     state->sequencer.last_step_enabled = true;
     monome_led_on(io->output.monome, event->grid.x, event->grid.y);
     monome_led_on(io->output.monome, last_step_coords.x, last_step_coords.y);
+
+    // render last step page
+    monome_led_level_set(io->output.monome, page_being_edited_coords.x, page_being_edited_coords.y, 4);
+    monome_led_on(io->output.monome, last_step_page_coords.x, last_step_page_coords.y);
+    current_part->render_page(current_part->page.last_step);
+    
     break;
   case MONOME_BUTTON_UP:
     state->sequencer.last_step_enabled = false;
     monome_led_off(io->output.monome, event->grid.x, event->grid.y);
     monome_led_off(io->output.monome, last_step_coords.x, last_step_coords.y);
+
+    // re-render page being edited.
+    monome_led_level_set(io->output.monome, last_step_page_coords.x, last_step_page_coords.y, 4);
+    monome_led_on(io->output.monome, page_being_edited_coords.x, page_being_edited_coords.y);
+    current_part->render_page(current_part->page.under_edit);
+
     break;
   }
 };
+
+void page_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    config->mappings.pages.x.min <= event->grid.x && event->grid.x <= config->mappings.pages.x.max &&
+    config->mappings.pages.y.min <= event->grid.y && event->grid.y <= config->mappings.pages.y.max;
+  if (!relevant) return;
+
+  // get current part & current page
+  Part *current_part = state->get_current_part();
+  int rendered_page = current_part->page.rendered;
+  mapping_coordinates_t rendered_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(rendered_page);
+
+  switch (event->event_type) {
+  case MONOME_BUTTON_DOWN:
+    int new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
+    current_part->render_page(new_page);
+    monome_led_level_set(io->output.monome, rendered_page_coords.x, rendered_page_coords.y, 4);
+    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+    
+    if (state->sequencer.last_step_enabled) current_part->page.last_step = new_page;
+    else current_part->page.under_edit = new_page;
+    
+    break;
+  }
+}
 
 #endif

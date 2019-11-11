@@ -84,7 +84,7 @@ private:
 
     // set pages led
     set_led_region_intensity(io, &(config->mappings.pages), 4);
-    mapping_coordinates_t selected_page = config->mappings.pages.get_coordinates_from_sequential_index(current_part->page);
+    mapping_coordinates_t selected_page = config->mappings.pages.get_coordinates_from_sequential_index(current_part->page.under_edit);
     monome_led_on(io->output.monome, selected_page.x, selected_page.y);
   };
 };

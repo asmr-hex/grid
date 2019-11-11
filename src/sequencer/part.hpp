@@ -14,6 +14,7 @@
 #include "../config/config.hpp"
 #include "../config/mappings/types.hpp"
 
+// TODO feed io to Part so it can render its internal state!
 
 class Part {
 public:
@@ -21,7 +22,6 @@ public:
     // load part file if it exists.
     ppqn = 8;
     length = 32;
-    page = 0;
     default_note = "C5";
     active_step = 0;
   };
@@ -65,10 +65,29 @@ public:
     sequence.remove_step(step);
   };
 
+  void render_page(int new_page) {
+    if (page.rendered == new_page) return;
+
+    page.rendered = new_page;
+    // TODO switch page..
+  };
+
+  void set_last_step(int coarse_step) {
+    length = (page.last_step + 1) * (coarse_step + 1);
+  }
+
+  int get_last_step() {
+    return length - 1;
+  }
+  
   int id;
-  int ppqn;
-  int page;
-  int length;
+  int ppqn = 8;
+  struct {
+    int rendered = 0;
+    int under_edit = 0;
+    int last_step = 0;
+  } page;
+  int length = 32;
   bool unsaved;
   
 private:
@@ -116,8 +135,8 @@ private:
 
   bool step_visible_in_ui(int coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
-    int min_visible_step = (page * page_size);
-    int max_visible_step = ((page + 1) * page_size) - 1;
+    int min_visible_step = (page.rendered * page_size);
+    int max_visible_step = ((page.rendered + 1) * page_size) - 1;
     return min_visible_step <= coarse_step && coarse_step <= max_visible_step;
   };
 
