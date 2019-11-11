@@ -40,7 +40,7 @@ public:
   unsigned int get_height() {
     if (height == 0) height = y.max - y.min + 1;
 
-    return height;    
+    return height;
   };
   
 private:

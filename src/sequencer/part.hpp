@@ -8,6 +8,7 @@
 
 #include "utils.hpp"
 #include "types.hpp"
+#include "sequence.hpp"
 #include "constants.hpp"
 
 
@@ -32,14 +33,6 @@ public:
     // sequence[1*constants::PPQN] = m2;
   };
 
-  void load(int new_part_idx) {
-    
-  };
-
-  void save() {
-    
-  };
-  
   std::vector<step_event_t> advance(bool instrument_is_displayed) {
     std::vector<step_event_t> next_events;
 
@@ -49,28 +42,10 @@ public:
       next_events.push_back(e);
     }
     
-    // if playback is not playing, do not advance.
-    
-    // if ppqn = 1, we want step_size = 1
-    // if ppqn = 2, we want ste_size = 2;
-    // etc.
-    
-    try {
-      // TODO: we will need to refactor this to come up with a way to
-      // gracefully handle midi off events when we change sequence length!
+    // TODO if playback is not playing, do not advance.
 
-      // get events from new active step
-      auto step = sequence.at(active_step);
-
-      for (auto i : step) {
-        // copy sequence event into results
-        next_events.push_back(i.second);
-
-        std::cout << "YAY @step=0\n";
-      }
-    } catch (std::out_of_range &error) {
-      // this step is empty. carry on.
-    }
+    // get all next events
+    sequence.collect_all_events_at(active_step, &next_events);
 
     // advance to next step
     active_step = get_next_step(active_step);
@@ -79,12 +54,8 @@ public:
   };
 
   bool is_step_on(unsigned int coarse_step_idx) {
-    try {
-      sequence.at(get_fine_step_index(coarse_step_idx));
-      return true;
-    } catch (std::out_of_range &error) {
-      return false;
-    }
+    step_idx_t step = get_fine_step_index(coarse_step_idx);
+    return sequence.is_step_on(step, active_layer);
   };
 
   /*
@@ -92,24 +63,16 @@ public:
     the sequence.
    */
   void add_step(unsigned int coarse_step_idx) {
-    step_event_t midi_note_on_event = midi_note_on(default_note, 0, 127);
-    step_event_t midi_note_off_event = midi_note_off(default_note, 0);
-    step_idx_t step_on = get_fine_step_index(coarse_step_idx);
-    step_idx_t step_off = get_fine_step_index(coarse_step_idx + 1);
+    step_event_t event = midi_note_on(default_note, 0, 127);
+    step_idx_t step = get_fine_step_index(coarse_step_idx);
 
     // TODO ....we should probably be using a mutex... -___-
-    sequence[step_on][midi_note_on_event.id] = midi_note_on_event;
-    sequence[step_off][midi_note_off_event.id] = midi_note_off_event;
+    sequence.add_midi_note_on_event(event, step, 1);
   };
   
-  void remove_step(unsigned int step_idx) {
-    try {
-      // TODO will this handle dropping stuff from memory? will this cause a mem leak?
-      sequence.erase(get_fine_step_index(step_idx));
-    } catch (std::out_of_range &error) {
-      // a step should ALWAYS exist if this is called...so this shouldn't happen...
-      // TODO add logging...
-    }
+  void remove_step(unsigned int coarse_step_idx) {
+    step_idx_t step = get_fine_step_index(coarse_step_idx);
+    sequence.remove_step(step);
   };
   
   int ppqn;
@@ -120,13 +83,9 @@ public:
 private:
   int id;
   int active_step;
-  sequence_t sequence;
-  playback_t playback;
+  event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
+  Sequence sequence;
   std::string default_note;
-
-  void load_from_file(std::string filepath) {
-    // internally load
-  }
 
   int get_next_step(int step) {
     // advance to next step
@@ -188,9 +147,6 @@ private:
     return xy;
   };
 
-  step_idx_t get_fine_step_index(unsigned int coarse_step_index) {
-    return coarse_step_index * constants::PPQN_MAX;
-  };
 };
 
 

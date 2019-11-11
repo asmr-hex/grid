@@ -115,4 +115,25 @@ step_event_t midi_note_off(std::string note, unsigned int channel) {
   };
 };
 
+step_event_t midi_note_off_from_on_event(step_event_t on_event) {
+  std::vector<unsigned char> data;
+  data.push_back((unsigned char)(on_event.data[0] - 16));
+  data.push_back(on_event.data[1]);
+  data.push_back(on_event.data[2]);
+  
+  return {
+          .protocol = MIDI,
+          .id = (unsigned short)(((0x0000 | data[0]) << 4) & data[1]),
+          .data = data,
+  };
+};
+
+event_uid_t midi_off_id_from_on_id(event_uid_t on_id) {
+  return (((on_id >> 4) - 16) << 4) | (0x00FF & on_id);
+};
+
+step_idx_t get_fine_step_index(unsigned int coarse_step_index) {
+  return coarse_step_index * constants::PPQN_MAX;  
+};
+
 #endif

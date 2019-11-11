@@ -5,6 +5,8 @@
 #include <chrono>
 #include <vector>
 
+#include "constants.hpp"
+
 
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::microseconds Microseconds;
@@ -67,6 +69,8 @@ struct step_event_t {
  */
 typedef unsigned int step_idx_t;
 
+typedef std::map<event_uid_t, step_event_t> layer_t;
+
 /*
   defines each step in a map, keyed by the step. more space-efficient
   than storing a sparse vector.
@@ -74,6 +78,8 @@ typedef unsigned int step_idx_t;
   the inner map is keyed by the event unique identifier. this way we have
   constant time look ups for modifying events at certain steps.
 */
-typedef std::map<step_idx_t, std::map<event_uid_t, step_event_t> > sequence_t;
+typedef std::map<step_idx_t, layer_t> sequence_t;
+
+typedef std::map<step_idx_t, std::map<event_uid_t, step_idx_t> > midi_on_to_midi_off_t;
 
 #endif
