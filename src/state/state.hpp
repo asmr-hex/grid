@@ -33,8 +33,9 @@ public:
   };
   
   struct {
-    bool shift_enabled;
-    bool last_step_enabled;
+    bool shift_enabled = false;
+    bool follow_cursor = false;
+    bool last_step_enabled = false; // TODO do we need this????
     Microseconds step_period;
     std::string active_instrument;
     struct {

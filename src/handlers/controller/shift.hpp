@@ -177,10 +177,21 @@ void last_step_handler(IO *io, State *state, Config *config, const monome_event_
   
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-    state->sequencer.last_step_enabled = true; // TODO do we need this in the sequencer state????
+    // turn on 'show last step' button
     monome_led_on(io->output.monome, event->grid.x, event->grid.y);
-    current_part->show_last_step = true;
 
+    // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
+    if (state->sequencer.shift_enabled) {
+      state->sequencer.follow_cursor = !state->sequencer.follow_cursor;
+      current_part->follow_cursor = state->sequencer.follow_cursor;
+
+      return;
+    }
+
+    // set the state for 'show last step'
+    current_part->show_last_step = true;
+    state->sequencer.last_step_enabled = true; // TODO do we need this in the sequencer state????
+    
     // only update the pages UI if it is not already being rendered
     if (current_part->page.last_step != current_part->page.rendered) {
       monome_led_level_set(io->output.monome, page_being_edited_coords.x, page_being_edited_coords.y, 4);
@@ -195,6 +206,12 @@ void last_step_handler(IO *io, State *state, Config *config, const monome_event_
     // turn off 'last step' button
     monome_led_off(io->output.monome, event->grid.x, event->grid.y);
 
+    // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
+    // and unpressing the 'last step' button should be a noop.
+    if (state->sequencer.shift_enabled) {
+      return;
+    }
+    
     // set the state
     // TODO do we need both these states duplicated...?
     state->sequencer.last_step_enabled = false;
@@ -228,13 +245,17 @@ void page_select_handler(IO *io, State *state, Config *config, const monome_even
 
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-    int new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
-    current_part->render_page(new_page);
-    monome_led_level_set(io->output.monome, rendered_page_coords.x, rendered_page_coords.y, 4);
-    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+    if (!state->sequencer.follow_cursor || current_part->show_last_step) {
+      int new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
 
-    // set the current page to stuff...
-    if (!state->sequencer.last_step_enabled) current_part->page.under_edit = new_page;
+      // only render the new page if we are not following the cursor, or we are setting the page of the last step
+      current_part->render_page(new_page);
+      monome_led_level_set(io->output.monome, rendered_page_coords.x, rendered_page_coords.y, 4);
+      monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+
+      // if we are not setting the 'last step' page, set the new page to be the page under edit
+      if (!current_part->show_last_step) current_part->page.under_edit = new_page;  
+    }
     
     break;
   }

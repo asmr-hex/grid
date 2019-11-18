@@ -111,6 +111,27 @@ public:
     // }
   };
 
+  // renders the page selection panel in the ui (monome grid).
+  //
+  // there should typically be two pages highlighted at a given time:
+  //  1) the currently rendered page
+  //  2) the page the cursor is on
+  // when these pages are the same, there will only be one page highlighted.
+  void render_page_selection_ui() {
+    // set all pages to blank
+    set_led_region_intensity(io, &config->mappings.pages, 4);
+
+    // set rendered page to highlighted
+    mapping_coordinates_t rendered_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.rendered);
+    monome_led_on(io->output.monome, rendered_page_coords.x, rendered_page_coords.y);
+
+    if (page.rendered != page.cursor) {
+      // set cursor page to highlighted
+      mapping_coordinates_t cursor_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.cursor);
+      monome_led_on(io->output.monome, cursor_page_coords.x, cursor_page_coords.y); 
+    }
+  }
+  
   // updates the state of last step of a part and updates the ui (monome grid).
   //
   // this function assumes that the currently rendered page is the page on which
@@ -143,6 +164,11 @@ public:
     return length - 1;
   }
 
+  int get_page(int absolute_coarse_step) {
+    unsigned int page_size = config->mappings.steps.get_area();
+    return absolute_coarse_step / page_size;
+  }
+  
   int get_page_relative_last_step(int page_i) {
     return get_relative_step(page_i, get_last_step());
   }
@@ -161,8 +187,10 @@ public:
     int rendered = 0;
     int under_edit = 0;
     int last_step = 1; // refactor to of_last_step
-    int tmp_last_step = 1; // refactor to of_last_step_tmp ??
+    int cursor = 0;
+    // int tmp_last_step = 1; // refactor to of_last_step_tmp ??
   } page;
+  bool follow_cursor = false;
   int length = 32; // TODO refactor this to be last_step
   bool show_last_step = false;
   bool unsaved;
@@ -180,7 +208,7 @@ private:
     // advance to next step
     step += ppqn;
 
-    // if the active step is now greater than the last step, circle back
+    // if the active step is now greater than the last step, loop back
     if (step > (length * constants::PPQN_MAX) - 1) {
       step = 0;
     }
@@ -193,8 +221,9 @@ private:
     if (!instrument_is_displayed) return;
 
     int coarse_step = active_step / constants::PPQN_MAX;
+    bool current_step_is_visible = is_step_visible(coarse_step);
 
-    if (is_step_visible(coarse_step) && !is_step_on(coarse_step)) {
+    if (current_step_is_visible && !is_step_on(coarse_step)) {
       int page_relative_coarse_step = get_relative_step(page.rendered, coarse_step);
       mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
       
@@ -203,14 +232,34 @@ private:
     }
 
     // now lets look at the next step
-    coarse_step = get_next_step(active_step) / constants::PPQN_MAX;
+    int next_coarse_step = get_next_step(active_step) / constants::PPQN_MAX;
+    bool next_step_is_visible = is_step_visible(next_coarse_step);
 
-    if (is_step_visible(coarse_step)) {
-      int page_relative_coarse_step = get_relative_step(page.rendered, coarse_step);
+    if (next_step_is_visible) {
+      int page_relative_coarse_step = get_relative_step(page.rendered, next_coarse_step);
       mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
 
       // we want to turn this step ON on the next advance.
       collector->push_back(turn_led_on(coords.x, coords.y));
+    }
+
+    // update the cursor's page if necessary
+    int page_of_next_step = get_page(next_coarse_step);
+    if (page_of_next_step != page.cursor) {
+      page.cursor = get_page(next_coarse_step);
+
+      // render the next page if necessary
+      if (follow_cursor) {
+      
+        // render cursor page only if we aren't showing the last step
+        if (!show_last_step) render_page(page.cursor);
+
+        // set page under edit as cursor page
+        page.under_edit = page.cursor;
+      }
+      
+      // update the page UI
+      render_page_selection_ui();
     }
   };
 
