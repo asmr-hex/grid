@@ -77,30 +77,68 @@ public:
   };
 
   void render_page(int new_page) {
-    if (page.rendered == new_page) return;
+    if (page.rendered != new_page) {
+      page.rendered = new_page;
 
-    page.rendered = new_page;
-
-    // render all visibile steps on this page
-    set_led_region_intensity(io, &config->mappings.steps, 0);
-    for (auto i : rendered_steps[page.rendered]) {
-      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(i);
-      monome_led_on(io->output.monome, coords.x, coords.y);
+      // render all visibile steps on this page
+      set_led_region_intensity(io, &config->mappings.steps, 0);
+      for (auto i : rendered_steps[page.rendered]) {
+        mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(i);
+        monome_led_on(io->output.monome, coords.x, coords.y);
+      }      
     }
 
-    // show the last step on this page if appropriate
-    if (show_last_step && page.last_step == new_page) {
+
+    // if we are rendering the pafge with the last step, show or hide last step
+    if (page.last_step == new_page) {
       int relative_last_step = get_relative_step(new_page, length -1);
       mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(relative_last_step);
-      monome_led_on(io->output.monome, coords.x, coords.y);
+      
+      if (show_last_step) {
+        // show the last step
+        monome_led_on(io->output.monome, coords.x, coords.y);  
+      } else if (!show_last_step && !is_step_on(get_last_step())) {
+        // hide the last step unless that step is on
+        monome_led_off(io->output.monome, coords.x, coords.y);
+      }
     }
+    
+    // // show the last step on this page if appropriate
+    // if (show_last_step && page.last_step == new_page) {
+    //   int relative_last_step = get_relative_step(new_page, length -1);
+    //   mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(relative_last_step);
+    //   monome_led_on(io->output.monome, coords.x, coords.y);
+    // }
   };
 
-  void set_last_step(int coarse_step) {
-    length = (page.last_step + 1) * (coarse_step + 1);
-    page.last_step = page.tmp_last_step;
-  }
+  // updates the state of last step of a part and updates the ui (monome grid).
+  //
+  // this function assumes that the currently rendered page is the page on which
+  // the new last step lies. this is important because the coordinates supplied for
+  // the new last step are relative to the currently rendered page.
+  void update_last_step(mapping_coordinates_t grid) {
+    int new_last_step = get_absolute_step(page.rendered, config->mappings.steps.get_sequential_index_from_coordinates(grid.x, grid.y));
 
+    // turn off led for outdated last step if it was on the same page as the new last step
+    // but only if the outdated last step was not already on as an active step.
+    if (page.last_step == page.rendered && !is_step_on(get_last_step())) {
+      // TODO if there is a step activated on the last step, we need to differentiate...
+
+      mapping_coordinates_t old_last_step = config->mappings.steps.get_coordinates_from_sequential_index(get_relative_step(page.rendered, get_last_step()));
+      monome_led_off(io->output.monome, old_last_step.x, old_last_step.y);
+    }
+
+    // update the state for the last step (length)
+    length = new_last_step + 1;
+
+    // update the page on which the last step lies. again, we assume this is the currently
+    // rendered page.
+    page.last_step = page.rendered;
+
+    // turn on the led for the new last step.
+    monome_led_on(io->output.monome, grid.x, grid.y);
+  }
+  
   int get_last_step() {
     return length - 1;
   }
@@ -125,7 +163,7 @@ public:
     int last_step = 1; // refactor to of_last_step
     int tmp_last_step = 1; // refactor to of_last_step_tmp ??
   } page;
-  int length = 32;
+  int length = 32; // TODO refactor this to be last_step
   bool show_last_step = false;
   bool unsaved;
   
