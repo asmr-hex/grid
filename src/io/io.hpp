@@ -54,7 +54,7 @@ private:
     
     // great, lets just connect to the first port available
     // TODO (coco|31.10.19) eventually maybe we want to be able to select the port.
-    output.midi->openPort(1);
+    output.midi->openPort(0);
   };
 
   void connect_to_midi_in() {

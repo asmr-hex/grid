@@ -81,19 +81,40 @@ public:
 
     page.rendered = new_page;
 
+    // render all visibile steps on this page
     set_led_region_intensity(io, &config->mappings.steps, 0);
     for (auto i : rendered_steps[page.rendered]) {
       mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(i);
+      monome_led_on(io->output.monome, coords.x, coords.y);
+    }
+
+    // show the last step on this page if appropriate
+    if (show_last_step && page.last_step == new_page) {
+      int relative_last_step = get_relative_step(new_page, length -1);
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(relative_last_step);
       monome_led_on(io->output.monome, coords.x, coords.y);
     }
   };
 
   void set_last_step(int coarse_step) {
     length = (page.last_step + 1) * (coarse_step + 1);
+    page.last_step = page.tmp_last_step;
   }
 
   int get_last_step() {
     return length - 1;
+  }
+
+  int get_page_relative_last_step(int page_i) {
+    return get_relative_step(page_i, get_last_step());
+  }
+
+  int get_absolute_step(int page_i, int page_relative_step) {
+    return (config->mappings.steps.get_area() * page_i) + page_relative_step;
+  }
+
+  int get_relative_step(int page_i, int page_absolute_step) {
+    return page_absolute_step - (config->mappings.steps.get_area() * page_i);
   }
   
   int id;
@@ -101,9 +122,11 @@ public:
   struct {
     int rendered = 0;
     int under_edit = 0;
-    int last_step = 0;
+    int last_step = 1; // refactor to of_last_step
+    int tmp_last_step = 1; // refactor to of_last_step_tmp ??
   } page;
   int length = 32;
+  bool show_last_step = false;
   bool unsaved;
   
 private:
@@ -159,14 +182,6 @@ private:
     int max_visible_step = ((page.rendered + 1) * page_size) - 1;
     return min_visible_step <= coarse_step && coarse_step <= max_visible_step;
   };
-
-  int get_absolute_step(int page_i, int page_relative_step) {
-    return (config->mappings.steps.get_area() * page_i) + page_relative_step;
-  }
-
-  int get_relative_step(int page_i, int page_absolute_step) {
-    return page_absolute_step - (config->mappings.steps.get_area() * page_i);
-  }
 };
 
 
