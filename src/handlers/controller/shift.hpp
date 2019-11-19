@@ -81,42 +81,8 @@ void ppqn_handler(IO *io, State *state, Config *config, const monome_event_t *ev
     Part *part_under_edit = state->get_rendered_instrument()->get_part_under_edit();
 
     // set the current ppqn for this part
-    switch (config->mappings.ppqn.get_sequential_index_from_coordinates(event->grid.x, event->grid.y)) {
-    case 0:
-      part_under_edit->ppqn = constants::PPQN::One;
-      break;
-    case 1:
-      part_under_edit->ppqn = constants::PPQN::Two;
-      break;
-    case 2:
-      part_under_edit->ppqn = constants::PPQN::Four;
-      break;
-    case 3:
-      part_under_edit->ppqn = constants::PPQN::Eight;
-      break;
-    case 4:
-      part_under_edit->ppqn = constants::PPQN::Sixteen;
-      break;
-    case 5:
-      part_under_edit->ppqn = constants::PPQN::ThirtyTwo;
-      break;
-    case 6:
-      part_under_edit->ppqn = constants::PPQN::SixtyFour;
-      break;
-    }
-    
-    // turn off all leds in ppqn zone...
-    // It might be more efficient to only turn off the previous ppqn button pressed, but we would
-    // need to keep track of that in teh state... might be worthwhile in the future depending on
-    // what other regions need in terms of functionality.
-    for (unsigned int x = config->mappings.ppqn.x.min; x <= config->mappings.ppqn.x.max; x++) {
-      for (unsigned int y = config->mappings.ppqn.y.min; y <= config->mappings.ppqn.y.max; y++) {
-        monome_led_off(io->output.monome, x, y);
-      }      
-    }
-
-    // turn on new part ppqn led
-    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+    part_under_edit->set_ppqn(config->mappings.ppqn.get_sequential_index_from_coordinates(event->grid.x, event->grid.y));
+    part_under_edit->render_ppqn_selection_ui();
   }
 }
 

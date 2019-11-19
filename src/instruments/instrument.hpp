@@ -34,21 +34,44 @@ public:
   };
 
   Part *get_part_in_playback() {
-    return parts[part.in_playback];
+    return parts[bank.in_playback][part.in_playback];
   }
 
   Part *get_part_under_edit() {
-    return parts[part.under_edit];
+    return parts[bank.under_edit][part.under_edit];
   }
+
+  // renders the part under edit by default in the ui (monome grid).
+  void render_part() {
+    render_part(bank.under_edit, part.under_edit);
+  };
   
-  void play_part(int part_idx) {
+  // renders a part ot the ui (monome grid).
+  void render_part(int bank_idx, int part_idx) {
+    ensure_part(bank_idx, part_idx);
+    
+    bool force_rerender = true;
+    Part *part_to_render = parts[bank_idx][part_idx];
+
+    // TODO have a method on Part called "render" which does all this stuff...
+    // render part and its sub-components
+    part_to_render->render_page(part_to_render->page.rendered, force_rerender);
+    part_to_render->render_page_selection_ui();
+    part_to_render->render_ppqn_selection_ui();
+
+    // TODO ADD LOGIC FOR RENDERING SELECTED PART PANEL AND SELECTED BANK PANEL
+  };
+  
+  void play_part(int bank_idx, int part_idx) {
     // TODO implement me!
   };
 
   // selects a new part to edit and renders it in the ui (monome grid)
-  void edit_part(int part_idx) {
-    if (part_idx == part.under_edit) return;
+  void edit_part(int bank_idx, int part_idx) {
+    if (bank_idx == bank.under_edit && part_idx == part.under_edit) return;
 
+    // TODO ADD LOGIC FOR SWITCHING BANKS TOO
+    
     mapping_coordinates_t old_under_edit_coords = config->mappings.parts.get_coordinates_from_sequential_index(part.under_edit);
     mapping_coordinates_t new_under_edit_coords = config->mappings.parts.get_coordinates_from_sequential_index(part_idx);
     
@@ -88,7 +111,7 @@ protected:
   Config *config;
   IO *io;
 
-  std::map<int, Part*> parts;
+  std::map<int, std::map<int, Part*> > parts;
   
   struct {
     struct {
@@ -105,21 +128,14 @@ protected:
     
   } led_brightness;
 
-  // renders a part ot the ui (monome grid).
-  void render_part(int part_idx) {
-    bool force_rerender = true;
-    parts[part_idx]->render_page(parts[part_idx]->page.rendered, force_rerender);
-    parts[part_idx]->render_page_selection_ui();
-  };
-
   // checks if a part exists and creates a new empty one if it doesn't
-  void ensure_part(int part_idx) {
+  void ensure_part(int bank_idx, int part_idx) {
     try {
       // does part exist?
-      parts.at(part_idx);
+      parts.at(bank_idx).at(part_idx);
     } catch (std::out_of_range &error) {
       // the part doesn't exist. lets' create it!
-      parts[part_idx] = new Part(part_idx, config, io);
+      parts[bank_idx][part_idx] = new Part(part_idx, config, io);
     }
   }
 };

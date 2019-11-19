@@ -123,10 +123,37 @@ public:
     rendered_steps[page.under_edit].erase(coarse_step_idx);
   };
 
+  // sets the ppqn given a sequential index.
+  void set_ppqn(int ppqn_index) {
+    switch (ppqn_index) {
+    case 0:
+      ppqn = constants::PPQN::One;
+      break;
+    case 1:
+      ppqn = constants::PPQN::Two;
+      break;
+    case 2:
+      ppqn = constants::PPQN::Four;
+      break;
+    case 3:
+      ppqn = constants::PPQN::Eight;
+      break;
+    case 4:
+      ppqn = constants::PPQN::Sixteen;
+      break;
+    case 5:
+      ppqn = constants::PPQN::ThirtyTwo;
+      break;
+    case 6:
+      ppqn = constants::PPQN::SixtyFour;
+      break;
+    }
+  };
+  
   // renders a page onto the ui without forced re-rendering
   void render_page(int new_page) {
     render_page(new_page, false);
-  }
+  };
 
   // renders a page onto the ui
   void render_page(int new_page, bool force_rerender) {
@@ -140,7 +167,6 @@ public:
         monome_led_on(io->output.monome, coords.x, coords.y);
       }      
     }
-
 
     // if we are rendering the pafge with the last step, show or hide last step
     if (page.last_step == new_page) {
@@ -176,7 +202,25 @@ public:
       mapping_coordinates_t cursor_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.cursor);
       monome_led_on(io->output.monome, cursor_page_coords.x, cursor_page_coords.y); 
     }
-  }
+  };
+
+  // renders the ppqn selection panel in the ui (monome grid).
+  void render_ppqn_selection_ui() {
+    int ppqn_index = get_ppqn_index(ppqn);
+    mapping_coordinates_t selected_ppqn = config->mappings.ppqn.get_coordinates_from_sequential_index(ppqn_index);
+
+    // turn off all leds in ppqn zone...
+    // It might be more efficient to only turn off the previous ppqn button pressed, but we would
+    // need to keep track of that in teh state... might be worthwhile in the future depending on
+    // what other regions need in terms of functionality.
+    for (unsigned int x = config->mappings.ppqn.x.min; x <= config->mappings.ppqn.x.max; x++) {
+      for (unsigned int y = config->mappings.ppqn.y.min; y <= config->mappings.ppqn.y.max; y++) {
+        monome_led_off(io->output.monome, x, y);
+      }      
+    }
+    
+    monome_led_on(io->output.monome, selected_ppqn.x, selected_ppqn.y);
+  };
   
   // updates the state of last step of a part and updates the ui (monome grid).
   //
@@ -204,7 +248,7 @@ public:
 
     // turn on the led for the new last step.
     monome_led_on(io->output.monome, grid.x, grid.y);
-  }
+  };
 
   bool is_step_on(unsigned int coarse_step_idx) {
     step_idx_t step = get_fine_step_index(coarse_step_idx);
@@ -213,24 +257,24 @@ public:
 
   int get_last_step() {
     return length - 1;
-  }
+  };
 
   int get_page(int absolute_coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
     return absolute_coarse_step / page_size;
-  }
+  };
   
   int get_page_relative_last_step(int page_i) {
     return get_relative_step(page_i, get_last_step());
-  }
+  };
 
   int get_absolute_step(int page_i, int page_relative_step) {
     return (config->mappings.steps.get_area() * page_i) + page_relative_step;
-  }
+  };
 
   int get_relative_step(int page_i, int page_absolute_step) {
     return page_absolute_step - (config->mappings.steps.get_area() * page_i);
-  }
+  };
     
 private:
   int active_step;
@@ -252,7 +296,42 @@ private:
 
     return step;
   };
-  
+
+  // returns the sequential index of ppqn within the available ppqns sorted in
+  // ascending order.
+  int get_ppqn_index(int ppqn_i) {
+    int index;
+    
+    switch (ppqn_i) {
+    case constants::PPQN::One:
+      index = 0;
+      break;
+    case constants::PPQN::Two:
+      index = 1;
+      break;
+    case constants::PPQN::Four:
+      index = 2;
+      break;
+    case constants::PPQN::Eight:
+      index = 3;
+      break;
+    case constants::PPQN::Sixteen:
+      index = 4;
+      break;
+    case constants::PPQN::ThirtyTwo:
+      index = 5;
+      break;
+    case constants::PPQN::SixtyFour:
+      index = 6;
+      break;
+    default:
+      index = 0;
+      break;
+    }
+
+    return index;
+  };
+
   bool is_step_visible(int coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
     int min_visible_step = (page.rendered * page_size);
