@@ -39,14 +39,16 @@ private:
     // turn all leds off at first.
     monome_led_all(io->output.monome, 0);
 
+    // TODO delegate this to ui initialization within instruments...
+    
     // get the current instrument and part
-    Instrument *current_instrument = state->get_current_instrument();
-    Part *current_part = state->get_current_part();
+    Instrument *rendered_instrument = state->get_rendered_instrument();
+    Part *rendered_part = rendered_instrument->get_part_under_edit();
     
     // set current instrument part ppqn led
     set_led_region_intensity(io, &config->mappings.ppqn, 0);
     unsigned int ppqn_led_offset = 0;
-    switch (current_part->ppqn) {
+    switch (rendered_part->ppqn) {
     case constants::PPQN::One:
       ppqn_led_offset = 0;
       break;
@@ -74,17 +76,17 @@ private:
 
     // set selected sequence led
     set_led_region_intensity(io, &(config->mappings.parts), 0);
-    mapping_coordinates_t selected_part = config->mappings.parts.get_coordinates_from_sequential_index(current_instrument->current_part);
+    mapping_coordinates_t selected_part = config->mappings.parts.get_coordinates_from_sequential_index(rendered_instrument->part.under_edit);
     monome_led_on(io->output.monome, selected_part.x, selected_part.y);
 
     // set selected bank led
     set_led_region_intensity(io, &(config->mappings.banks), 4);
-    mapping_coordinates_t selected_bank = config->mappings.banks.get_coordinates_from_sequential_index(current_instrument->current_bank);
+    mapping_coordinates_t selected_bank = config->mappings.banks.get_coordinates_from_sequential_index(rendered_instrument->bank.under_edit);
     monome_led_on(io->output.monome, selected_bank.x, selected_bank.y);
 
     // set pages led
     set_led_region_intensity(io, &(config->mappings.pages), 4);
-    mapping_coordinates_t selected_page = config->mappings.pages.get_coordinates_from_sequential_index(current_part->page.under_edit);
+    mapping_coordinates_t selected_page = config->mappings.pages.get_coordinates_from_sequential_index(rendered_part->page.under_edit);
     monome_led_on(io->output.monome, selected_page.x, selected_page.y);
   };
 };

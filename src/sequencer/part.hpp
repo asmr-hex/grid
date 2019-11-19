@@ -21,6 +21,20 @@
 
 class Part {
 public:
+  int id;
+  int ppqn = 8;
+  struct {
+    int rendered = 0;
+    int under_edit = 0;
+    int last_step = 1; // refactor to of_last_step
+    int cursor = 0;
+  } page;
+  bool follow_cursor = false;
+  int length = 32; // TODO refactor this to be last_step
+  bool show_last_step = false;
+  bool unsaved;
+
+  
   Part(int id, Config *config, IO *io) : id(id), config(config), io(io) {
     // load part file if it exists.
     ppqn = 8;
@@ -29,11 +43,52 @@ public:
     active_step = 0;
   };
 
-  std::vector<step_event_t> advance(bool instrument_is_displayed) {
-    std::vector<step_event_t> next_events;
+  void advance_ui_cursor() {
+    int coarse_step = active_step / constants::PPQN_MAX;
+    bool current_step_is_visible = is_step_visible(coarse_step);
 
-    // should we display the step in the ui?
-    collect_next_ui_step_events(instrument_is_displayed, &next_events);
+    if (current_step_is_visible && !is_step_on(coarse_step)) {
+      int page_relative_coarse_step = get_relative_step(page.rendered, coarse_step);
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
+      
+      // we want to turn this step OFF on the next advance.
+      monome_led_off(io->output.monome, coords.x, coords.y);
+    }
+
+    // now lets look at the next step
+    int next_coarse_step = get_next_step(active_step) / constants::PPQN_MAX;
+    bool next_step_is_visible = is_step_visible(next_coarse_step);
+
+    if (next_step_is_visible) {
+      int page_relative_coarse_step = get_relative_step(page.rendered, next_coarse_step);
+      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
+
+      // we want to turn this step ON on the next advance.
+      monome_led_on(io->output.monome, coords.x, coords.y);
+    }
+
+    // update the cursor's page if necessary
+    int page_of_next_step = get_page(next_coarse_step);
+    if (page_of_next_step != page.cursor) {
+      page.cursor = get_page(next_coarse_step);
+
+      // render the next page if necessary
+      if (follow_cursor) {
+      
+        // render cursor page only if we aren't showing the last step
+        if (!show_last_step) render_page(page.cursor);
+
+        // set page under edit as cursor page
+        page.under_edit = page.cursor;
+      }
+      
+      // update the page UI
+      render_page_selection_ui();
+    }
+  };
+  
+  std::vector<step_event_t> advance() {
+    std::vector<step_event_t> next_events;
 
     // TODO if playback is not playing, do not advance.
 
@@ -45,16 +100,8 @@ public:
     
     return next_events;
   };
-
-  bool is_step_on(unsigned int coarse_step_idx) {
-    step_idx_t step = get_fine_step_index(coarse_step_idx);
-    return sequence.is_step_on(step, active_layer);
-  };
-
-  /*
-    add a step to the sequence. this adds the default midi note to
-    the sequence.
-   */
+  
+  // add a step to the sequence. this adds the default midi note to the sequence.
   void add_step(unsigned int coarse_step_idx) {
     int abs_coarse_step = get_absolute_step(page.under_edit, coarse_step_idx);
     step_event_t event = midi_note_on(default_note, 0, 127);
@@ -76,8 +123,14 @@ public:
     rendered_steps[page.under_edit].erase(coarse_step_idx);
   };
 
+  // renders a page onto the ui without forced re-rendering
   void render_page(int new_page) {
-    if (page.rendered != new_page) {
+    render_page(new_page, false);
+  }
+
+  // renders a page onto the ui
+  void render_page(int new_page, bool force_rerender) {
+    if (page.rendered != new_page || force_rerender) {
       page.rendered = new_page;
 
       // render all visibile steps on this page
@@ -102,13 +155,6 @@ public:
         monome_led_off(io->output.monome, coords.x, coords.y);
       }
     }
-    
-    // // show the last step on this page if appropriate
-    // if (show_last_step && page.last_step == new_page) {
-    //   int relative_last_step = get_relative_step(new_page, length -1);
-    //   mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(relative_last_step);
-    //   monome_led_on(io->output.monome, coords.x, coords.y);
-    // }
   };
 
   // renders the page selection panel in the ui (monome grid).
@@ -159,7 +205,12 @@ public:
     // turn on the led for the new last step.
     monome_led_on(io->output.monome, grid.x, grid.y);
   }
-  
+
+  bool is_step_on(unsigned int coarse_step_idx) {
+    step_idx_t step = get_fine_step_index(coarse_step_idx);
+    return sequence.is_step_on(step, active_layer);
+  };
+
   int get_last_step() {
     return length - 1;
   }
@@ -180,21 +231,7 @@ public:
   int get_relative_step(int page_i, int page_absolute_step) {
     return page_absolute_step - (config->mappings.steps.get_area() * page_i);
   }
-  
-  int id;
-  int ppqn = 8;
-  struct {
-    int rendered = 0;
-    int under_edit = 0;
-    int last_step = 1; // refactor to of_last_step
-    int cursor = 0;
-    // int tmp_last_step = 1; // refactor to of_last_step_tmp ??
-  } page;
-  bool follow_cursor = false;
-  int length = 32; // TODO refactor this to be last_step
-  bool show_last_step = false;
-  bool unsaved;
-  
+    
 private:
   int active_step;
   event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
@@ -216,53 +253,6 @@ private:
     return step;
   };
   
-  void collect_next_ui_step_events(bool instrument_is_displayed, std::vector<step_event_t> *collector) {
-    // escape immediately if this is not the currently active isntrument.
-    if (!instrument_is_displayed) return;
-
-    int coarse_step = active_step / constants::PPQN_MAX;
-    bool current_step_is_visible = is_step_visible(coarse_step);
-
-    if (current_step_is_visible && !is_step_on(coarse_step)) {
-      int page_relative_coarse_step = get_relative_step(page.rendered, coarse_step);
-      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
-      
-      // we want to turn this step OFF on the next advance.
-      collector->push_back(turn_led_off(coords.x, coords.y));
-    }
-
-    // now lets look at the next step
-    int next_coarse_step = get_next_step(active_step) / constants::PPQN_MAX;
-    bool next_step_is_visible = is_step_visible(next_coarse_step);
-
-    if (next_step_is_visible) {
-      int page_relative_coarse_step = get_relative_step(page.rendered, next_coarse_step);
-      mapping_coordinates_t coords = config->mappings.steps.get_coordinates_from_sequential_index(page_relative_coarse_step);
-
-      // we want to turn this step ON on the next advance.
-      collector->push_back(turn_led_on(coords.x, coords.y));
-    }
-
-    // update the cursor's page if necessary
-    int page_of_next_step = get_page(next_coarse_step);
-    if (page_of_next_step != page.cursor) {
-      page.cursor = get_page(next_coarse_step);
-
-      // render the next page if necessary
-      if (follow_cursor) {
-      
-        // render cursor page only if we aren't showing the last step
-        if (!show_last_step) render_page(page.cursor);
-
-        // set page under edit as cursor page
-        page.under_edit = page.cursor;
-      }
-      
-      // update the page UI
-      render_page_selection_ui();
-    }
-  };
-
   bool is_step_visible(int coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
     int min_visible_step = (page.rendered * page_size);

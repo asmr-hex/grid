@@ -14,21 +14,38 @@
 
 class Instrument {
 public:
-  Instrument(Config *config, IO *io) : config(config), io(io) {
-    current_part = 0;
-    current_bank = 0;
-    // TODO initialize better
-    parts.push_back(new Part(0, config, io));
-  };
+  bool is_playing;
+  bool stop_on_next_measure;
+
+  struct {
+    int in_playback = 0;
+    int under_edit = 0;
+  } part;
+
+  struct {
+    int in_playback = 0;
+    int under_edit = 0;
+  } bank;
+
   
-  Part *get_current_part() {
-    return parts[current_part];
+  Instrument(Config *config, IO *io) : config(config), io(io) {
+    // TODO initialize better
+    parts[0] = new Part(0, config, io);
   };
 
+  Part *get_part_in_playback() {
+    return parts[part.in_playback];
+  }
+
+  Part *get_part_under_edit() {
+    return parts[part.under_edit];
+  }
+  
   void play_part(int part_idx) {
     // TODO implement me!
   };
 
+  // selects a new part to edit and renders it in the ui (monome grid)
   void edit_part(int part_idx) {
     if (part_idx == part.under_edit) return;
 
@@ -50,6 +67,9 @@ public:
                            led_brightness.part.off);
     }
 
+    // ensure part exists
+    ensure_part(part_idx);
+    
     // update part under edit
     part.under_edit = part_idx;
     
@@ -59,26 +79,17 @@ public:
                          new_under_edit_coords.y,
                          led_brightness.part.under_edit);
 
-    // TODO render new part under edit
+    // render new part under edit
+    render_part(part_idx);
   };
-  
-  int current_part;
-  int current_bank;
-  bool is_playing;
-  bool stop_on_next_measure;
-  
+    
 protected:
   std::string name;
   Config *config;
   IO *io;
 
-  std::vector<Part*> parts;
+  std::map<int, Part*> parts;
   
-  struct {
-    int in_playback = 0;
-    int under_edit = 0;
-  } part;
-
   struct {
     struct {
       int in_playback = 4;
@@ -93,7 +104,23 @@ protected:
     } bank;
     
   } led_brightness;
-  
+
+  // renders a part ot the ui (monome grid).
+  void render_part(int part_idx) {
+    bool force_rerender = true;
+    parts[part_idx]->render_page(parts[part_idx]->page.rendered, force_rerender);
+  };
+
+  // checks if a part exists and creates a new empty one if it doesn't
+  void ensure_part(int part_idx) {
+    try {
+      // does part exist?
+      parts.at(part_idx);
+    } catch (std::out_of_range &error) {
+      // the part doesn't exist. lets' create it!
+      parts[part_idx] = new Part(part_idx, config, io);
+    }
+  }
 };
 
 #endif

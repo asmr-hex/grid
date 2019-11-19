@@ -27,7 +27,7 @@ public:
     initialize_instruments();
 
     // TODO initialize state
-    sequencer.active_instrument = "sp404";
+    sequencer.rendered_instrument = "sp404";
     float bpm = 120.0;
     sequencer.step_period = Microseconds(static_cast<int>((60 * 1000 * 1000)/(bpm * (float)constants::PPQN_MAX)));
   };
@@ -37,9 +37,9 @@ public:
     bool follow_cursor = false;
     bool last_step_enabled = false; // TODO do we need this????
     Microseconds step_period;
-    std::string active_instrument;
+    std::string rendered_instrument;
     struct {
-      bool is_playing;
+      bool is_playing = false;
     } playback;
   } sequencer;
 
@@ -52,14 +52,12 @@ public:
 
   std::map<std::string, Instrument *> instruments_by_name;
 
-  Instrument *get_current_instrument() {
-    return instruments_by_name[sequencer.active_instrument];
+  // returns the instrument which is currently 'in focus', i.e. the instrument
+  // which is rendered in the ui.
+  Instrument *get_rendered_instrument() {
+    return instruments_by_name[sequencer.rendered_instrument];
   };
 
-  Part *get_current_part() {
-    return get_current_instrument()->get_current_part();
-  };
-  
 private:
   void initialize_instruments() {
     for (auto it : instruments_by_name) {

@@ -34,14 +34,22 @@ private:
     std::vector<step_event_t> current_step_events;
     
     for (auto it : instruments) {
-      std::string name = it.first;
+      std::string instrument_name = it.first;
       Instrument * instrument = it.second;
-      Part* part = instrument->get_current_part();
+      Part* part_in_playback = instrument->get_part_in_playback();
+      Part* part_under_edit = instrument->get_part_under_edit();
+      bool instrument_is_rendered = instrument_name == state->sequencer.rendered_instrument;
 
-      // determine whether this is the current instrument on display.
-      bool instrument_is_displayed = name == state->sequencer.active_instrument ? true : false;
+      // TODO eventually (somehow...) render cursor moving in parts under edit which
+      // are not in playback mode... this will require some synchronization.
       
-      std::vector<step_event_t> new_step_events = part->advance(instrument_is_displayed);
+      if (instrument_is_rendered && part_in_playback == part_under_edit) {
+        // update the ui with the part under edit
+        part_under_edit->advance_ui_cursor();
+      }
+
+      // collect next sonic events
+      std::vector<step_event_t> new_step_events = part_in_playback->advance();
       current_step_events.insert(current_step_events.end(),
                                  new_step_events.begin(),
                                  new_step_events.end());
