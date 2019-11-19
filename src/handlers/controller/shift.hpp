@@ -261,4 +261,28 @@ void page_select_handler(IO *io, State *state, Config *config, const monome_even
   }
 }
 
+void part_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    config->mappings.parts.x.min <= event->grid.x && event->grid.x <= config->mappings.parts.x.max &&
+    config->mappings.parts.y.min <= event->grid.y && event->grid.y <= config->mappings.parts.y.max;
+  if (!relevant) return;
+
+  Instrument *instrument = state->get_current_instrument();
+  int selected_part_idx = config->mappings.parts.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
+  
+  switch (event->event_type) {
+  case MONOME_BUTTON_DOWN:
+
+    if (state->sequencer.shift_enabled) {
+      // immediately begin playing selected part.
+      instrument->play_part(selected_part_idx);
+      return;
+    }
+
+    // set the part under edit
+    instrument->edit_part(selected_part_idx);
+    break;
+  }
+}
 #endif
