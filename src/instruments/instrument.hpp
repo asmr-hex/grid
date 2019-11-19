@@ -109,6 +109,7 @@ protected:
   void render_part(int part_idx) {
     bool force_rerender = true;
     parts[part_idx]->render_page(parts[part_idx]->page.rendered, force_rerender);
+    parts[part_idx]->render_page_selection_ui();
   };
 
   // checks if a part exists and creates a new empty one if it doesn't
