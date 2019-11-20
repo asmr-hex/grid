@@ -105,25 +105,39 @@ public:
   };
 
   // toggle the playback state (play/pause) of the current part under edit.
+  //
+  // if the current part under edit is not the part in playback, they part in
+  // playback is scheduled to stop on the completion of its current sequence
+  // cycle and hand over playback to the part under edit.
   void play_or_pause_part() {
-    play_or_pause_part(bank.under_edit, part.under_edit);
-  };
+    Part *part_under_edit = get_part_under_edit();
+    Part *part_in_playback = get_part_in_playback();
     
-  void play_or_pause_part(int bank_idx, int part_idx) {
-    // TODO implement me!
+    if (part.under_edit == part.in_playback) {
+      // when the part under edit *is* the part in playback, we simply
+      // play or pause the part depending on the part's playback state
 
-    // if current part is in playback and is paused, play it
+      if (part_in_playback->playback.is_playing) {
+        // current part is in playback and is playing, pause it
+        part_in_playback->pause_playback();
+      } else {
+        // current part is in playback and is paused or stopped, play it
+        part_in_playback->begin_playback();
+      }
+      
+      
+    } else {
+      // current part is under edit and not in playback.
+      
+      // schedule current in playback part to stop on next cycle
+      // and hand over playback to part under edit.
+      part_in_playback->enqueue_next_part_for_playback(part_under_edit);
+      
+      // TODO there might need to be some state in between the hand-off
+      // from a playing part to a not playing part... maybe indicated by
+      // a slowly blinking led on the part...?
+    }
 
-    // if current part is in playback and is playing, pause it
-
-    // if current part is under edit and not in playback
-    // schedule current in playback part to stop on next cycle
-    // and hand over playback to part under edit.
-
-    // TODO there might need to be some state in between the hand-off
-    // from a playing part to a not playing part... maybe indicated by
-    // a slowly blinking led on the part...?
-    
     // update playback led for current part
   };
 

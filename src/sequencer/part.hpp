@@ -34,6 +34,9 @@ public:
   bool show_last_step = false;
   struct {
     bool is_playing = false;
+    bool is_stopping = false;
+    bool is_about_to_start = false;
+    Part *next_part;
   } playback;
   bool unsaved;
 
@@ -45,9 +48,27 @@ public:
     default_note = "C5";
   };
 
+  void begin_playback() {
+    playback.is_playing = true;
+  };
+  
+  void pause_playback() {
+    playback.is_playing = false;
+  };
+  
   void stop_playback() {
     playback.is_playing = false;
     active_step = 0;
+  };
+
+  void enqueue_next_part_for_playback(Part *next_part) {
+    playback.is_stopping = true;
+    playback.next_part = next_part;
+
+    // TODO
+    // somehow need to communicate with Instrument when this
+    // part has completed its sequence cycle so that the Instrument
+    // can update the part.in_playback... (maybe pass a pointer to mutate?)
   };
   
   void advance_ui_cursor() {
