@@ -27,7 +27,6 @@ public:
     int under_edit = 0;
   } bank;
 
-  
   Instrument(Config *config, IO *io) : config(config), io(io) {
     // TODO initialize better
     parts[0][0] = new Part(0, config, io);
@@ -66,6 +65,7 @@ public:
     part_to_render->render_page(part_to_render->page.rendered, force_rerender);
     part_to_render->render_page_selection_ui();
     part_to_render->render_ppqn_selection_ui();
+    // TODO render part's playback status
   };
 
   // renders the part selection ui panel.
@@ -104,16 +104,42 @@ public:
     monome_led_level_set(io->output.monome, bank_under_edit.x, bank_under_edit.y, led_brightness.bank.under_edit);
   };
 
-  // set a part in playback mode. this variant method uses the currently 'under edit' bank
-  // since it assumes that only a part was selected without a bank.
-  void play_part(int part_idx) {
-    play_part(bank.under_edit, part_idx);
+  // toggle the playback state (play/pause) of the current part under edit.
+  void play_or_pause_part() {
+    play_or_pause_part(bank.under_edit, part.under_edit);
   };
-  
-  void play_part(int bank_idx, int part_idx) {
+    
+  void play_or_pause_part(int bank_idx, int part_idx) {
     // TODO implement me!
+
+    // if current part is in playback and is paused, play it
+
+    // if current part is in playback and is playing, pause it
+
+    // if current part is under edit and not in playback
+    // schedule current in playback part to stop on next cycle
+    // and hand over playback to part under edit.
+
+    // TODO there might need to be some state in between the hand-off
+    // from a playing part to a not playing part... maybe indicated by
+    // a slowly blinking led on the part...?
+    
+    // update playback led for current part
   };
 
+  void stop_part() {
+    // stop part in playback!
+    get_part_in_playback()->stop_playback();
+
+    if (part.under_edit == part.in_playback) {
+      // update the start/pause led to be off
+      monome_led_level_set(io->output.monome,
+                           config->mappings.play_pause.x,
+                           config->mappings.play_pause.y,
+                           led_brightness.playback.stop);
+    }
+  };
+  
   // selects a new part to edit and renders it in the ui. this variant method uses the currently
   // 'under edit' bank since it assumes that only a part was selected without a bank.
   void edit_part(int part_idx) {
@@ -216,7 +242,12 @@ protected:
       int under_edit = 15;
       int off = 4;
     } bank;
-    
+
+    struct {
+      int play = 15;
+      int pause = 5;
+      int stop = 0;
+    } playback;
   } led_brightness;
 
   // checks if a part exists and creates a new empty one if it doesn't

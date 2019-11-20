@@ -17,7 +17,8 @@ struct ControllerMapping {
   mapping_range_2d_t ppqn;
 
   mapping_coordinates_t shift;
-  mapping_coordinates_t play_stop;
+  mapping_coordinates_t play_pause;
+  mapping_coordinates_t stop;
   mapping_coordinates_t record;
   mapping_coordinates_t last_step;
   mapping_coordinates_t tempo;

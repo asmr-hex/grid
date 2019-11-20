@@ -50,8 +50,11 @@ ppqn:
 shift:
   x: 0
   y: 7
-play_stop:
+play_pause:
   x: 1
+  y: 7
+stop:
+  x: 2
   y: 7
 record:
   x: 2

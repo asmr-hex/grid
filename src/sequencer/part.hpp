@@ -32,6 +32,9 @@ public:
   bool follow_cursor = false;
   int length = 32; // TODO refactor this to be last_step
   bool show_last_step = false;
+  struct {
+    bool is_playing = false;
+  } playback;
   bool unsaved;
 
   
@@ -40,9 +43,13 @@ public:
     ppqn = 8;
     length = 64;
     default_note = "C5";
-    active_step = 0;
   };
 
+  void stop_playback() {
+    playback.is_playing = false;
+    active_step = 0;
+  };
+  
   void advance_ui_cursor() {
     int coarse_step = active_step / constants::PPQN_MAX;
     bool current_step_is_visible = is_step_visible(coarse_step);
@@ -277,7 +284,7 @@ public:
   };
     
 private:
-  int active_step;
+  int active_step = 0;
   event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
   Sequence sequence;
   std::string default_note;

@@ -108,9 +108,12 @@ private:
       } else if (param == "shift") {
         mappings.shift.x = coordinates["x"].as<unsigned int>();
         mappings.shift.y = coordinates["y"].as<unsigned int>();
-      } else if (param == "play_stop") {
-        mappings.play_stop.x = coordinates["x"].as<unsigned int>();
-        mappings.play_stop.y = coordinates["y"].as<unsigned int>();
+      } else if (param == "play_pause") {
+        mappings.play_pause.x = coordinates["x"].as<unsigned int>();
+        mappings.play_pause.y = coordinates["y"].as<unsigned int>();
+      } else if (param == "stop") {
+        mappings.stop.x = coordinates["x"].as<unsigned int>();
+        mappings.stop.y = coordinates["y"].as<unsigned int>();
       } else if (param == "record") {
         mappings.record.x = coordinates["x"].as<unsigned int>();
         mappings.record.y = coordinates["y"].as<unsigned int>();

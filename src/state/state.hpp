@@ -40,7 +40,20 @@ public:
     std::string rendered_instrument;
     struct {
       bool is_playing = false;
-    } playback;
+    } playback; // TODO dispose of this
+    struct {
+      bool play_pause_is_held = false;
+      bool stop_is_held = false;
+      struct {
+        bool was_selected = false;
+        int part;
+        int bank;
+      } part;
+      struct {
+        bool were_selected = false;
+        std::vector<std::string> instruments; // TODO think more about which datastructure to use.  
+      } instruments;
+    } transport;
   } sequencer;
 
   struct {

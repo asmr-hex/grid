@@ -17,7 +17,8 @@ public:
   EventHandlers(IO * io, State *state, Config *config) : io(io), state(state), config(config) {
     // TODO instantiate all handlers.
     monome_handlers.push_back(&shift_handler);
-    monome_handlers.push_back(&play_stop_handler);
+    monome_handlers.push_back(&play_pause_handler);
+    monome_handlers.push_back(&stop_handler);
     monome_handlers.push_back(&ppqn_handler);
     monome_handlers.push_back(&step_handler);
     monome_handlers.push_back(&last_step_handler);

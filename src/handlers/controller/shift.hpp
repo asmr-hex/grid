@@ -68,6 +68,97 @@ void play_stop_handler(IO *io, State *state, Config *config, const monome_event_
   }
 }
 
+void play_pause_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    event->grid.x == config->mappings.play_pause.x &&
+    event->grid.y == config->mappings.play_pause.y &&
+    !state->sequencer.transport.stop_is_held;
+  if (!relevant) return;
+
+  switch (event->event_type) {
+  case MONOME_BUTTON_DOWN:
+    state->sequencer.transport.play_pause_is_held = true;
+
+    // TODO toggle play/pause led to be the opposite state of the part in playback
+    break;
+  case MONOME_BUTTON_UP:
+    state->sequencer.transport.play_pause_is_held = false;
+
+    // if (state->sequencer.transport.part.was_selected) {
+    //   // while the play/pause button was held down, a part was selected!
+
+    //   // play or pause part!
+    //   Instrument *instrument = state->get_rendered_instrument();
+    //   int part = state->sequencer.transport.part.part;
+    //   int bank = state->sequencer.transport.part.bank;
+    //   instrument->play_or_pause_part(bank, part);
+
+    //   // reset transport part selection trigger
+    //   state->sequencer.transport.part.was_selected = false;
+      
+    //   return;
+    // }
+
+    if (state->sequencer.transport.instruments.were_selected) {
+      // while the play/pause button was held down, some instruments were selected!
+
+      // TODO handle play or pausing all selected instruments.
+      // TODO this would be a good time to refactr the 'sequence' field of 'State'
+      // into its own separate class so it can have methods....liek the one to implement this.
+
+      // reset transport instruments selection trigger
+      state->sequencer.transport.instruments.were_selected = false;
+      // TODO clear vector (or whatever data structure we use here...)
+      
+      return;
+    }
+
+    // okay, no part or instruments were selected while play/pause was held.
+
+    // just play or pause the currently under edit part for the rendered instrument.
+    state->get_rendered_instrument()->play_or_pause_part();
+    
+    break;
+  }
+};
+
+void stop_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    event->grid.x == config->mappings.stop.x &&
+    event->grid.y == config->mappings.stop.y &&
+    !state->sequencer.transport.play_pause_is_held;
+  if (!relevant) return;
+
+  switch (event->event_type) {
+  case MONOME_BUTTON_DOWN:
+    state->sequencer.transport.stop_is_held = true;
+    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
+    break;
+  case MONOME_BUTTON_UP:
+    state->sequencer.transport.stop_is_held = false;
+    monome_led_off(io->output.monome, event->grid.x, event->grid.y);
+
+    if (state->sequencer.transport.instruments.were_selected) {
+      // TODO handle stopping all selected instruments.
+      // TODO this would be a good time to refactr the 'sequence' field of 'State'
+      // into its own separate class so it can have methods....liek the one to implement this.
+
+      // reset transport instruments selection trigger
+      state->sequencer.transport.instruments.were_selected = false;
+      // TODO clear vector (or whatever data structure we use here...)
+
+      return;
+    }
+
+    // okay nothing was selected, just stop the part in playback
+    state->get_rendered_instrument()->stop_part();
+      
+    break;
+  }
+};
+
 void ppqn_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
@@ -239,11 +330,14 @@ void part_select_handler(IO *io, State *state, Config *config, const monome_even
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
 
-    if (state->sequencer.shift_enabled) {
-      // immediately begin playing selected part.
-      rendered_instrument->play_part(selected_part_idx);
-      return;
-    }
+    // if ( state->sequencer.transport.play_pause_is_held &&
+    //      !state->sequencer.transport.instruments.were_selected ) {
+
+    //   // select this part to eventually (when play/pause is unheld) be put in playback
+    //   state->sequencer.transport.part.was_selected = true;
+    //   state->sequencer.transport.part.part = selected_part_idx;
+    //   state->sequencer.transport.part.bank = rendered_instrument->bank.under_edit;
+    // }
 
     // set the part under edit
     rendered_instrument->edit_part(selected_part_idx);
@@ -264,12 +358,27 @@ void bank_select_handler(IO *io, State *state, Config *config, const monome_even
   
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-    if (state->sequencer.shift_enabled) {
-      // immediately begin playing selected part
-      rendered_instrument->play_part(selected_bank_idx, rendered_instrument->part.under_edit);
-      return;
-    }
+    // if ( state->sequencer.transport.play_pause_is_held &&
+    //      !state->sequencer.transport.instruments.were_selected ) {
 
+    //   // TODO (coco|11.19.2019) maybe this is weird ui logic and shouldn't be allowed...?
+      
+    //   // select this part to eventually (when play/pause is unheld) be put in playback
+    //   state->sequencer.transport.part.was_selected = true;
+    //   switch (selected_bank_idx) {
+    //   case rendered_instrument->bank.in_playback:
+    //     state->sequencer.transport.part.part = rendered_instrument->part.in_playback;
+    //     break;
+    //   case rendered_instrument->bank.under_edit:
+    //     state->sequencer.transport.part.part = rendered_instrument->part.under_edit;
+    //     break;
+    //   default:
+    //     state->sequencer.transport.part.part = 0;
+    //     break;
+    //   }
+    //   state->sequencer.transport.part.bank = selected_bank_idx;
+    // }
+    
     rendered_instrument->edit_part(selected_bank_idx, rendered_instrument->part.under_edit);
   }
 };
