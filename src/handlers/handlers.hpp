@@ -23,6 +23,7 @@ public:
     monome_handlers.push_back(&last_step_handler);
     monome_handlers.push_back(&page_select_handler);
     monome_handlers.push_back(&part_select_handler);
+    monome_handlers.push_back(&bank_select_handler);
   };
 
   void register_midi_callback() {

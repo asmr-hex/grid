@@ -11,7 +11,17 @@
 #include "instruments/instrument.hpp"
 #include "instruments/factory.hpp"
 
-
+// the controller is the top level class and entrypoint for initializing,
+// configuring, and running this musical controller.
+//
+// at a high level, this musical controller consists of:
+//  * I/O manager which maintains connections to connected MIDI/OSC devices
+//  * a collection of instrument classes which maintain and control instrument state
+//  * a state machine which contains the state of the the sequencer and instruments as
+//    well as event handlers for responding to external inputs.
+//  * a scheduler for running the instrument's clock and scheduling sequencing events.
+//
+// TODO (coco|11.19.2019) refactor to reduce abstract layers (e.g. do we need a StateMachine AND Controller classes?)
 class Controller {
 public:
   Controller(std::string config_path) : config(config_path) {
@@ -23,6 +33,7 @@ public:
 
     scheduler = new Scheduler(&io, state_machine->state, instruments);
   };
+  
   void run() {
     state_machine->listen();
     scheduler->run();

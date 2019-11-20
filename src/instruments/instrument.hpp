@@ -30,7 +30,7 @@ public:
   
   Instrument(Config *config, IO *io) : config(config), io(io) {
     // TODO initialize better
-    parts[0] = new Part(0, config, io);
+    parts[0][0] = new Part(0, config, io);
   };
 
   Part *get_part_in_playback() {
@@ -41,12 +41,20 @@ public:
     return parts[bank.under_edit][part.under_edit];
   }
 
+  void render() {
+    render_part();
+    
+    // render part / bank selection panels
+    render_part_selection_panel();
+    render_bank_selection_panel();
+  };
+  
   // renders the part under edit by default in the ui (monome grid).
   void render_part() {
     render_part(bank.under_edit, part.under_edit);
   };
   
-  // renders a part ot the ui (monome grid).
+  // renders a part of the ui (monome grid).
   void render_part(int bank_idx, int part_idx) {
     ensure_part(bank_idx, part_idx);
     
@@ -58,52 +66,135 @@ public:
     part_to_render->render_page(part_to_render->page.rendered, force_rerender);
     part_to_render->render_page_selection_ui();
     part_to_render->render_ppqn_selection_ui();
+  };
 
-    // TODO ADD LOGIC FOR RENDERING SELECTED PART PANEL AND SELECTED BANK PANEL
+  // renders the part selection ui panel.
+  //
+  // notably, this method clears the entire panel and thus, for optimization purposes, should
+  // only be used when initially rendering this sub-section of the ui for a given instrument
+  // and *not* for incrementally switching parts.
+  void render_part_selection_panel() {
+    // set entire part selection panel to 'off'
+    set_led_region_intensity(io, &config->mappings.parts, led_brightness.part.off);
+
+    // get coordinates of parts under edit / in playback
+    mapping_coordinates_t part_under_edit = config->mappings.parts.get_coordinates_from_sequential_index(part.under_edit);
+    mapping_coordinates_t part_in_playback = config->mappings.parts.get_coordinates_from_sequential_index(part.in_playback);
+
+    // set leds for parts under edit / in playback
+    monome_led_level_set(io->output.monome, part_in_playback.x, part_in_playback.y, led_brightness.part.in_playback);
+    monome_led_level_set(io->output.monome, part_under_edit.x, part_under_edit.y, led_brightness.part.under_edit);
+  };
+
+  // renders the bank selection ui panel.
+  //
+  // notably, this method clears the entire panel and thus, for optimization purposes, should
+  // only be used when initially rendering this sub-section of the ui for a given instrument
+  // and *not* for incrementally switching banks.
+  void render_bank_selection_panel() {
+    // set entire part selection panel to 'off'
+    set_led_region_intensity(io, &config->mappings.banks, led_brightness.bank.off);
+
+    // get coordinates of banks under edit / in playback
+    mapping_coordinates_t bank_under_edit = config->mappings.banks.get_coordinates_from_sequential_index(bank.under_edit);
+    mapping_coordinates_t bank_in_playback = config->mappings.banks.get_coordinates_from_sequential_index(bank.in_playback);
+
+    // set leds for banks under edit / in playback
+    monome_led_level_set(io->output.monome, bank_in_playback.x, bank_in_playback.y, led_brightness.bank.in_playback);
+    monome_led_level_set(io->output.monome, bank_under_edit.x, bank_under_edit.y, led_brightness.bank.under_edit);
+  };
+
+  // set a part in playback mode. this variant method uses the currently 'under edit' bank
+  // since it assumes that only a part was selected without a bank.
+  void play_part(int part_idx) {
+    play_part(bank.under_edit, part_idx);
   };
   
   void play_part(int bank_idx, int part_idx) {
     // TODO implement me!
   };
 
+  // selects a new part to edit and renders it in the ui. this variant method uses the currently
+  // 'under edit' bank since it assumes that only a part was selected without a bank.
+  void edit_part(int part_idx) {
+    edit_part(bank.under_edit, part_idx);
+  };
+  
   // selects a new part to edit and renders it in the ui (monome grid)
   void edit_part(int bank_idx, int part_idx) {
     if (bank_idx == bank.under_edit && part_idx == part.under_edit) return;
 
-    // TODO ADD LOGIC FOR SWITCHING BANKS TOO
+    // okay...either the bank or the part under edit changed.
     
-    mapping_coordinates_t old_under_edit_coords = config->mappings.parts.get_coordinates_from_sequential_index(part.under_edit);
-    mapping_coordinates_t new_under_edit_coords = config->mappings.parts.get_coordinates_from_sequential_index(part_idx);
+    mapping_coordinates_t old_under_edit_coords;
+    mapping_coordinates_t new_under_edit_coords;
     
-    // turn off or turn down current under edit part led
-    if (part.under_edit == part.in_playback) {
-      // set this led to 'in playback' brightness
+    if (part_idx != part.under_edit) {
+      // the part unnder edit has changed!
+ 
+      old_under_edit_coords = config->mappings.parts.get_coordinates_from_sequential_index(part.under_edit);
+      new_under_edit_coords = config->mappings.parts.get_coordinates_from_sequential_index(part_idx);
+      
+      // turn off or turn down current under edit part led
+      if (part.under_edit == part.in_playback) {
+        // set this led to 'in playback' brightness
+        monome_led_level_set(io->output.monome,
+                             old_under_edit_coords.x,
+                             old_under_edit_coords.y,
+                             led_brightness.part.in_playback);
+      } else {
+        // turn off the currently under edit part led
+        monome_led_level_set(io->output.monome,
+                             old_under_edit_coords.x,
+                             old_under_edit_coords.y,
+                             led_brightness.part.off);
+      }
+ 
+      // set this led to 'under_edit' brightness
       monome_led_level_set(io->output.monome,
-                           old_under_edit_coords.x,
-                           old_under_edit_coords.y,
-                           led_brightness.part.in_playback);
-    } else {
-      // turn off the currently under edit part led
+                           new_under_edit_coords.x,
+                           new_under_edit_coords.y,
+                           led_brightness.part.under_edit);
+      
+    }
+
+    if (bank_idx != bank.under_edit) {
+      // the bank under edit has changed!
+
+      old_under_edit_coords = config->mappings.banks.get_coordinates_from_sequential_index(bank.under_edit);
+      new_under_edit_coords = config->mappings.banks.get_coordinates_from_sequential_index(bank_idx);
+      
+      // turn off or turn down current under edit part led
+      if (bank.under_edit == bank.in_playback) {
+        // set this led to 'in playback' brightness
+        monome_led_level_set(io->output.monome,
+                             old_under_edit_coords.x,
+                             old_under_edit_coords.y,
+                             led_brightness.bank.in_playback);
+      } else {
+        // turn off the currently under edit part led
+        monome_led_level_set(io->output.monome,
+                             old_under_edit_coords.x,
+                             old_under_edit_coords.y,
+                             led_brightness.bank.off);
+      }
+      
+      // set this led to 'under_edit' brightness
       monome_led_level_set(io->output.monome,
-                           old_under_edit_coords.x,
-                           old_under_edit_coords.y,
-                           led_brightness.part.off);
+                           new_under_edit_coords.x,
+                           new_under_edit_coords.y,
+                           led_brightness.part.under_edit);
     }
 
     // ensure part exists
-    ensure_part(part_idx);
-    
-    // update part under edit
+    ensure_part(bank_idx, part_idx);
+      
+    // update bank / part under edit
     part.under_edit = part_idx;
-    
-    // set this led to 'under_edit' brightness
-    monome_led_level_set(io->output.monome,
-                         new_under_edit_coords.x,
-                         new_under_edit_coords.y,
-                         led_brightness.part.under_edit);
-
+    bank.under_edit = bank_idx;
+      
     // render new part under edit
-    render_part(part_idx);
+    render_part(bank_idx, part_idx);
   };
     
 protected:

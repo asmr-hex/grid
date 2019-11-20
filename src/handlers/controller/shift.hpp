@@ -224,7 +224,7 @@ void page_select_handler(IO *io, State *state, Config *config, const monome_even
     
     break;
   }
-}
+};
 
 void part_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
@@ -249,5 +249,29 @@ void part_select_handler(IO *io, State *state, Config *config, const monome_even
     rendered_instrument->edit_part(selected_part_idx);
     break;
   }
-}
+};
+
+void bank_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+  // is this event even relevant?
+  bool relevant =
+    config->mappings.banks.x.min <= event->grid.x && event->grid.x <= config->mappings.banks.x.max &&
+    config->mappings.banks.y.min <= event->grid.y && event->grid.y <= config->mappings.banks.y.max;
+  if (!relevant) return;
+
+  Instrument *rendered_instrument = state->get_rendered_instrument();
+  int selected_bank_idx = config->mappings.banks.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
+  
+  
+  switch (event->event_type) {
+  case MONOME_BUTTON_DOWN:
+    if (state->sequencer.shift_enabled) {
+      // immediately begin playing selected part
+      rendered_instrument->play_part(selected_bank_idx, rendered_instrument->part.under_edit);
+      return;
+    }
+
+    rendered_instrument->edit_part(selected_bank_idx, rendered_instrument->part.under_edit);
+  }
+};
+
 #endif

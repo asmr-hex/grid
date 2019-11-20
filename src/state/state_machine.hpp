@@ -44,25 +44,8 @@ private:
     // get the current instrument and part
     Instrument *rendered_instrument = state->get_rendered_instrument();
 
-    // render default part under edit.
-    rendered_instrument->render_part();
-    // TODO eventually, once we are rendering the actual instrument UI, we should
-    // have a method on Instrument called "render" AND a method on Part called "render"
-
-    // // set selected sequence led
-    // set_led_region_intensity(io, &(config->mappings.parts), 0);
-    // mapping_coordinates_t selected_part = config->mappings.parts.get_coordinates_from_sequential_index(rendered_instrument->part.under_edit);
-    // monome_led_on(io->output.monome, selected_part.x, selected_part.y);
-
-    // // set selected bank led
-    // set_led_region_intensity(io, &(config->mappings.banks), 4);
-    // mapping_coordinates_t selected_bank = config->mappings.banks.get_coordinates_from_sequential_index(rendered_instrument->bank.under_edit);
-    // monome_led_on(io->output.monome, selected_bank.x, selected_bank.y);
-
-    // // set pages led
-    // set_led_region_intensity(io, &(config->mappings.pages), 4);
-    // mapping_coordinates_t selected_page = config->mappings.pages.get_coordinates_from_sequential_index(rendered_part->page.under_edit);
-    // monome_led_on(io->output.monome, selected_page.x, selected_page.y);
+    // render instrument
+    rendered_instrument->render();
   };
 };
 
