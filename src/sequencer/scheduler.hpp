@@ -103,10 +103,7 @@ private:
     while (true) {
       auto tick = Clock::now();
 
-      if (state->sequencer.playback.is_playing) {
-        // only dispatch if we are currently playing.
-        dispatch();
-      }
+      dispatch();
  
       auto tock = Clock::now();
       Microseconds remaining_usec = state->sequencer.step_period - std::chrono::duration_cast<Microseconds>(tock - tick);

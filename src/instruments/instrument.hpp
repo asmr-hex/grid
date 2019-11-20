@@ -116,7 +116,7 @@ public:
     if (part.under_edit == part.in_playback) {
       // when the part under edit *is* the part in playback, we simply
       // play or pause the part depending on the part's playback state
-
+      
       if (part_in_playback->playback.is_playing) {
         // current part is in playback and is playing, pause it
         part_in_playback->pause_playback();
@@ -124,7 +124,6 @@ public:
         // current part is in playback and is paused or stopped, play it
         part_in_playback->begin_playback();
       }
-      
       
     } else {
       // current part is under edit and not in playback.
@@ -139,6 +138,18 @@ public:
     }
 
     // update playback led for current part
+    int play_pause_led_brightness;
+    if (part_under_edit->playback.is_playing) {
+      play_pause_led_brightness = led_brightness.playback.play;
+    } else if (part_under_edit->playback.is_paused) {
+      play_pause_led_brightness = led_brightness.playback.pause;
+    } else if (!part_under_edit->playback.is_playing) {
+      play_pause_led_brightness = led_brightness.playback.stop;
+    }
+    monome_led_level_set(io->output.monome,
+                         config->mappings.play_pause.x,
+                         config->mappings.play_pause.y,
+                         play_pause_led_brightness);
   };
 
   void stop_part() {

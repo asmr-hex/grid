@@ -39,9 +39,6 @@ public:
     Microseconds step_period;
     std::string rendered_instrument;
     struct {
-      bool is_playing = false;
-    } playback; // TODO dispose of this
-    struct {
       bool play_pause_is_held = false;
       bool stop_is_held = false;
       struct {
