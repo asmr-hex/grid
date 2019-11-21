@@ -90,12 +90,6 @@ public:
     playback.is_stopping = true;
     playback.next_part = next_part;
     playback.next_part->playback.is_about_to_start = true;
-    
-    // TODO
-    // somehow need to communicate with Instrument when this
-    // part has completed its sequence cycle so that the Instrument
-    // can update the part.in_playback... (maybe pass a pointer to mutate?)
-    // idk if this is bad tho...
   };
   
   void advance_ui_cursor() {
@@ -250,24 +244,41 @@ public:
     }
   };
 
+  void render_page_selection_ui() {
+    render_page_selection_ui(page.last_step);
+  };
+  
   // renders the page selection panel in the ui (monome grid).
   //
   // there should typically be two pages highlighted at a given time:
   //  1) the currently rendered page
   //  2) the page the cursor is on
   // when these pages are the same, there will only be one page highlighted.
-  void render_page_selection_ui() {
-    // set all pages to blank
-    set_led_region_intensity(io, &config->mappings.pages, 4);
+  void render_page_selection_ui(int last_step_page) {
+    // set all page leds before last page
+    set_led_region_intensity(io,
+                             config->mappings.pages.get_region_coordinates(0, last_step_page),
+                             led_brightness.page.within_last_step);
+    // set all page leds after last page
+    set_led_region_intensity(io,
+                             config->mappings.pages.get_region_coordinates(last_step_page + 1,
+                                                                           config->mappings.pages.get_area() - 1),
+                             led_brightness.page.beyond_last_step);
 
     // set rendered page to highlighted
     mapping_coordinates_t rendered_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.rendered);
-    monome_led_on(io->output.monome, rendered_page_coords.x, rendered_page_coords.y);
+    monome_led_level_set(io->output.monome,
+                         rendered_page_coords.x,
+                         rendered_page_coords.y,
+                         led_brightness.page.under_edit);
 
     if (page.rendered != page.cursor) {
       // set cursor page to highlighted
       mapping_coordinates_t cursor_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.cursor);
-      monome_led_on(io->output.monome, cursor_page_coords.x, cursor_page_coords.y); 
+      monome_led_level_set(io->output.monome,
+                           cursor_page_coords.x,
+                           cursor_page_coords.y,
+                           led_brightness.page.in_playback); 
     }
   };
 
@@ -370,6 +381,12 @@ private:
   std::function<void (int, int)> swap_part_in_playback;
 
   struct {
+    struct {
+      int beyond_last_step = 0;
+      int within_last_step = 5;
+      int under_edit = 15;
+      int in_playback = 10;
+    } page;
     struct {
       int play = 15;
       int pause = 5;

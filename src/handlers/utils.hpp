@@ -15,4 +15,10 @@ void set_led_region_intensity(IO *io, mapping_range_2d_t *range, unsigned int in
   }
 };
 
+void set_led_region_intensity(IO *io, std::vector<mapping_coordinates_t> region, unsigned int intensity) {
+  for (mapping_coordinates_t coords : region) {
+    monome_led_level_set(io->output.monome, coords.x, coords.y, intensity);
+  }
+};
+
 #endif

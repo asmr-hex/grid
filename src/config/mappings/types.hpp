@@ -1,6 +1,9 @@
 #ifndef MAPPING_TYPES_H
 #define MAPPING_TYPES_H
 
+#include <vector>
+
+
 struct mapping_range_1d_t {
   unsigned int min;
   unsigned int max;  
@@ -29,6 +32,16 @@ public:
             (idx % get_width()) + x.min,
             (idx / get_width()) + y.min,
     };
+  };
+
+  std::vector<mapping_coordinates_t> get_region_coordinates(unsigned int start, unsigned int end) {
+    std::vector<mapping_coordinates_t> region;
+
+    for (int i=start; i<=end; i++) {
+      region.push_back(get_coordinates_from_sequential_index(i));
+    }
+
+    return region;
   };
   
   unsigned int get_width() {

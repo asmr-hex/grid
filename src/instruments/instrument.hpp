@@ -115,7 +115,7 @@ public:
     Part *part_under_edit = get_part_under_edit();
     Part *part_in_playback = get_part_in_playback();
     
-    if (part.under_edit == part.in_playback) {
+    if (part.under_edit == part.in_playback && bank.under_edit == bank.in_playback) {
       // when the part under edit *is* the part in playback, we simply
       // play or pause the part depending on the part's playback state
       
@@ -129,10 +129,26 @@ public:
       
     } else {
       // current part is under edit and not in playback.
-      
-      // schedule current in playback part to stop on next cycle
-      // and hand over playback to part under edit.
-      part_in_playback->enqueue_next_part_for_playback(part_under_edit);
+
+      if (!part_in_playback->playback.is_playing) {
+        // since the current part in playback is paused/stopped we can immediately start
+
+        // ensure current part in playback is actually stopped
+        part_in_playback->stop_playback();
+        part_under_edit->begin_playback();
+
+        // set the new part as in playback
+        bank.in_playback = part_under_edit->id.bank;
+        part.in_playback = part_under_edit->id.part;
+
+        // re-render the part/bank ui
+        render_part_selection_panel();
+        render_bank_selection_panel();
+      } else {
+        // schedule current in playback part to stop on next cycle
+        // and hand over playback to part under edit.
+        part_in_playback->enqueue_next_part_for_playback(part_under_edit);   
+      }
     }
 
     // update playback led for current part
@@ -149,10 +165,6 @@ public:
              // update leds of old part in playback if necessary
              if (part.in_playback == part.under_edit) {
                get_part_in_playback()->render_play_pause_ui();
-               // monome_led_level_set(io->output.monome,
-               //                      config->mappings.play_pause.x,
-               //                      config->mappings.play_pause.y,
-               //                      led_brightness.playback.stop);
              }
     
              bank.in_playback = bank_id;
@@ -161,11 +173,11 @@ public:
              // update leds of new part in playback if necessary
              if (part.in_playback == part.under_edit) {
                get_part_in_playback()->render_play_pause_ui();
-               // monome_led_level_set(io->output.monome,
-               //                      config->mappings.play_pause.x,
-               //                      config->mappings.play_pause.y,
-               //                      led_brightness.playback.play);
              }
+
+             // re-render the part/bank ui
+             render_part_selection_panel();
+             render_bank_selection_panel();
            };
   };
   
@@ -176,10 +188,6 @@ public:
     if (part.under_edit == part.in_playback) {
       // update the start/pause led to be off
       get_part_in_playback()->render_play_pause_ui();
-      // monome_led_level_set(io->output.monome,
-      //                      config->mappings.play_pause.x,
-      //                      config->mappings.play_pause.y,
-      //                      led_brightness.playback.stop);
     }
   };
   
