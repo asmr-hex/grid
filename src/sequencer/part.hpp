@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "utils.hpp"
 #include "types.hpp"
@@ -21,7 +22,10 @@
 
 class Part {
 public:
-  int id;
+  struct {
+    int part;
+    int bank;
+  } id;
   int ppqn = 8;
   struct {
     int rendered = 0;
@@ -42,8 +46,15 @@ public:
   bool unsaved;
 
   
-  Part(int id, Config *config, IO *io) : id(id), config(config), io(io) {
+  Part(int part_id,
+       int bank_id,
+       Config *config,
+       IO *io,
+       std::function<void (int, int)> swap_part_in_playback)
+    : config(config), io(io), swap_part_in_playback(swap_part_in_playback) {
     // load part file if it exists.
+    id.part = part_id;
+    id.bank = bank_id;
     ppqn = 8;
     length = 64;
     default_note = "C5";
@@ -52,6 +63,7 @@ public:
   void begin_playback() {
     playback.is_playing = true;
     playback.is_paused = false;
+    playback.is_about_to_start = false;
   };
   
   void pause_playback() {
@@ -62,6 +74,7 @@ public:
   void stop_playback() {
     playback.is_playing = false;
     playback.is_paused = false;
+    playback.is_stopping = false;
     active_step = 0;
   };
 
@@ -138,13 +151,19 @@ public:
     // do not advance if we are not playing! just return empty vector!
     if (!playback.is_playing) return next_events;
     
-    // TODO if playback is not playing, do not advance.
 
     // get all next events
     sequence.collect_all_events_at(active_step, &next_events);
 
     // advance to next step
     active_step = get_next_step(active_step);
+
+    if (playback.is_stopping && active_step == 0) {
+      // we have reached the end of a sequence cycle
+
+      // relinquish playback status and give the next part a turn!
+      handoff_playback();
+    }
     
     return next_events;
   };
@@ -269,6 +288,22 @@ public:
     
     monome_led_on(io->output.monome, selected_ppqn.x, selected_ppqn.y);
   };
+
+  // renders the play/pause button in the ui (monome grid) according to playback state.
+  void render_play_pause_ui() {
+    int play_pause_led_brightness;
+    if (playback.is_playing) {
+      play_pause_led_brightness = led_brightness.playback.play;
+    } else if (playback.is_paused) {
+      play_pause_led_brightness = led_brightness.playback.pause;
+    } else if (!playback.is_playing) {
+      play_pause_led_brightness = led_brightness.playback.stop;
+    }
+    monome_led_level_set(io->output.monome,
+                         config->mappings.play_pause.x,
+                         config->mappings.play_pause.y,
+                         play_pause_led_brightness);
+  };
   
   // updates the state of last step of a part and updates the ui (monome grid).
   //
@@ -332,7 +367,16 @@ private:
   Config *config;
   IO *io;
   std::map<int, std::set<int> > rendered_steps;
+  std::function<void (int, int)> swap_part_in_playback;
 
+  struct {
+    struct {
+      int play = 15;
+      int pause = 5;
+      int stop = 0;
+    } playback;
+  } led_brightness;
+  
   int get_next_step(int step) {
     // advance to next step
     step += ppqn;
@@ -345,6 +389,17 @@ private:
     return step;
   };
 
+  void handoff_playback() {
+    // first, stop this part
+    stop_playback();
+
+    // start next part
+    playback.next_part->begin_playback();
+
+    // execute notify handler on instrument
+    swap_part_in_playback(playback.next_part->id.bank, playback.next_part->id.part);
+  };
+  
   // returns the sequential index of ppqn within the available ppqns sorted in
   // ascending order.
   int get_ppqn_index(int ppqn_i) {

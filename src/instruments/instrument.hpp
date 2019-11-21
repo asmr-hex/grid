@@ -1,9 +1,11 @@
 #ifndef INSTRUMENT_H
 #define INSTRUMENT_H
 
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include <monome.h>
 
@@ -29,7 +31,7 @@ public:
 
   Instrument(Config *config, IO *io) : config(config), io(io) {
     // TODO initialize better
-    parts[0][0] = new Part(0, config, io);
+    parts[0][0] = new Part(0, 0, config, io, swap_part_in_playback_closure());
   };
 
   Part *get_part_in_playback() {
@@ -65,7 +67,7 @@ public:
     part_to_render->render_page(part_to_render->page.rendered, force_rerender);
     part_to_render->render_page_selection_ui();
     part_to_render->render_ppqn_selection_ui();
-    // TODO render part's playback status
+    part_to_render->render_play_pause_ui();
   };
 
   // renders the part selection ui panel.
@@ -131,37 +133,53 @@ public:
       // schedule current in playback part to stop on next cycle
       // and hand over playback to part under edit.
       part_in_playback->enqueue_next_part_for_playback(part_under_edit);
-      
-      // TODO there might need to be some state in between the hand-off
-      // from a playing part to a not playing part... maybe indicated by
-      // a slowly blinking led on the part...?
     }
 
     // update playback led for current part
-    int play_pause_led_brightness;
-    if (part_under_edit->playback.is_playing) {
-      play_pause_led_brightness = led_brightness.playback.play;
-    } else if (part_under_edit->playback.is_paused) {
-      play_pause_led_brightness = led_brightness.playback.pause;
-    } else if (!part_under_edit->playback.is_playing) {
-      play_pause_led_brightness = led_brightness.playback.stop;
-    }
-    monome_led_level_set(io->output.monome,
-                         config->mappings.play_pause.x,
-                         config->mappings.play_pause.y,
-                         play_pause_led_brightness);
+    part_under_edit->render_play_pause_ui();
   };
 
+  // returns a closure which swaps out the part currently in playback.
+  //
+  // the returned closure is called from within a Part when it is stopping and its
+  // sequence cycle has ended.
+  std::function<void (int, int)> swap_part_in_playback_closure() {
+    return [this] (int bank_id, int part_id) {
+
+             // update leds of old part in playback if necessary
+             if (part.in_playback == part.under_edit) {
+               get_part_in_playback()->render_play_pause_ui();
+               // monome_led_level_set(io->output.monome,
+               //                      config->mappings.play_pause.x,
+               //                      config->mappings.play_pause.y,
+               //                      led_brightness.playback.stop);
+             }
+    
+             bank.in_playback = bank_id;
+             part.in_playback = part_id;
+
+             // update leds of new part in playback if necessary
+             if (part.in_playback == part.under_edit) {
+               get_part_in_playback()->render_play_pause_ui();
+               // monome_led_level_set(io->output.monome,
+               //                      config->mappings.play_pause.x,
+               //                      config->mappings.play_pause.y,
+               //                      led_brightness.playback.play);
+             }
+           };
+  };
+  
   void stop_part() {
     // stop part in playback!
     get_part_in_playback()->stop_playback();
 
     if (part.under_edit == part.in_playback) {
       // update the start/pause led to be off
-      monome_led_level_set(io->output.monome,
-                           config->mappings.play_pause.x,
-                           config->mappings.play_pause.y,
-                           led_brightness.playback.stop);
+      get_part_in_playback()->render_play_pause_ui();
+      // monome_led_level_set(io->output.monome,
+      //                      config->mappings.play_pause.x,
+      //                      config->mappings.play_pause.y,
+      //                      led_brightness.playback.stop);
     }
   };
   
@@ -267,12 +285,6 @@ protected:
       int under_edit = 15;
       int off = 4;
     } bank;
-
-    struct {
-      int play = 15;
-      int pause = 5;
-      int stop = 0;
-    } playback;
   } led_brightness;
 
   // checks if a part exists and creates a new empty one if it doesn't
@@ -282,7 +294,7 @@ protected:
       parts.at(bank_idx).at(part_idx);
     } catch (std::out_of_range &error) {
       // the part doesn't exist. lets' create it!
-      parts[bank_idx][part_idx] = new Part(part_idx, config, io);
+      parts[bank_idx][part_idx] = new Part(part_idx, bank_idx, config, io, swap_part_in_playback_closure());
     }
   }
 };
