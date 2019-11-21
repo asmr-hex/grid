@@ -80,7 +80,9 @@ private:
     monome_t *monome;
 
     // TODO (coco|5.11.2019) parameterize monome serial port location.
-    if( !(monome = monome_open("/dev/tty.usbserial-m1000843")) ) {
+    // rpi : /dev/ttyUSB0
+    // osx : /dev/tty.usbserial-m1000843
+    if( !(monome = monome_open("/dev/ttyUSB0")) ) {
       std::cout << "Could not connect to monome grid!\n";
       exit( EXIT_FAILURE );
     }
