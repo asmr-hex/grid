@@ -11,10 +11,10 @@ public:
   // gracefully handle midi off events when we change sequence length!
 
   void collect_all_events_at(step_idx_t step, std::vector<step_event_t> *collector) {
-    collect_events_from_sequence_at_step(midi_off_steps, step, collector);
-    collect_events_from_sequence_at_step(midi_on_steps, step, collector);
-    collect_events_from_sequence_at_step(midi_cc_steps, step, collector);
-    collect_events_from_sequence_at_step(midi_nrpn_steps, step, collector);
+    collect_events_from_sequence_at_step(&midi_off_steps, step, collector);
+    collect_events_from_sequence_at_step(&midi_on_steps, step, collector);    
+    collect_events_from_sequence_at_step(&midi_cc_steps, step, collector);
+    collect_events_from_sequence_at_step(&midi_nrpn_steps, step, collector);
   };
   
   void add_midi_note_on_event(step_event_t event, step_idx_t step, unsigned int off_offset) {
@@ -68,9 +68,9 @@ private:
   sequence_t midi_nrpn_steps;
   midi_on_to_midi_off_t midi_on_to_midi_off;
 
-  void collect_events_from_sequence_at_step(sequence_t seq, step_idx_t step, std::vector<step_event_t> *collector) {
+  void collect_events_from_sequence_at_step(sequence_t *seq, step_idx_t step, std::vector<step_event_t> *collector) {
     try {
-      for (auto i : seq.at(step)) {
+      for (auto i : seq->at(step)) {
         collector->push_back(i.second);
       }
     } catch (std::out_of_range &error) {
