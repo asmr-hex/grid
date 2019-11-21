@@ -62,8 +62,6 @@ void play_pause_handler(IO *io, State *state, Config *config, const monome_event
       return;
     }
 
-    // okay, no part or instruments were selected while play/pause was held.
-
     // just play or pause the currently under edit part for the rendered instrument.
     state->get_rendered_instrument()->play_or_pause_part();
     
@@ -132,6 +130,8 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
     config->mappings.steps.y.min <= event->grid.y && event->grid.y <= config->mappings.steps.y.max;
   if (!relevant) return;
 
+  // TODO refactor all this to be encapsulated within Part (?)
+  
   switch (event->event_type) {
   case MONOME_BUTTON_UP:
     // get step index
@@ -139,23 +139,19 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
     unsigned int relative_step = config->mappings.steps.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
     unsigned int absolute_step = part_under_edit->get_absolute_step(part_under_edit->page.under_edit, relative_step);
 
-    if (state->sequencer.last_step_enabled) {
+    if (part_under_edit->show_last_step) {
       // escape hatch if we are in 'last_step' mode.
       part_under_edit->update_last_step({event->grid.x, event->grid.y});
       return;
     }
     
     if (part_under_edit->is_step_on(absolute_step)) {
-      // turn this step off!
-
-      // remove stop from part
+      // turn this step off! remove stop from part
       part_under_edit->remove_step(relative_step);
 
       monome_led_off(io->output.monome, event->grid.x, event->grid.y);
     } else {
-      // turn this step on!!
-
-      // TODO add step to part
+      // turn this step on!! add step to part
       part_under_edit->add_step(relative_step);
       
       monome_led_on(io->output.monome, event->grid.x, event->grid.y);
@@ -174,10 +170,8 @@ void last_step_handler(IO *io, State *state, Config *config, const monome_event_
   // get last step of current part
   Part *part_under_edit = state->get_rendered_instrument()->get_part_under_edit();
   int last_step = part_under_edit->length - 1;
-  mapping_coordinates_t last_step_coords = config->mappings.steps.get_coordinates_from_sequential_index(last_step);
-  mapping_coordinates_t last_step_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(part_under_edit->page.last_step);
-  mapping_coordinates_t rendered_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(part_under_edit->page.rendered);
-  mapping_coordinates_t page_being_edited_coords = config->mappings.pages.get_coordinates_from_sequential_index(part_under_edit->page.under_edit);
+
+  // TODO refactor all this into encapsulated method in Part (?)
   
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
@@ -187,25 +181,23 @@ void last_step_handler(IO *io, State *state, Config *config, const monome_event_
     // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
     if (state->sequencer.shift_enabled) {
       part_under_edit->follow_cursor = !part_under_edit->follow_cursor;
+
+      // render the page of the last step
+      part_under_edit->render_page(part_under_edit->page.cursor);
+
+      // re-render page selection ui
+      part_under_edit->render_page_selection_ui();
       return;
     }
 
     // set the state for 'show last step'
     part_under_edit->show_last_step = true;
-    state->sequencer.last_step_enabled = true; // TODO do we need this in the sequencer state????
-    
-    // // only update the pages UI if it is not already being rendered
-    // if (part_under_edit->page.last_step != part_under_edit->page.rendered) {
-    //   monome_led_level_set(io->output.monome, page_being_edited_coords.x, page_being_edited_coords.y, 4);
-    //   monome_led_on(io->output.monome, last_step_page_coords.x, last_step_page_coords.y);
-    // }
 
     // render the page of the last step
     part_under_edit->render_page(part_under_edit->page.last_step);
 
-
+    // re-render page selection ui
     part_under_edit->render_page_selection_ui();
-    
     
     break;
   case MONOME_BUTTON_UP:
@@ -219,21 +211,12 @@ void last_step_handler(IO *io, State *state, Config *config, const monome_event_
     }
     
     // set the state
-    // TODO do we need both these states duplicated...?
-    state->sequencer.last_step_enabled = false;
     part_under_edit->show_last_step = false;
-
-    // // only update the pages UI if it is not already being rendered
-    // if (part_under_edit->page.under_edit != part_under_edit->page.rendered) {
-    //   monome_led_level_set(io->output.monome, rendered_page_coords.x, rendered_page_coords.y, 4);
-    //   // monome_led_level_set(io->output.monome, last_step_tmp_page_coords.x, last_step_tmp_page_coords.y, 4); // note, i think we need to do this before the next line...
-    //   monome_led_on(io->output.monome, page_being_edited_coords.x, page_being_edited_coords.y);
-    // }
 
     // re-render the page currently being edited
     part_under_edit->render_page(part_under_edit->page.under_edit);
 
-    // only update the pages UI if it is not already being rendered
+    // re-render page selection ui
     part_under_edit->render_page_selection_ui();
     
     break;
@@ -254,8 +237,12 @@ void page_select_handler(IO *io, State *state, Config *config, const monome_even
 
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
+    // TODO refactor all this into a method encapsulated in Part
+    
     // if we are following the cursor and then select a new page, turn off follow mode
-    if (part_under_edit->follow_cursor) part_under_edit->follow_cursor = false;
+    // (unless we are selecting a new last step)
+    if (part_under_edit->follow_cursor && !part_under_edit->show_last_step)
+      part_under_edit->follow_cursor = false;
     
     int new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
 
@@ -286,16 +273,6 @@ void part_select_handler(IO *io, State *state, Config *config, const monome_even
   
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-
-    // if ( state->sequencer.transport.play_pause_is_held &&
-    //      !state->sequencer.transport.instruments.were_selected ) {
-
-    //   // select this part to eventually (when play/pause is unheld) be put in playback
-    //   state->sequencer.transport.part.was_selected = true;
-    //   state->sequencer.transport.part.part = selected_part_idx;
-    //   state->sequencer.transport.part.bank = rendered_instrument->bank.under_edit;
-    // }
-
     // set the part under edit
     rendered_instrument->edit_part(selected_part_idx);
     break;
@@ -312,30 +289,9 @@ void bank_select_handler(IO *io, State *state, Config *config, const monome_even
   Instrument *rendered_instrument = state->get_rendered_instrument();
   int selected_bank_idx = config->mappings.banks.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
   
-  
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-    // if ( state->sequencer.transport.play_pause_is_held &&
-    //      !state->sequencer.transport.instruments.were_selected ) {
-
-    //   // TODO (coco|11.19.2019) maybe this is weird ui logic and shouldn't be allowed...?
-      
-    //   // select this part to eventually (when play/pause is unheld) be put in playback
-    //   state->sequencer.transport.part.was_selected = true;
-    //   switch (selected_bank_idx) {
-    //   case rendered_instrument->bank.in_playback:
-    //     state->sequencer.transport.part.part = rendered_instrument->part.in_playback;
-    //     break;
-    //   case rendered_instrument->bank.under_edit:
-    //     state->sequencer.transport.part.part = rendered_instrument->part.under_edit;
-    //     break;
-    //   default:
-    //     state->sequencer.transport.part.part = 0;
-    //     break;
-    //   }
-    //   state->sequencer.transport.part.bank = selected_bank_idx;
-    // }
-    
+    // set the part/bank under edit
     rendered_instrument->edit_part(selected_bank_idx, rendered_instrument->part.under_edit);
   }
 };

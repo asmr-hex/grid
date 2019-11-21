@@ -34,18 +34,11 @@ public:
   
   struct {
     bool shift_enabled = false;
-    bool follow_cursor = false;
-    bool last_step_enabled = false; // TODO do we need this????
     Microseconds step_period;
     std::string rendered_instrument;
     struct {
       bool play_pause_is_held = false;
       bool stop_is_held = false;
-      struct {
-        bool was_selected = false;
-        int part;
-        int bank;
-      } part;
       struct {
         bool were_selected = false;
         std::vector<std::string> instruments; // TODO think more about which datastructure to use.  
