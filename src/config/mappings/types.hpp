@@ -12,6 +12,16 @@ struct mapping_range_1d_t {
 struct mapping_coordinates_t {
   unsigned int x;
   unsigned int y;
+
+  // overload logical equality operator so coordinates can be used as a map key
+  bool operator==(const mapping_coordinates_t &m) const {
+    return x == m.x && y == m.y;
+  };
+
+  // overload logical less than  operator so coordinates can be used as a map key
+  bool operator<(const mapping_coordinates_t &m) const {
+    return x < m.x && y < m.y;
+  };
 };
 
 class mapping_range_2d_t {
