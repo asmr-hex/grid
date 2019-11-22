@@ -10,6 +10,8 @@
 #include "sequencer/scheduler.hpp"
 #include "instruments/instrument.hpp"
 #include "instruments/factory.hpp"
+#include "animation/animator.hpp"
+
 
 // the controller is the top level class and entrypoint for initializing,
 // configuring, and running this musical controller.
@@ -27,6 +29,10 @@ public:
   Controller(std::string config_path) : config(config_path) {
     io.connect();
 
+    animation = new Animator();
+
+    // TODO pass animation to state and instruments
+    
     initialize_instruments();
     
     state_machine = new StateMachine(&io, &config, instruments);
@@ -42,6 +48,7 @@ public:
 private:
   IO io;
   Config config;
+  Animator *animation;
   Scheduler *scheduler;
   StateMachine *state_machine;
   std::map<std::string, Instrument*> instruments;
