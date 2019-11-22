@@ -8,9 +8,10 @@
 #include "../io/io.hpp"
 #include "../state/state.hpp"
 #include "../config/config.hpp"
+#include "../animation/animator.hpp"
 
 
-typedef void (*midi_handler)(IO *, State*, Config *,std::vector<unsigned char> *);
-typedef void (*monome_handler)(IO *, State*, Config *, const monome_event_t *);
+typedef void (*midi_handler)(IO *, State*, Config *,std::vector<unsigned char> *); // TODO add Animator to midi handlers
+typedef void (*monome_handler)(IO *, Animator *, State*, Config *, const monome_event_t *);
 
 #endif

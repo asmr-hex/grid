@@ -2,6 +2,7 @@
 #define ANIMATION_ANIMATOR_H
 
 #include <map>
+#include <algorithm>
 
 #include <monome.h>
 #include <boost/thread.hpp>
@@ -15,13 +16,23 @@
 class Animator {
 public:
   // TODO make frame period configurable via constructor
-  Animator(IO *io, Microseconds frame_period) : io(io), frame_period(frame_period) {};
+  Animator(IO *io) : io(io) {};
   
   void run() {
+    if (is_running) return; // only run once
+    
     animation_thread = boost::thread(&Animator::animation_loop, this);
+    is_running = true;
   };
 
   void add(waveform w, mapping_coordinates_t c) {
+    // before adding the waveform, lets update the periods to be aligned
+    // with the frame period of the animation loop.
+    // NOTE: since the periods are constrained to be integers, this will force the periods
+    // of the waveform components (modulator, pwm) to be integer multiples of the frame period.
+    w.modulator.period = std::max(static_cast<int>(w.modulator.period / frame_period), 1);
+    w.pwm.period = std::max(static_cast<int>(w.pwm.period / frame_period), 1);
+    
     animations[c] = w;
   };
 
@@ -31,7 +42,8 @@ public:
   
 private:
   IO *io;
-  Microseconds frame_period;
+  bool is_running = false;
+  int frame_period = 50;  // milliseconds per cycle
   boost::thread animation_thread;
   std::map<mapping_coordinates_t, waveform> animations;
   unsigned int t = 0;
@@ -52,7 +64,7 @@ private:
       t++;
       
       auto tock = Clock::now();
-      Microseconds remaining_usec = frame_period - std::chrono::duration_cast<Microseconds>(tock - tick);
+      Microseconds remaining_usec = Microseconds(frame_period * 1000) - std::chrono::duration_cast<Microseconds>(tock - tick);
 
       boost::this_thread::sleep(boost::posix_time::microseconds(remaining_usec.count()));
     }

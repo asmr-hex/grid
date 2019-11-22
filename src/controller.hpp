@@ -29,18 +29,19 @@ public:
   Controller(std::string config_path) : config(config_path) {
     io.connect();
 
-    animation = new Animator();
+    animation = new Animator(&io);
 
     // TODO pass animation to state and instruments
     
     initialize_instruments();
     
-    state_machine = new StateMachine(&io, &config, instruments);
+    state_machine = new StateMachine(&io, &config, instruments, animation);
 
     scheduler = new Scheduler(&io, state_machine->state, instruments);
   };
   
   void run() {
+    animation->run();
     state_machine->listen();
     scheduler->run();
   };

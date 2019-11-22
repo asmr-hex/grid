@@ -11,16 +11,17 @@
 #include "../config/config.hpp"
 #include "../handlers/utils.hpp"
 #include "../handlers/handlers.hpp"
+#include "../animation/animator.hpp"
 #include "../sequencer/constants.hpp"
 #include "../instruments/instrument.hpp"
 
 
 class StateMachine {
 public:
-  StateMachine(IO *io, Config *config, std::map<std::string, Instrument *> instruments){
+  StateMachine(IO *io, Config *config, std::map<std::string, Instrument *> instruments, Animator *animation){
     state = new State(instruments);
 
-    event_handlers = new EventHandlers(io, state, config);
+    event_handlers = new EventHandlers(io, state, config, animation);
 
     initialize_ui(io, state, config);
   };

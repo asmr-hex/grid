@@ -8,9 +8,10 @@
 #include "../../config/config.hpp"
 #include "../../config/mappings/types.hpp"
 #include "../../sequencer/part.hpp"
+#include "../../animation/animator.hpp"
 
 
-void shift_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void shift_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     event->grid.x == config->mappings.shift.x &&
@@ -31,7 +32,7 @@ void shift_handler(IO *io, State *state, Config *config, const monome_event_t *e
   }
 };
 
-void play_pause_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void play_pause_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     event->grid.x == config->mappings.play_pause.x &&
@@ -69,7 +70,7 @@ void play_pause_handler(IO *io, State *state, Config *config, const monome_event
   }
 };
 
-void stop_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void stop_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     event->grid.x == config->mappings.stop.x &&
@@ -105,7 +106,7 @@ void stop_handler(IO *io, State *state, Config *config, const monome_event_t *ev
   }
 };
 
-void ppqn_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void ppqn_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     config->mappings.ppqn.x.min <= event->grid.x && event->grid.x <= config->mappings.ppqn.x.max &&
@@ -123,7 +124,7 @@ void ppqn_handler(IO *io, State *state, Config *config, const monome_event_t *ev
   }
 }
 
-void step_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void step_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     config->mappings.steps.x.min <= event->grid.x && event->grid.x <= config->mappings.steps.x.max &&
@@ -160,7 +161,7 @@ void step_handler(IO *io, State *state, Config *config, const monome_event_t *ev
   }
 }
 
-void last_step_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void last_step_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     event->grid.x == config->mappings.last_step.x &&
@@ -223,7 +224,7 @@ void last_step_handler(IO *io, State *state, Config *config, const monome_event_
   }
 };
 
-void page_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void page_select_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     config->mappings.pages.x.min <= event->grid.x && event->grid.x <= config->mappings.pages.x.max &&
@@ -261,7 +262,7 @@ void page_select_handler(IO *io, State *state, Config *config, const monome_even
   }
 };
 
-void part_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void part_select_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     config->mappings.parts.x.min <= event->grid.x && event->grid.x <= config->mappings.parts.x.max &&
@@ -279,7 +280,7 @@ void part_select_handler(IO *io, State *state, Config *config, const monome_even
   }
 };
 
-void bank_select_handler(IO *io, State *state, Config *config, const monome_event_t *event) {
+void bank_select_handler(IO *io, Animator *animation, State *state, Config *config, const monome_event_t *event) {
   // is this event even relevant?
   bool relevant =
     config->mappings.banks.x.min <= event->grid.x && event->grid.x <= config->mappings.banks.x.max &&

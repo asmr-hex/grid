@@ -10,11 +10,13 @@
 #include "../state/state.hpp"
 #include "../config/config.hpp"
 #include "controller/shift.hpp"
+#include "../animation/animator.hpp"
 
 
 class EventHandlers {
 public:
-  EventHandlers(IO * io, State *state, Config *config) : io(io), state(state), config(config) {
+  EventHandlers(IO * io, State *state, Config *config, Animator *animation)
+    : io(io), state(state), config(config), animation(animation) {
     // TODO instantiate all handlers.
     monome_handlers.push_back(&shift_handler);
     monome_handlers.push_back(&play_pause_handler);
@@ -50,7 +52,7 @@ public:
     EventHandlers * handlers = (EventHandlers *)userData;
     
     for (monome_handler fn : handlers->monome_handlers) {
-      fn(handlers->io, handlers->state, handlers->config, event);
+      fn(handlers->io, handlers->animation, handlers->state, handlers->config, event);
     }
   };
   
@@ -58,6 +60,7 @@ private:
   IO *io;
   State *state;
   Config *config;
+  Animator *animation;
 
   std::vector<midi_handler> midi_handlers;
   std::vector<monome_handler> monome_handlers;
