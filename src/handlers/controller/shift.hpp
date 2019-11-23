@@ -177,8 +177,6 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
   
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-    // turn on 'show last step' button
-    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
 
     // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
     if (state->sequencer.shift_enabled) {
@@ -190,16 +188,23 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
       // re-render page selection ui
       part_under_edit->render_page_selection_ui();
 
-      // test: register animation
-      // waveform w = { .amplitude = 15 };
-      struct waveform w = { .amplitude = 15,
-                            .modulator = { .type = Sine, .period = 1500 },
-                            .pwm = { .duty_cycle = 0.5, .period = 100 }
-      };
-      animation->add(w, config->mappings.last_step);
-      
+      if (part_under_edit->follow_cursor) {
+        // test: register animation
+        // waveform w = { .amplitude = 15 };
+        struct waveform w = { .amplitude = 15,
+                              .modulator = { .type = Sine, .period = 1500 },
+                              .pwm = { .duty_cycle = 0.5, .period = 100 }
+        };
+        animation->add(w, config->mappings.last_step);
+      } else {
+        animation->remove(config->mappings.last_step);
+      }
+
       return;
     }
+
+    // turn on 'show last step' button
+    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
 
     // set the state for 'show last step'
     part_under_edit->show_last_step = true;
