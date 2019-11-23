@@ -20,7 +20,7 @@ struct mapping_coordinates_t {
 
   // overload logical less than  operator so coordinates can be used as a map key
   bool operator<(const mapping_coordinates_t &m) const {
-    return x < m.x && y < m.y;
+    return x < m.x || y < m.y;
   };
 };
 

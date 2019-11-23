@@ -191,9 +191,10 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
       if (part_under_edit->follow_cursor) {
         // test: register animation
         // waveform w = { .amplitude = 15 };
-        struct waveform w = { .amplitude = 15,
-                              .modulator = { .type = Sine, .period = 1500 },
-                              .pwm = { .duty_cycle = 0.5, .period = 100 }
+        struct waveform w = { .amplitude.max = 9,
+                              .amplitude.max = 4,
+                              .modulator = { .type = Unit },
+                              .pwm = { .duty_cycle = 0.5, .period = 400, .phase = 0 }
         };
         animation->add(w, config->mappings.last_step);
       } else {

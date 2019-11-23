@@ -8,6 +8,7 @@
 #include <boost/thread.hpp>
 
 #include "types.hpp"
+#include "constants.hpp"
 #include "../io/io.hpp"
 #include "../state/state.hpp"
 #include "../instruments/instrument.hpp"
@@ -15,9 +16,10 @@
 
 class Scheduler {
 public:
-  Scheduler(IO *io, State *state, std::map<std::string, Instrument *> instruments) :
+  Scheduler(IO *io, State *state, Config *config, std::map<std::string, Instrument *> instruments) :
     io(io),
     state(state),
+    config(config),
     instruments(instruments){};
   
   void run() {
@@ -27,11 +29,14 @@ public:
 private:
   IO *io;
   State *state;
+  Config *config;
+  int pulse = 0;
   std::map<std::string, Instrument *> instruments;
   boost::thread dispatcher_thread;
 
   std::vector<step_event_t> fetch_next_step_events() {
     std::vector<step_event_t> current_step_events;
+    bool is_on_beat = pulse == 0;
     
     for (auto it : instruments) {
       std::string instrument_name = it.first;
@@ -39,17 +44,17 @@ private:
       Part* part_in_playback = instrument->get_part_in_playback();
       Part* part_under_edit = instrument->get_part_under_edit();
       bool instrument_is_rendered = instrument_name == state->sequencer.rendered_instrument;
-
+      
       // TODO eventually (somehow...) render cursor moving in parts under edit which
       // are not in playback mode... this will require some synchronization.
       
       if (instrument_is_rendered && part_in_playback == part_under_edit) {
         // update the ui with the part under edit
-        part_under_edit->advance_ui_cursor();
+        part_under_edit->advance_ui_cursor(is_on_beat);
       }
 
       // collect next sonic events
-      std::vector<step_event_t> new_step_events = part_in_playback->advance();
+      std::vector<step_event_t> new_step_events = part_in_playback->advance(is_on_beat);
       current_step_events.insert(current_step_events.end(),
                                  new_step_events.begin(),
                                  new_step_events.end());
@@ -83,6 +88,30 @@ private:
     io->output.midi->sendMessage(&event.data);
   };
 
+  void tick_metronome() {
+    switch (pulse) {
+    case 0:
+      monome_led_level_set(io->output.monome,
+                           config->mappings.tempo.x,
+                           config->mappings.tempo.y,
+                           12);
+      pulse++;
+      break;
+    case constants::PPQN_MAX / 8:
+      monome_led_level_set(io->output.monome,
+                           config->mappings.tempo.x,
+                           config->mappings.tempo.y,
+                           0);
+      pulse++;
+      break;
+    case constants::PPQN_MAX - 1:
+      pulse = 0;
+      break;
+    default:
+      pulse++;
+      break;
+    }
+  };
   
   void dispatch() {
     std::vector<step_event_t> current_step_events = fetch_next_step_events();
@@ -103,6 +132,8 @@ private:
     while (true) {
       auto tick = Clock::now();
 
+      tick_metronome();
+      
       dispatch();
  
       auto tock = Clock::now();

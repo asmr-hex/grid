@@ -12,6 +12,7 @@
 #include "../sequencer/part.hpp"
 #include "../config/config.hpp"
 #include "../io/io.hpp"
+#include "../animation/animator.hpp"
 
 
 class Instrument {
@@ -29,9 +30,10 @@ public:
     int under_edit = 0;
   } bank;
 
-  Instrument(Config *config, IO *io) : config(config), io(io) {
+  Instrument(Config *config, IO *io, Animator *animation)
+    : config(config), io(io), animation(animation) {
     // TODO initialize better
-    parts[0][0] = new Part(0, 0, config, io, swap_part_in_playback_closure());
+    parts[0][0] = new Part(0, 0, config, io, animation, swap_part_in_playback_closure());
   };
 
   Part *get_part_in_playback() {
@@ -278,6 +280,7 @@ protected:
   std::string name;
   Config *config;
   IO *io;
+  Animator *animation;
 
   std::map<int, std::map<int, Part*> > parts;
   
@@ -302,7 +305,12 @@ protected:
       parts.at(bank_idx).at(part_idx);
     } catch (std::out_of_range &error) {
       // the part doesn't exist. lets' create it!
-      parts[bank_idx][part_idx] = new Part(part_idx, bank_idx, config, io, swap_part_in_playback_closure());
+      parts[bank_idx][part_idx] = new Part(part_idx,
+                                           bank_idx,
+                                           config,
+                                           io,
+                                           animation,
+                                           swap_part_in_playback_closure());
     }
   }
 };

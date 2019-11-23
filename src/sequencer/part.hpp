@@ -14,6 +14,9 @@
 
 #include "../io/io.hpp"
 
+#include "../animation/types.hpp"
+#include "../animation/animator.hpp"
+
 #include "../config/config.hpp"
 #include "../config/mappings/types.hpp"
 #include "../handlers/utils.hpp"
@@ -26,7 +29,12 @@ public:
     int part;
     int bank;
   } id;
-  int ppqn = 8;
+  struct {
+    int current = 8;
+    int next;
+    bool pending_change = false;
+  } ppqn;
+  bool ppqn_pending_change = false;
   struct {
     int rendered = 0;
     int under_edit = 0;
@@ -50,20 +58,24 @@ public:
        int bank_id,
        Config *config,
        IO *io,
+       Animator *animation,
        std::function<void (int, int)> swap_part_in_playback)
-    : config(config), io(io), swap_part_in_playback(swap_part_in_playback) {
+    : config(config),
+      io(io),
+      animation(animation),
+      swap_part_in_playback(swap_part_in_playback) {
     // load part file if it exists.
     id.part = part_id;
     id.bank = bank_id;
-    ppqn = 8;
+    ppqn.current = 8;
     length = 64;
     default_note = "C5";
   };
 
   void begin_playback() {
-    playback.is_playing = true;
+    playback.is_playing = false;
     playback.is_paused = false;
-    playback.is_about_to_start = false;
+    playback.is_about_to_start = true;
   };
   
   void pause_playback() {
@@ -92,7 +104,10 @@ public:
     playback.next_part->playback.is_about_to_start = true;
   };
   
-  void advance_ui_cursor() {
+  void advance_ui_cursor(bool is_on_beat) {
+    // perform on beat updates if appropriate
+    on_beat_updates(is_on_beat);
+
     // do not advance if we are not playing!
     if (!playback.is_playing) return;
     
@@ -139,9 +154,12 @@ public:
     }
   };
   
-  std::vector<step_event_t> advance() {
+  std::vector<step_event_t> advance(bool is_on_beat) {
     std::vector<step_event_t> next_events;
-
+    
+    // perform on beat updates if appropriate
+    on_beat_updates(is_on_beat);
+    
     // do not advance if we are not playing! just return empty vector!
     if (!playback.is_playing) return next_events;
     
@@ -186,29 +204,35 @@ public:
 
   // sets the ppqn given a sequential index.
   void set_ppqn(int ppqn_index) {
+    // if a change is already pending, remove the animation for the stale next ppqn
+    if (ppqn.pending_change)
+      animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(get_ppqn_index(ppqn.next)));
+    
     switch (ppqn_index) {
     case 0:
-      ppqn = constants::PPQN::One;
+      ppqn.next = constants::PPQN::One;
       break;
     case 1:
-      ppqn = constants::PPQN::Two;
+      ppqn.next = constants::PPQN::Two;
       break;
     case 2:
-      ppqn = constants::PPQN::Four;
+      ppqn.next = constants::PPQN::Four;
       break;
     case 3:
-      ppqn = constants::PPQN::Eight;
+      ppqn.next = constants::PPQN::Eight;
       break;
     case 4:
-      ppqn = constants::PPQN::Sixteen;
+      ppqn.next = constants::PPQN::Sixteen;
       break;
     case 5:
-      ppqn = constants::PPQN::ThirtyTwo;
+      ppqn.next = constants::PPQN::ThirtyTwo;
       break;
     case 6:
-      ppqn = constants::PPQN::SixtyFour;
+      ppqn.next = constants::PPQN::SixtyFour;
       break;
     }
+
+    ppqn.pending_change = true;
   };
   
   // renders a page onto the ui without forced re-rendering
@@ -284,17 +308,20 @@ public:
 
   // renders the ppqn selection panel in the ui (monome grid).
   void render_ppqn_selection_ui() {
-    int ppqn_index = get_ppqn_index(ppqn);
+    int ppqn_index = get_ppqn_index(ppqn.current);
     mapping_coordinates_t selected_ppqn = config->mappings.ppqn.get_coordinates_from_sequential_index(ppqn_index);
 
     // turn off all leds in ppqn zone...
-    // It might be more efficient to only turn off the previous ppqn button pressed, but we would
-    // need to keep track of that in teh state... might be worthwhile in the future depending on
-    // what other regions need in terms of functionality.
-    for (unsigned int x = config->mappings.ppqn.x.min; x <= config->mappings.ppqn.x.max; x++) {
-      for (unsigned int y = config->mappings.ppqn.y.min; y <= config->mappings.ppqn.y.max; y++) {
-        monome_led_off(io->output.monome, x, y);
-      }      
+    set_led_region_intensity(io, &config->mappings.ppqn, 0);
+
+    if (ppqn.pending_change) {
+      int next_ppqn_idx = get_ppqn_index(ppqn.next);
+      mapping_coordinates_t c = config->mappings.ppqn.get_coordinates_from_sequential_index(next_ppqn_idx);
+      waveform w = {.amplitude.max = 9,
+                    .modulator = { .type = Unit },
+                    .pwm = { .duty_cycle = 0.1, .period = 100, .phase = 0 }
+      };
+      animation->add(w, c);
     }
     
     monome_led_on(io->output.monome, selected_ppqn.x, selected_ppqn.y);
@@ -375,8 +402,10 @@ private:
   event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
   Sequence sequence;
   std::string default_note;
-  Config *config;
+  
   IO *io;
+  Config *config;
+  Animator *animation;
   std::map<int, std::set<int> > rendered_steps;
   std::function<void (int, int)> swap_part_in_playback;
 
@@ -396,7 +425,7 @@ private:
   
   int get_next_step(int step) {
     // advance to next step
-    step += ppqn;
+    step += ppqn.current;
 
     // if the active step is now greater than the last step, loop back
     if (step > (length * constants::PPQN_MAX) - 1) {
@@ -406,6 +435,24 @@ private:
     return step;
   };
 
+  void on_beat_updates(bool is_on_beat) {
+    if (!is_on_beat) return;
+
+    // if we are about to begin playing, make sure it starts on the beat
+    if (playback.is_about_to_start) {
+      playback.is_about_to_start = false;
+      playback.is_playing = true;
+    }
+
+    // if we are changing the ppqn, wait until beat for it to take effect
+    if (ppqn.pending_change) {
+      ppqn.current = ppqn.next;
+      ppqn.pending_change = false;
+      animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(get_ppqn_index(ppqn.next)));
+      render_ppqn_selection_ui();
+    }
+  }
+  
   void handoff_playback() {
     // first, stop this part
     stop_playback();

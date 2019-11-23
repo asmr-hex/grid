@@ -15,10 +15,14 @@
 enum WaveformTypes {Sine, Saw, Unit};
 
 struct waveform {
-  int amplitude;       // between 0..15
+  struct {
+    int min = 0;
+    int max = 15;
+  } amplitude;
   struct Modulator {
     int period;        // in milliseconds per cycle
     WaveformTypes type;
+    float phase;
   } modulator;
 
   // the pwm, or Pulse Witch Modulator is a step function (on or off)
@@ -26,6 +30,7 @@ struct waveform {
   struct PWM {
     float duty_cycle;  // a percent (pulse width / period)
     int period;        // in milliseconds per cycle
+    float phase;
   } pwm;
 };
 
@@ -67,13 +72,13 @@ private:
     // compute pwm
     float pwm_a = compute_pwm(t);
     
-    return static_cast<unsigned int>(std::floor( (wave.amplitude + 1) * mod_a * pwm_a ));
+    return static_cast<unsigned int>(std::floor( (wave.amplitude.max - wave.amplitude.min + 1) * mod_a * pwm_a ) + wave.amplitude.min);
   };
 
   float compute_modulator(unsigned int t) {
     float result;
 
-    t = t % wave.modulator.period;
+    t = (t + (int)(wave.modulator.phase * wave.modulator.period)) % wave.modulator.period;
     
     switch (wave.modulator.type) {
     case Sine:
@@ -93,7 +98,7 @@ private:
   float compute_pwm(unsigned int t) {
     float pulse_width = wave.pwm.duty_cycle * (float)wave.pwm.period;
 
-    t = t % wave.pwm.period;
+    t = (t + (int)(wave.pwm.phase * wave.pwm.period)) % wave.pwm.period;
     
     if ((float)t < pulse_width) return 1;
 

@@ -9,6 +9,7 @@
 
 #include "../io/io.hpp"
 #include "../config/config.hpp"
+#include "../animation/animator.hpp"
 
 
 class InstrumentFactory {
@@ -20,21 +21,21 @@ public:
     add<GR1>("gr1");
   };
 
-  Instrument *create(std::string name, Config *config, IO *io) {
-    return constructor_map[name](config, io);
+  Instrument *create(std::string name, Config *config, IO *io, Animator *animation) {
+    return constructor_map[name](config, io, animation);
   };
   
 private:
   /*
     this is a map of instrument constructors keyed by their string names.
   */
-  std::map<std::string, Instrument*(*)(Config *, IO *)> constructor_map;
+  std::map<std::string, Instrument*(*)(Config *, IO *, Animator *)> constructor_map;
 
   /*
     a template function for instantiating derived instrument classes.
   */
-  template<typename T> static Instrument *construct(Config *config, IO *io) {
-    return new T(config, io);
+  template<typename T> static Instrument *construct(Config *config, IO *io, Animator *animation) {
+    return new T(config, io, animation);
   };
 
   /*

@@ -4,11 +4,12 @@
 #include "instrument.hpp"
 #include "../config/config.hpp"
 #include "../io/io.hpp"
+#include "../animation/animator.hpp"
 
 
 class ER1 : public Instrument {
 public:
-  ER1(Config *config, IO *io) : Instrument(config, io) {};
+  ER1(Config *config, IO *io, Animator *animation) : Instrument(config, io, animation) {};
 };
 
 #endif
