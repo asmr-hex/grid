@@ -15,7 +15,6 @@
 
 class Animator {
 public:
-  // TODO make frame period configurable via constructor
   Animator(IO *io) : io(io) {};
   
   void run() {
