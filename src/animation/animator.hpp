@@ -33,7 +33,7 @@ public:
     w.modulator.period = std::max(static_cast<int>(w.modulator.period / frame_period), 1);
     w.pwm.period = std::max(static_cast<int>(w.pwm.period / frame_period), 1);
     
-    animations[c] = w;
+    animations[c] = new WaveformWrapper(w);
   };
 
   void remove(mapping_coordinates_t c) {
@@ -45,7 +45,7 @@ private:
   bool is_running = false;
   int frame_period = 50;  // milliseconds per cycle
   boost::thread animation_thread;
-  std::map<mapping_coordinates_t, waveform> animations;
+  std::map<mapping_coordinates_t, WaveformWrapper*> animations;
   unsigned int t = 0;
   
   void animation_loop() {
@@ -54,7 +54,7 @@ private:
       
       // iterate through animations, compute them, broadcast to monome!
       for (auto i : animations) {
-        int intensity = i.second.compute(t);
+        int intensity = i.second->compute(t);
         monome_led_level_set(io->output.monome,
                              i.first.x,
                              i.first.y,

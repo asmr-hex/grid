@@ -3,30 +3,36 @@
 
 #define _USE_MATH_DEFINES
 
+#include <iostream>
+
 #include <map>
 #include <cmath>
+#include <algorithm>
 
 #include <boost/math/common_factor.hpp>
 
 
 enum WaveformTypes {Sine, Saw, Unit};
 
-// TODO define animation types!
 struct waveform {
-public:
   int amplitude;       // between 0..15
-  struct {
+  struct Modulator {
     int period;        // in milliseconds per cycle
     WaveformTypes type;
   } modulator;
 
   // the pwm, or Pulse Witch Modulator is a step function (on or off)
   // which can have a variable pulse width.
-  struct {
+  struct PWM {
     float duty_cycle;  // a percent (pulse width / period)
     int period;        // in milliseconds per cycle
   } pwm;
+};
 
+class WaveformWrapper {
+public:
+  WaveformWrapper(waveform w) : wave(w) {};
+  
   int compute(unsigned int t) {
     unsigned int intensity;
     
@@ -40,7 +46,7 @@ public:
       intensity = cache.at(t);
     } catch (std::out_of_range &error) {
       // it is not in the cache, we must compute it
-      intensity = compute_intensity(t);
+      intensity = std::min(compute_intensity(t), (unsigned int)15);
 
       // add the intensity for this time step into the cache
       cache[t] = intensity;
@@ -50,7 +56,8 @@ public:
   };
 
 private:
-  std::map<float, int> cache;
+  waveform wave;
+  std::map<float, int> cache = std::map<float, int>();
   int fundamental_period = -1;
 
   unsigned int compute_intensity(unsigned int t) {
@@ -59,19 +66,21 @@ private:
 
     // compute pwm
     float pwm_a = compute_pwm(t);
-
-    return static_cast<unsigned int>(std::floor( amplitude * mod_a * pwm_a ));
+    
+    return static_cast<unsigned int>(std::floor( (wave.amplitude + 1) * mod_a * pwm_a ));
   };
 
   float compute_modulator(unsigned int t) {
     float result;
+
+    t = t % wave.modulator.period;
     
-    switch (modulator.type) {
+    switch (wave.modulator.type) {
     case Sine:
-      result = std::sin( t * ( 1 / modulator.period ) * 2 * M_PI );
+      result = (std::sin( (float)t * ( 1 / (float)wave.modulator.period ) * 2 * M_PI ) * 0.5) + 0.5;
       break;
     case Saw:
-      result = t / modulator.period;
+      result = (float)t / (float)wave.modulator.period;
       break;
     case Unit:
       result = 1;
@@ -82,9 +91,11 @@ private:
   };
 
   float compute_pwm(unsigned int t) {
-    float pulse_width = pwm.duty_cycle * pwm.period;
+    float pulse_width = wave.pwm.duty_cycle * (float)wave.pwm.period;
 
-    if (t < pulse_width) return 1;
+    t = t % wave.pwm.period;
+    
+    if ((float)t < pulse_width) return 1;
 
     return 0;
   };
@@ -92,7 +103,10 @@ private:
   void compute_fundamental_period() {
     if (fundamental_period != -1) return;
     
-    fundamental_period = boost::math::lcm(modulator.period, pwm.period);
+    // ensure that modulator period is set if its Unit waveform
+    if (wave.modulator.type == Unit) wave.modulator.period = 1;
+    
+    fundamental_period = boost::math::lcm(wave.modulator.period, wave.pwm.period);
   };
 };
 

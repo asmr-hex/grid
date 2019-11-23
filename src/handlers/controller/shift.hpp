@@ -8,6 +8,7 @@
 #include "../../config/config.hpp"
 #include "../../config/mappings/types.hpp"
 #include "../../sequencer/part.hpp"
+#include "../../animation/types.hpp"
 #include "../../animation/animator.hpp"
 
 
@@ -188,6 +189,15 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
 
       // re-render page selection ui
       part_under_edit->render_page_selection_ui();
+
+      // test: register animation
+      // waveform w = { .amplitude = 15 };
+      struct waveform w = { .amplitude = 15,
+                            .modulator = { .type = Sine, .period = 1500 },
+                            .pwm = { .duty_cycle = 0.5, .period = 100 }
+      };
+      animation->add(w, config->mappings.last_step);
+      
       return;
     }
 
