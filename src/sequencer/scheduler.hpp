@@ -36,7 +36,6 @@ private:
 
   std::vector<step_event_t> fetch_next_step_events() {
     std::vector<step_event_t> current_step_events;
-    bool is_on_beat = pulse == 0;
     
     for (auto it : instruments) {
       std::string instrument_name = it.first;
@@ -47,14 +46,16 @@ private:
       
       // TODO eventually (somehow...) render cursor moving in parts under edit which
       // are not in playback mode... this will require some synchronization.
+
+      part_in_playback->sync_to_clk(pulse);
       
       if (instrument_is_rendered && part_in_playback == part_under_edit) {
         // update the ui with the part under edit
-        part_under_edit->advance_ui_cursor(is_on_beat);
+        part_under_edit->advance_ui_cursor();
       }
 
       // collect next sonic events
-      std::vector<step_event_t> new_step_events = part_in_playback->advance(is_on_beat);
+      std::vector<step_event_t> new_step_events = part_in_playback->advance();
       current_step_events.insert(current_step_events.end(),
                                  new_step_events.begin(),
                                  new_step_events.end());

@@ -49,6 +49,8 @@ public:
     bool is_paused = false;
     bool is_stopping = false;
     bool is_about_to_start = false;
+    bool is_about_to_unpause = false;
+    int pause_pulse_offset = 0;
     Part *next_part;
   } playback;
   bool unsaved;
@@ -74,13 +76,18 @@ public:
 
   void begin_playback() {
     playback.is_playing = false;
-    playback.is_paused = false;
-    playback.is_about_to_start = true;
+    // playback.is_paused = false;
+    if (playback.is_paused) {
+      playback.is_about_to_unpause = true;  
+    } else {
+      playback.is_about_to_start = true;  
+    }
   };
   
   void pause_playback() {
     playback.is_playing = false;
     playback.is_paused = true;
+    playback.pause_pulse_offset = active_step % constants::PPQN_MAX;
   };
   
   void stop_playback() {
@@ -103,11 +110,17 @@ public:
     playback.next_part = next_part;
     playback.next_part->playback.is_about_to_start = true;
   };
-  
-  void advance_ui_cursor(bool is_on_beat) {
-    // perform on beat updates if appropriate
-    on_beat_updates(is_on_beat);
 
+  void sync_to_clk(int pulse) {
+    if (pulse == 0) {
+      // perform on beat updates if appropriate
+      on_beat_updates();
+    }
+
+    on_pulse_updates(pulse);
+  };
+  
+  void advance_ui_cursor() {
     // do not advance if we are not playing!
     if (!playback.is_playing) return;
     
@@ -154,11 +167,8 @@ public:
     }
   };
   
-  std::vector<step_event_t> advance(bool is_on_beat) {
+  std::vector<step_event_t> advance() {
     std::vector<step_event_t> next_events;
-    
-    // perform on beat updates if appropriate
-    on_beat_updates(is_on_beat);
     
     // do not advance if we are not playing! just return empty vector!
     if (!playback.is_playing) return next_events;
@@ -207,7 +217,7 @@ public:
     // if a change is already pending, remove the animation for the stale next ppqn
     if (ppqn.pending_change)
       animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(get_ppqn_index(ppqn.next)));
-    
+
     switch (ppqn_index) {
     case 0:
       ppqn.next = constants::PPQN::One;
@@ -435,9 +445,7 @@ private:
     return step;
   };
 
-  void on_beat_updates(bool is_on_beat) {
-    if (!is_on_beat) return;
-
+  void on_beat_updates() {
     // if we are about to begin playing, make sure it starts on the beat
     if (playback.is_about_to_start) {
       playback.is_about_to_start = false;
@@ -452,6 +460,15 @@ private:
       render_ppqn_selection_ui();
     }
   }
+
+  void on_pulse_updates(int pulse) {
+    // if we are about to pause, make sure we pause on the beat so we can resume on the beat
+    if (pulse == playback.pause_pulse_offset && playback.is_about_to_unpause) {
+      playback.is_paused = false;
+      playback.is_playing = true;
+      playback.is_about_to_unpause = false;
+    }
+  };
   
   void handoff_playback() {
     // first, stop this part

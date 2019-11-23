@@ -1,7 +1,10 @@
 #ifndef ANIMATION_ANIMATOR_H
 #define ANIMATION_ANIMATOR_H
 
+#include <iostream>
+
 #include <map>
+#include <mutex>
 #include <algorithm>
 
 #include <monome.h>
@@ -25,6 +28,8 @@ public:
   };
 
   void add(waveform w, mapping_coordinates_t c) {
+    std::lock_guard<std::mutex> guard(lock);
+    
     // before adding the waveform, lets update the periods to be aligned
     // with the frame period of the animation loop.
     // NOTE: since the periods are constrained to be integers, this will force the periods
@@ -36,29 +41,38 @@ public:
   };
 
   void remove(mapping_coordinates_t c) {
+    std::lock_guard<std::mutex> guard(lock);
+    
     animations.erase(c);
   };
   
 private:
   IO *io;
+  std::mutex lock;
   bool is_running = false;
   int frame_period = 50;  // milliseconds per cycle
   boost::thread animation_thread;
   std::map<mapping_coordinates_t, WaveformWrapper*> animations;
   unsigned int t = 0;
+
+  void update_animation_frame() {
+    std::lock_guard<std::mutex> guard(lock);
+
+    // iterate through animations, compute them, broadcast to monome!
+    for (auto i : animations) {
+      int intensity = i.second->compute(t);
+      monome_led_level_set(io->output.monome,
+                           i.first.x,
+                           i.first.y,
+                           intensity);
+    }
+  }
   
   void animation_loop() {
     while (true) {
       auto tick = Clock::now();
       
-      // iterate through animations, compute them, broadcast to monome!
-      for (auto i : animations) {
-        int intensity = i.second->compute(t);
-        monome_led_level_set(io->output.monome,
-                             i.first.x,
-                             i.first.y,
-                             intensity);
-      }
+      update_animation_frame();
 
       t++;
       
