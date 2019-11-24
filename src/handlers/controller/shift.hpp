@@ -189,8 +189,7 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
       part_under_edit->render_page_selection_ui();
 
       if (part_under_edit->follow_cursor) {
-        // test: register animation
-        // waveform w = { .amplitude = 15 };
+        part_under_edit->page.under_edit = part_under_edit->page.cursor;
         struct waveform w = { .amplitude.max = 9,
                               .amplitude.max = 4,
                               .modulator = { .type = Unit },
@@ -199,6 +198,7 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
         animation->add(w, config->mappings.last_step);
       } else {
         animation->remove(config->mappings.last_step);
+        monome_led_off(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y);
       }
 
       return;
@@ -220,12 +220,6 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
   case MONOME_BUTTON_UP:
     // turn off 'last step' button
     monome_led_off(io->output.monome, event->grid.x, event->grid.y);
-
-    // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
-    // and unpressing the 'last step' button should be a noop.
-    if (state->sequencer.shift_enabled) {
-      return;
-    }
     
     // set the state
     part_under_edit->show_last_step = false;
@@ -258,8 +252,11 @@ void page_select_handler(IO *io, Animator *animation, State *state, Config *conf
     
     // if we are following the cursor and then select a new page, turn off follow mode
     // (unless we are selecting a new last step)
-    if (part_under_edit->follow_cursor && !part_under_edit->show_last_step)
+    if (part_under_edit->follow_cursor && !part_under_edit->show_last_step) {
       part_under_edit->follow_cursor = false;
+      animation->remove(config->mappings.last_step);
+      monome_led_off(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y);
+    }
     
     int new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
 

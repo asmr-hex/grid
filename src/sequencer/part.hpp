@@ -82,12 +82,27 @@ public:
     } else {
       playback.is_about_to_start = true;  
     }
+    
+    // add animation for about to begin
+    waveform w = {.amplitude.max = 15,
+                  .amplitude.min = 5,
+                  .modulator = { .type = Unit },
+                  .pwm = { .duty_cycle = 0.6, .period = 100, .phase = 0}
+    };
+    animation->add(w, config->mappings.play_pause);
   };
   
   void pause_playback() {
     playback.is_playing = false;
     playback.is_paused = true;
     playback.pause_pulse_offset = active_step % constants::PPQN_MAX;
+    // add animation for about to begin
+    waveform w = {.amplitude.max = 8,
+                  .amplitude.min = 4,
+                  .modulator = { .type = Unit },
+                  .pwm = { .duty_cycle = 0.5, .period = 500, .phase = 0}
+    };
+    animation->add(w, config->mappings.play_pause);
   };
   
   void stop_playback() {
@@ -95,6 +110,7 @@ public:
     playback.is_paused = false;
     playback.is_stopping = false;
     active_step = 0;
+    animation->remove(config->mappings.play_pause);
   };
 
   void enqueue_next_part_for_playback(Part *next_part) {
@@ -180,11 +196,9 @@ public:
     // advance to next step
     active_step = get_next_step(active_step);
 
-    if (playback.is_stopping && active_step == 0) {
+    if ( active_step == 0 ) {
       // we have reached the end of a sequence cycle
-
-      // relinquish playback status and give the next part a turn!
-      handoff_playback();
+      on_cycle_updates();
     }
     
     return next_events;
@@ -445,11 +459,20 @@ private:
     return step;
   };
 
+  void on_cycle_updates() {
+    if (playback.is_stopping) {
+      // relinquish playback status and give the next part a turn!
+      handoff_playback(); 
+    }
+  }
+  
   void on_beat_updates() {
     // if we are about to begin playing, make sure it starts on the beat
     if (playback.is_about_to_start) {
       playback.is_about_to_start = false;
       playback.is_playing = true;
+      animation->remove(config->mappings.play_pause);
+      render_play_pause_ui();
     }
 
     // if we are changing the ppqn, wait until beat for it to take effect
@@ -467,6 +490,8 @@ private:
       playback.is_paused = false;
       playback.is_playing = true;
       playback.is_about_to_unpause = false;
+      animation->remove(config->mappings.play_pause);
+      render_play_pause_ui();
     }
   };
   

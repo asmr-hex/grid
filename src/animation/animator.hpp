@@ -42,7 +42,7 @@ public:
 
   void remove(mapping_coordinates_t c) {
     std::lock_guard<std::mutex> guard(lock);
-    
+
     animations.erase(c);
   };
   
