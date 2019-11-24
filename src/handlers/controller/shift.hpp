@@ -181,35 +181,14 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
     // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
     if (state->sequencer.shift_enabled) {
       part_under_edit->follow_cursor = !part_under_edit->follow_cursor;
-
-      // render the page of the last step
-      part_under_edit->render_page(part_under_edit->page.cursor);
-
-      // re-render page selection ui
-      part_under_edit->render_page_selection_ui();
-
-      if (part_under_edit->follow_cursor) {
-        part_under_edit->page.under_edit = part_under_edit->page.cursor;
-        struct waveform w = { .amplitude.max = 9,
-                              .amplitude.max = 4,
-                              .modulator = { .type = Unit },
-                              .pwm = { .duty_cycle = 0.5, .period = 400, .phase = 0 }
-        };
-        animation->add(w, config->mappings.last_step);
-      } else {
-        animation->remove(config->mappings.last_step);
-        monome_led_off(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y);
-      }
-
-      return;
+      part_under_edit->page.under_edit = part_under_edit->page.cursor;
     }
-
-    // turn on 'show last step' button
-    monome_led_on(io->output.monome, event->grid.x, event->grid.y);
 
     // set the state for 'show last step'
     part_under_edit->show_last_step = true;
 
+    part_under_edit->render_last_step_ui();
+    
     // render the page of the last step
     part_under_edit->render_page(part_under_edit->page.last_step);
 

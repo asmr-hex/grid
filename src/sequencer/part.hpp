@@ -366,6 +366,26 @@ public:
                          config->mappings.play_pause.y,
                          play_pause_led_brightness);
   };
+
+  void render_last_step_ui() {
+    if (follow_cursor) {
+      waveform w = { .amplitude.max = 9,
+                     .amplitude.max = 4,
+                     .modulator = { .type = Unit },
+                     .pwm = { .duty_cycle = 0.5, .period = 400, .phase = 0 }
+      };
+      animation->add(w, config->mappings.last_step);
+    } else {
+      // remove any pre-existing animations
+      animation->remove(config->mappings.last_step);
+    }
+    
+    if (show_last_step) {
+      monome_led_on(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y);
+    } else if (!show_last_step && !follow_cursor) {
+      monome_led_off(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y); 
+    }
+  }
   
   // updates the state of last step of a part and updates the ui (monome grid).
   //
