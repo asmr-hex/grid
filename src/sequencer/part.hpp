@@ -313,6 +313,11 @@ public:
                                                                            config->mappings.pages.get_area() - 1),
                              led_brightness.page.beyond_last_step);
 
+    // remove all animations from pages
+    for (mapping_coordinates_t m : config->mappings.pages.get_region_coordinates(0, last_step_page)) {
+      animation->remove(m);
+    }
+    
     // set rendered page to highlighted
     mapping_coordinates_t rendered_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.rendered);
     monome_led_level_set(io->output.monome,
@@ -320,13 +325,24 @@ public:
                          rendered_page_coords.y,
                          led_brightness.page.under_edit);
 
-    if (page.rendered != page.cursor) {
-      // set cursor page to highlighted
-      mapping_coordinates_t cursor_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.cursor);
-      monome_led_level_set(io->output.monome,
-                           cursor_page_coords.x,
-                           cursor_page_coords.y,
-                           led_brightness.page.in_playback); 
+    if (!follow_cursor) {
+      if (page.rendered != page.cursor) {
+        // set cursor page to highlighted
+        mapping_coordinates_t cursor_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(page.cursor);
+        waveform w = {.amplitude.max = led_brightness.page.within_last_step,
+                      .amplitude.min = led_brightness.page.beyond_last_step,
+                      .modulator = { .type = Unit },
+                      .pwm = { .duty_cycle = 0.8, .period = 300, .phase = 0 }
+        };
+        animation->add(w, cursor_page_coords);
+      } else {
+        waveform w = {.amplitude.max = led_brightness.page.under_edit,
+                      .amplitude.min = led_brightness.page.in_playback,
+                      .modulator = { .type = Unit },
+                      .pwm = { .duty_cycle = 0.8, .period = 300, .phase = 0 }
+        };
+        animation->add(w, rendered_page_coords);
+      } 
     }
   };
 
@@ -349,6 +365,12 @@ public:
     }
     
     monome_led_on(io->output.monome, selected_ppqn.x, selected_ppqn.y);
+
+    waveform w = {.amplitude.max = 15,
+                  .modulator = { .type = Sine, .period = 2000, .phase = 0 },
+                  .pwm = { .duty_cycle = 1, .period = 100, .phase = 0 }
+    };
+    animation->add(w, {.x = 3, .y = 7});
   };
 
   // renders the play/pause button in the ui (monome grid) according to playback state.
