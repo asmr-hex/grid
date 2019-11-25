@@ -7,6 +7,8 @@
 #include "../config/config.hpp"
 
 
+// Ppqn maintains the state and ui rendering of the ppqn (pulse per quarter note) panel
+// for each part.
 class Ppqn {
 public:
   int current = 8;
