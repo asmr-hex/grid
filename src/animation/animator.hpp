@@ -1,11 +1,9 @@
 #ifndef ANIMATION_ANIMATOR_H
 #define ANIMATION_ANIMATOR_H
 
-#include <iostream>
-
-#include <map>
 #include <mutex>
 #include <algorithm>
+#include <unordered_map>
 
 #include <monome.h>
 #include <boost/thread.hpp>
@@ -52,8 +50,6 @@ public:
     std::lock_guard<std::mutex> guard(lock);
 
     animations.erase(c);
-
-    std::cout << c.x << ", " << c.y << " REMOVED\n";
   };
   
 private:
@@ -62,7 +58,7 @@ private:
   bool is_running = false;
   int frame_period = 50;  // milliseconds per cycle
   boost::thread animation_thread;
-  std::map<mapping_coordinates_t, WaveformWrapper*> animations;
+  std::unordered_map<mapping_coordinates_t, WaveformWrapper*, mapping_coordinates_hasher> animations;
   unsigned int t = 0;
 
   void update_animation_frame() {

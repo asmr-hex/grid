@@ -20,7 +20,21 @@ struct mapping_coordinates_t {
 
   // overload logical less than  operator so coordinates can be used as a map key
   bool operator<(const mapping_coordinates_t &m) const {
-    return x < m.x || y < m.y;
+    if (x < m.x && y <= m.y) return true;
+    if (x <= m.x && y < m.y) return true;
+
+    return false;
+  };
+};
+
+// the mapping_coordinates_hasher is used as the hash function when mapping_coordinates_t
+// is used as the key to an unordered_map.
+struct mapping_coordinates_hasher {
+  size_t operator()(const mapping_coordinates_t &m) const
+  {
+    size_t h1 = std::hash<double>()(m.x);
+    size_t h2 = std::hash<double>()(m.y);
+    return (h1 ^ (h2 << 1));
   };
 };
 

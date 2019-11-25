@@ -39,7 +39,6 @@ public:
     // if a change is already pending, remove the animation for the stale next ppqn
     if (pending_change) {
       animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(index_from_ppqn(next)), 0);
-      std::cout << next << " ANIMATION OFF (in set_next)\n";
     }
 
     next = ppqn_from_index(idx);
@@ -51,8 +50,6 @@ public:
                   .pwm = { .duty_cycle = 0.1, .period = 100, .phase = 0 }
     };
     animation->add(w, config->mappings.ppqn.get_coordinates_from_sequential_index(index_from_ppqn(next)));
-
-    std::cout << next << " ANIMATION ON\n";
     
     render();
   }
@@ -65,7 +62,6 @@ public:
   void set() {
     // remove the animation for the next ppqn and turn off pending change.
     animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(index_from_ppqn(next)), 0);
-    std::cout << next << " ANIMATION OFF (in set)\n";
     
     set(index_from_ppqn(next));
   }
