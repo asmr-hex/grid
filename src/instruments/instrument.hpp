@@ -68,7 +68,7 @@ public:
     // render part and its sub-components
     part_to_render->render_page(part_to_render->page.rendered, force_rerender);
     part_to_render->render_page_selection_ui();
-    part_to_render->render_ppqn_selection_ui();
+    part_to_render->ppqn->render();
     part_to_render->render_play_pause_ui();
     part_to_render->render_last_step_ui();
   };

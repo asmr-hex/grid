@@ -40,10 +40,20 @@ public:
     animations[c] = new WaveformWrapper(w);
   };
 
+  // remove animations, if they exist, from coordinates and set the led to a
+  // provided intensity.
+  void remove(mapping_coordinates_t c, int intensity) {
+    remove(c);
+    monome_led_level_set(io->output.monome, c.x, c.y, intensity);
+  }
+
+  // remove animations, if they exist, from coordinates.
   void remove(mapping_coordinates_t c) {
     std::lock_guard<std::mutex> guard(lock);
 
     animations.erase(c);
+
+    std::cout << c.x << ", " << c.y << " REMOVED\n";
   };
   
 private:

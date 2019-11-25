@@ -121,7 +121,6 @@ void ppqn_handler(IO *io, Animator *animation, State *state, Config *config, con
 
     // set the current ppqn for this part
     part_under_edit->set_ppqn(config->mappings.ppqn.get_sequential_index_from_coordinates(event->grid.x, event->grid.y));
-    part_under_edit->render_ppqn_selection_ui();
   }
 }
 

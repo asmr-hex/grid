@@ -21,7 +21,8 @@
 #include "../config/mappings/types.hpp"
 #include "../handlers/utils.hpp"
 
-// TODO feed io to Part so it can render its internal state!
+#include "ppqn.hpp"
+
 
 class Part {
 public:
@@ -29,12 +30,8 @@ public:
     int part;
     int bank;
   } id;
-  struct {
-    int current = 8;
-    int next;
-    bool pending_change = false;
-  } ppqn;
-  bool ppqn_pending_change = false;
+  Ppqn *ppqn;
+  
   struct {
     int rendered = 0;
     int under_edit = 0;
@@ -69,7 +66,9 @@ public:
     // load part file if it exists.
     id.part = part_id;
     id.bank = bank_id;
-    ppqn.current = 8;
+
+    ppqn = new Ppqn(io, animation, config);
+    
     length = 64;
     default_note = "C5";
   };
@@ -227,36 +226,15 @@ public:
   };
 
   // sets the ppqn given a sequential index.
-  void set_ppqn(int ppqn_index) {
-    // if a change is already pending, remove the animation for the stale next ppqn
-    if (ppqn.pending_change)
-      animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(get_ppqn_index(ppqn.next)));
-
-    switch (ppqn_index) {
-    case 0:
-      ppqn.next = constants::PPQN::One;
-      break;
-    case 1:
-      ppqn.next = constants::PPQN::Two;
-      break;
-    case 2:
-      ppqn.next = constants::PPQN::Four;
-      break;
-    case 3:
-      ppqn.next = constants::PPQN::Eight;
-      break;
-    case 4:
-      ppqn.next = constants::PPQN::Sixteen;
-      break;
-    case 5:
-      ppqn.next = constants::PPQN::ThirtyTwo;
-      break;
-    case 6:
-      ppqn.next = constants::PPQN::SixtyFour;
-      break;
+  //
+  // if the part is currently playing, set the next ppqn to be scheduled
+  // otherwise, immediately set the current ppqn.
+  void set_ppqn(int idx) {
+    if (playback.is_playing) {
+      ppqn->set_next(idx);
+    } else {
+      ppqn->set(idx);
     }
-
-    ppqn.pending_change = true;
   };
   
   // renders a page onto the ui without forced re-rendering
@@ -344,33 +322,6 @@ public:
         animation->add(w, rendered_page_coords);
       } 
     }
-  };
-
-  // renders the ppqn selection panel in the ui (monome grid).
-  void render_ppqn_selection_ui() {
-    int ppqn_index = get_ppqn_index(ppqn.current);
-    mapping_coordinates_t selected_ppqn = config->mappings.ppqn.get_coordinates_from_sequential_index(ppqn_index);
-
-    // turn off all leds in ppqn zone...
-    set_led_region_intensity(io, &config->mappings.ppqn, 0);
-
-    if (ppqn.pending_change) {
-      int next_ppqn_idx = get_ppqn_index(ppqn.next);
-      mapping_coordinates_t c = config->mappings.ppqn.get_coordinates_from_sequential_index(next_ppqn_idx);
-      waveform w = {.amplitude.max = 9,
-                    .modulator = { .type = Unit },
-                    .pwm = { .duty_cycle = 0.1, .period = 100, .phase = 0 }
-      };
-      animation->add(w, c);
-    }
-    
-    monome_led_on(io->output.monome, selected_ppqn.x, selected_ppqn.y);
-
-    waveform w = {.amplitude.max = 15,
-                  .modulator = { .type = Sine, .period = 2000, .phase = 0 },
-                  .pwm = { .duty_cycle = 1, .period = 100, .phase = 0 }
-    };
-    animation->add(w, {.x = 3, .y = 7});
   };
 
   // renders the play/pause button in the ui (monome grid) according to playback state.
@@ -491,7 +442,7 @@ private:
   
   int get_next_step(int step) {
     // advance to next step
-    step += ppqn.current;
+    step += ppqn->current;
 
     // if the active step is now greater than the last step, loop back
     if (step > (length * constants::PPQN_MAX) - 1) {
@@ -518,12 +469,7 @@ private:
     }
 
     // if we are changing the ppqn, wait until beat for it to take effect
-    if (ppqn.pending_change) {
-      ppqn.current = ppqn.next;
-      ppqn.pending_change = false;
-      animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(get_ppqn_index(ppqn.next)));
-      render_ppqn_selection_ui();
-    }
+    if (ppqn->pending_change) ppqn->set();
   }
 
   void on_pulse_updates(int pulse) {
@@ -548,41 +494,6 @@ private:
     swap_part_in_playback(playback.next_part->id.bank, playback.next_part->id.part);
   };
   
-  // returns the sequential index of ppqn within the available ppqns sorted in
-  // ascending order.
-  int get_ppqn_index(int ppqn_i) {
-    int index;
-    
-    switch (ppqn_i) {
-    case constants::PPQN::One:
-      index = 0;
-      break;
-    case constants::PPQN::Two:
-      index = 1;
-      break;
-    case constants::PPQN::Four:
-      index = 2;
-      break;
-    case constants::PPQN::Eight:
-      index = 3;
-      break;
-    case constants::PPQN::Sixteen:
-      index = 4;
-      break;
-    case constants::PPQN::ThirtyTwo:
-      index = 5;
-      break;
-    case constants::PPQN::SixtyFour:
-      index = 6;
-      break;
-    default:
-      index = 0;
-      break;
-    }
-
-    return index;
-  };
-
   bool is_step_visible(int coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
     int min_visible_step = (page.rendered * page_size);
