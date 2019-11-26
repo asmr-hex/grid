@@ -22,6 +22,7 @@
 #include "../handlers/utils.hpp"
 
 #include "ppqn.hpp"
+#include "transport.hpp"
 
 
 class Part {
@@ -66,6 +67,12 @@ public:
     default_note = "C5";
   };
 
+  //////////////////////////////////////////////
+  //                                          //
+  //    t r a n s p o r t    m e t h o d s    //
+  //                                          //
+  //////////////////////////////////////////////
+  
   // prepare to play part and possibly render
   void play() {
     transport->prepare_to_play();
@@ -87,13 +94,18 @@ public:
 
   // transition to a new part to play
   //
-  // when we are transitioning to a new part, the part
-  // currently in playback is never being rendered, so we
-  // don't give the option to render here.
+  // when we are transitioning to a new part, the part currently in playback
+  // is never being rendered, so we don't give the option to render here.
   void transition_to(Part *next_part) {
     transport->transition_to(next_part->transport);
   };
 
+  //////////////////////////////////////////////
+  //                                          //
+  //    s c h e d u l e d    m e t h o d s    //
+  //                                          //
+  //////////////////////////////////////////////
+  
   void sync_to_clk(int pulse) {
     if (pulse == 0) {
       // perform on beat updates if appropriate

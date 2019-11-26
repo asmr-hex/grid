@@ -184,12 +184,7 @@ public:
 
   void stop_part() {
     // stop part in playback!
-    get_part_in_playback()->stop_playback();
-
-    if (part.under_edit == part.in_playback) {
-      // update the start/pause led to be off
-      get_part_in_playback()->render_play_pause_ui();
-    }
+    get_part_in_playback()->stop();
   };
   
   // selects a new part to edit and renders it in the ui. this variant method uses the currently
