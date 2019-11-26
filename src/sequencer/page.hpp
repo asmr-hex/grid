@@ -9,6 +9,8 @@
 #include "../animation/types.hpp"
 #include "../animation/animator.hpp"
 
+#include "steps.hpp"
+
 
 class Page {
 public:
@@ -17,23 +19,33 @@ public:
   int in_playback = 0;
   int last        = 1;
 
-  // location of cursor, page relative
-  int cursor;
-
   Page(IO *io, Config *config, Animator *animation)
-    : io(io), config(config), animation(animation) {};
+    : io(io), config(config), animation(animation) {
+    steps = new Steps(op, config, animation);
+  };
 
+  // TODO in terms of rendering, we need to be able to do the following
+  // 1) render steps, last step, cursor from scratch
+  // 2) "incrementally" render last step without re-rendering all steps
+  // 3) "incrementally" render cursor without re-rendering all steps
+  
   // render everything on a provided page
   void render(int page) {
     rendered = page;
 
-    render_page(page);
-    render_selection_panel(page);
+    steps->render(page);
+
+    // do remaining rendering of page panel
   };
 
   // render everything on the page_under edit
   void render() {
     render(under_edit);
+  };
+
+  // sets the provided page as the page under_edit
+  void edit(int page) {
+    
   };
   
 private:
@@ -41,6 +53,8 @@ private:
   Config *config;
   Animator *animation;
 
+  Steps *steps;
+  
   // led brightness and animation configuration for pages panel
   struct {
     int out_of_bounds             = 0;
@@ -51,33 +65,15 @@ private:
                                      .modulator = { .type = Unit },
                                      .pwm = { .duty_cycle = 0.8, .period = 300, .phase = 0 }
     };
-    waveform in_playback_rendered = {.amplitude.max = 15,
-                                     .amplitude.min = 4,
-                                     .modulator = { .type = Unit },
-                                     .pwm = { .duty_cycle = 0.8, .period = 300, .phase = 0 }
-    };
+    struct {
+      waveform in_playback_and_rendered = {.amplitude.max = 15,
+                                           .amplitude.min = 4,
+                                           .modulator = { .type = Unit },
+                                           .pwm = { .duty_cycle = 0.8, .period = 300, .phase = 0 }
+      };
+    } collision;
   } led;
-
-  // steps rendered on each page
-  std::map<int, std::set<int> > rendered_steps;
-
-  // renders the activated steps on the sequence page as well as the cursor and last step
-  // if appropriate.
-  void render_page(int page) {
-    // remove all animations
-    
-    // render activated steps
-
-    // render cursor
-
-    // render last step if necessary
-        
-  };
-
-  // renders the page selection panel.
-  void render_selection_panel(int page) {
-    
-  };
+  
 };
 
 #endif
