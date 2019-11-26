@@ -32,7 +32,7 @@ public:
   } id;
   Ppqn *ppqn;
   Transport *transport;
-  
+  bool is_rendered = false;
   struct {
     int rendered = 0;
     int under_edit = 0;
@@ -67,19 +67,19 @@ public:
   };
 
   // prepare to play part and possibly render
-  void play(bool is_rendered) {
+  void play() {
     transport->prepare_to_play();
     if (is_rendered) transport->render();
   };
 
   // pause part and render and possibly render
-  void pause(bool is_rendered) {
+  void pause() {
     transport->pause();
     if (is_rendered) transport->render();
   };
 
   // stop part and possibly render
-  void stop(bool is_rendered) {
+  void stop() {
     transport->stop();
     active_step = 0;
     if (is_rendered) transport->render();
@@ -203,6 +203,8 @@ public:
     } else {
       ppqn->set(idx);
     }
+
+    if (is_rendered) ppqn->render();
   };
   
   // renders a page onto the ui without forced re-rendering
@@ -399,28 +401,40 @@ private:
     return step;
   };
 
-  // TODO on these async updates to state... WE NEED TO BE ABLE TO TELL
-  // IF WE NEED TO RENDER THE CHANGES!
-  // I.E is Instrument::part.in_playback == Instrument::part.under_edit
+  //////////////////////////////////////////////////
+  //                                              //
+  //  a s y n c     s t a t e     u p d a t e s   //
+  //                                              //
+  //////////////////////////////////////////////////
   
   void on_cycle_updates() {
     // relinquish playback status and give the next part a turn!
-    if (transport->is_stopping && transport->is_transitioning)
+    if (transport->is_stopping && transport->is_transitioning) {
       transport->handoff_playback();
+      if (is_rendered) transport->render();
+    }
   }
   
   void on_beat_updates() {
     // if we are about to begin playing, make sure it starts on the beat
-    if (transport->is_about_to_start) transport->play();
+    if (transport->is_about_to_start) {
+      transport->play();
+      if (is_rendered) transport->render();
+    }
 
     // if we are changing the ppqn, wait until beat for it to take effect
-    if (ppqn->pending_change) ppqn->set();
+    if (ppqn->pending_change) {
+      ppqn->set();
+      if (is_rendered) ppqn->render();
+    }
   }
 
   void on_pulse_updates(int pulse) {
     // if we are about to pause, make sure we pause on the beat so we can resume on the beat
-    if (pulse == transport->pause_pulse_offset && transport->is_about_to_unpause)
+    if (pulse == transport->pause_pulse_offset && transport->is_about_to_unpause) {
       transport->play();
+      if (is_rendered) transport->render();
+    }
   };
   
   bool is_step_visible(int coarse_step) {

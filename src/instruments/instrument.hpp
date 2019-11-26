@@ -127,9 +127,9 @@ public:
       // play or pause the part depending on the part's playback state
 
       if (part_in_playback->transport->is_playing)
-        part_in_playback->pause(true);
+        part_in_playback->pause();
       else
-        part_in_playback->play(true);
+        part_in_playback->play();
     } else {
       // current part is under edit and not in playback.
       // this means we are going to play the part under edit now.
@@ -138,8 +138,8 @@ public:
         // since the current part in playback is paused/stopped we can immediately start
 
         // ensure current part in playback is actually stopped
-        part_in_playback->stop(false);
-        part_under_edit->play(true);
+        part_in_playback->stop();
+        part_under_edit->play();
 
         // set the new part as in playback
         bank.in_playback = part_under_edit->id.bank;
@@ -182,22 +182,6 @@ public:
            };
   };
 
-  // returns a closure which tells the caller if the provided part is
-  // currently being rendered.
-  //
-  // this is passed to each Part and is used as a way to smuggle in the render
-  // state of a given Part without having the overhead of book-keeping some state
-  // in each part (e.g. Part::is_rendered). though maybe that is a more straightfoward
-  // approach..? but then again, once we get into different instruments beign rendered,
-  // we will have to take that into account.
-  // TODO think about this more --^ this seems liek a code smell since we maybe should
-  // only be using these kind of closures to update the parent's state from a child.
-  std::function<bool (int, int)> is_part_rendered_closure() {
-    return [this] (int bank_id, int part_id) {
-             return part.under_edit == part_id && bank.under_edit == bank_id;
-           };
-  };
-  
   void stop_part() {
     // stop part in playback!
     get_part_in_playback()->stop_playback();
@@ -282,7 +266,12 @@ public:
 
     // ensure part exists
     ensure_part(bank_idx, part_idx);
-      
+
+    // before we update the part under edit, set the previous part under edit's
+    // render status to false and the new part under edit's rennder status to true
+    get_part_under_edit()->is_rendered = false;
+    parts[bank_idx][part_idx]->is_rendered = true;
+    
     // update bank / part under edit
     part.under_edit = part_idx;
     bank.under_edit = bank_idx;
@@ -327,7 +316,7 @@ protected:
                                            animation,
                                            swap_part_in_playback_closure());
     }
-  }
+  };
 };
 
 #endif

@@ -30,8 +30,10 @@ public:
     mapping_coordinates_t current_coords = config->mappings.ppqn.get_coordinates_from_sequential_index(current_idx);
     mapping_coordinates_t next_coords = config->mappings.ppqn.get_coordinates_from_sequential_index(next_idx);
 
-    // turn off all leds in ppqn zone
-    set_led_region_intensity(io, &config->mappings.ppqn, 0);
+    // remove all animations from ppqn panel and set to off intensity
+    animation->remove(config->mappings.ppqn, led.off);
+
+    if (pending_change) animation->add(led.next, next_coords);
     
     // turn on the current ppqn
     monome_led_on(io->output.monome, current_coords.x, current_coords.y);
@@ -41,23 +43,9 @@ public:
   //
   // this doesn't change the current ppqn but updates the ppqn which will be
   // set next. this method is usually called from within the event handlers thread.
-  void set_next(int idx) {    
-    // if a change is already pending, remove the animation for the stale next ppqn
-    if (pending_change) {
-      animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(index_from_ppqn(next)), 0);
-    }
-
+  void set_next(int idx) {
     next = ppqn_from_index(idx);
     pending_change = true;
-
-    // set animation for next ppqn
-    waveform w = {.amplitude.max = 9,
-                  .modulator = { .type = Unit },
-                  .pwm = { .duty_cycle = 0.1, .period = 100, .phase = 0 }
-    };
-    animation->add(w, config->mappings.ppqn.get_coordinates_from_sequential_index(index_from_ppqn(next)));
-    
-    render();
   }
 
   // sets the current ppqn using the next ppqn and re-renders.
@@ -65,10 +53,7 @@ public:
   // we assume that next has been set already using set_next method. it is worth noting
   // that this method variant is typically called from within a different thread as the
   // set_next method. this method is called from the sequencer scheduler thread usually.
-  void set() {
-    // remove the animation for the next ppqn and turn off pending change.
-    animation->remove(config->mappings.ppqn.get_coordinates_from_sequential_index(index_from_ppqn(next)), 0);
-    
+  void set() {    
     set(index_from_ppqn(next));
   }
 
@@ -76,14 +61,22 @@ public:
   void set(int idx) {      
     pending_change = false;
     current = ppqn_from_index(idx);
-
-    render();
   };
   
 private:
   IO *io;
   Config *config;
   Animator *animation;
+
+  // led brightness and animation configuration for ppqn panel
+  struct {
+    int off = 0;
+    int current = 15;
+    waveform next = {.amplitude.max = 9,
+                     .modulator = { .type = Unit },
+                     .pwm = { .duty_cycle = 0.1, .period = 100, .phase = 0 }
+    };
+  } led;
   
   int ppqn_from_index(int idx) {
     switch (idx) {

@@ -58,6 +58,10 @@ public:
     };
   };
 
+  std::vector<mapping_coordinates_t> get_region_coordinates() {
+    return get_region_coordinates(0, get_area());
+  };
+  
   std::vector<mapping_coordinates_t> get_region_coordinates(unsigned int start, unsigned int end) {
     std::vector<mapping_coordinates_t> region;
 
