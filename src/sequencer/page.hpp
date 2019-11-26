@@ -17,11 +17,23 @@ public:
   int in_playback = 0;
   int last        = 1;
 
-  Pages(IO *io, Config *config, Animator *animation)
+  // location of cursor, page relative
+  int cursor;
+
+  Page(IO *io, Config *config, Animator *animation)
     : io(io), config(config), animation(animation) {};
 
+  // render everything on a provided page
+  void render(int page) {
+    rendered = page;
+
+    render_page(page);
+    render_selection_panel(page);
+  };
+
+  // render everything on the page_under edit
   void render() {
-    
+    render(under_edit);
   };
   
 private:
@@ -45,8 +57,27 @@ private:
                                      .pwm = { .duty_cycle = 0.8, .period = 300, .phase = 0 }
     };
   } led;
-  
+
+  // steps rendered on each page
   std::map<int, std::set<int> > rendered_steps;
+
+  // renders the activated steps on the sequence page as well as the cursor and last step
+  // if appropriate.
+  void render_page(int page) {
+    // remove all animations
+    
+    // render activated steps
+
+    // render cursor
+
+    // render last step if necessary
+        
+  };
+
+  // renders the page selection panel.
+  void render_selection_panel(int page) {
+    
+  };
 };
 
 #endif
