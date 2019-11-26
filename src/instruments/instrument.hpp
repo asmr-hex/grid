@@ -118,27 +118,28 @@ public:
     Part *part_under_edit = get_part_under_edit();
     Part *part_in_playback = get_part_in_playback();
     
-    if (part.under_edit == part.in_playback && bank.under_edit == bank.in_playback) {
+    bool playback_part_is_under_edit =
+      part.under_edit == part.in_playback &&
+      bank.under_edit == bank.in_playback;
+    
+    if (playback_part_is_under_edit) {
       // when the part under edit *is* the part in playback, we simply
       // play or pause the part depending on the part's playback state
-      
-      if (part_in_playback->playback.is_playing) {
-        // current part is in playback and is playing, pause it
-        part_in_playback->pause_playback();
-      } else {
-        // current part is in playback and is paused or stopped, play it
-        part_in_playback->begin_playback();
-      }
-      
+
+      if (part_in_playback->transport->is_playing)
+        part_in_playback->pause(true);
+      else
+        part_in_playback->play(true);
     } else {
       // current part is under edit and not in playback.
+      // this means we are going to play the part under edit now.
 
-      if (!part_in_playback->playback.is_playing) {
+      if (!part_in_playback->transport->is_playing) {
         // since the current part in playback is paused/stopped we can immediately start
 
         // ensure current part in playback is actually stopped
-        part_in_playback->stop_playback();
-        part_under_edit->begin_playback();
+        part_in_playback->stop(false);
+        part_under_edit->play(true);
 
         // set the new part as in playback
         bank.in_playback = part_under_edit->id.bank;
@@ -150,12 +151,9 @@ public:
       } else {
         // schedule current in playback part to stop on next cycle
         // and hand over playback to part under edit.
-        part_in_playback->enqueue_next_part_for_playback(part_under_edit);   
+        part_in_playback->transition_to(part_under_edit);   
       }
     }
-
-    // update playback led for current part
-    part_under_edit->render_play_pause_ui();
   };
 
   // returns a closure which swaps out the part currently in playback.
@@ -181,6 +179,22 @@ public:
              // re-render the part/bank ui
              render_part_selection_panel();
              render_bank_selection_panel();
+           };
+  };
+
+  // returns a closure which tells the caller if the provided part is
+  // currently being rendered.
+  //
+  // this is passed to each Part and is used as a way to smuggle in the render
+  // state of a given Part without having the overhead of book-keeping some state
+  // in each part (e.g. Part::is_rendered). though maybe that is a more straightfoward
+  // approach..? but then again, once we get into different instruments beign rendered,
+  // we will have to take that into account.
+  // TODO think about this more --^ this seems liek a code smell since we maybe should
+  // only be using these kind of closures to update the parent's state from a child.
+  std::function<bool (int, int)> is_part_rendered_closure() {
+    return [this] (int bank_id, int part_id) {
+             return part.under_edit == part_id && bank.under_edit == bank_id;
            };
   };
   

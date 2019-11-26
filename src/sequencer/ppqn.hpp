@@ -19,6 +19,10 @@ public:
   Ppqn(IO *io, Animator *animation, Config *config)
     : io(io), animation(animation), config(config) {};
 
+  //TODO WE NEED TO DECOUPLE STATE UPDATES FROM RENDERING
+  // RENDERING SHOULD BE CALLED BY THE PARENT WHICH KNOWS THE
+  // RENDERING STATE!
+  
   // render the ppqn selection panel in the ui.
   void render() {
     int current_idx = index_from_ppqn(current);

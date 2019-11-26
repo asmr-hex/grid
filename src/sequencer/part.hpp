@@ -31,6 +31,7 @@ public:
     int bank;
   } id;
   Ppqn *ppqn;
+  Transport *transport;
   
   struct {
     int rendered = 0;
@@ -41,15 +42,6 @@ public:
   bool follow_cursor = false;
   int length = 32; // TODO refactor this to be last_step
   bool show_last_step = false;
-  struct {
-    bool is_playing = false;
-    bool is_paused = false;
-    bool is_stopping = false;
-    bool is_about_to_start = false;
-    bool is_about_to_unpause = false;
-    int pause_pulse_offset = 0;
-    Part *next_part;
-  } playback;
   bool unsaved;
 
   
@@ -68,62 +60,38 @@ public:
     id.bank = bank_id;
 
     ppqn = new Ppqn(io, animation, config);
+    transport= new Transport(id.part, id.bank, io, animation, config, swap_part_in_playback);
     
     length = 64;
     default_note = "C5";
   };
 
-  void begin_playback() {
-    playback.is_playing = false;
-    // playback.is_paused = false;
-    if (playback.is_paused) {
-      playback.is_about_to_unpause = true;  
-    } else {
-      playback.is_about_to_start = true;  
-    }
-    
-    // add animation for about to begin
-    waveform w = {.amplitude.max = 15,
-                  .amplitude.min = 5,
-                  .modulator = { .type = Unit },
-                  .pwm = { .duty_cycle = 0.6, .period = 100, .phase = 0}
-    };
-    animation->add(w, config->mappings.play_pause);
+  // prepare to play part and possibly render
+  void play(bool is_rendered) {
+    transport->prepare_to_play();
+    if (is_rendered) transport->render();
   };
-  
-  void pause_playback() {
-    playback.is_playing = false;
-    playback.is_paused = true;
-    playback.pause_pulse_offset = active_step % constants::PPQN_MAX;
-    // add animation for about to begin
-    waveform w = {.amplitude.max = 8,
-                  .amplitude.min = 4,
-                  .modulator = { .type = Unit },
-                  .pwm = { .duty_cycle = 0.5, .period = 500, .phase = 0}
-    };
-    animation->add(w, config->mappings.play_pause);
+
+  // pause part and render and possibly render
+  void pause(bool is_rendered) {
+    transport->pause();
+    if (is_rendered) transport->render();
   };
-  
-  void stop_playback() {
-    playback.is_playing = false;
-    playback.is_paused = false;
-    playback.is_stopping = false;
+
+  // stop part and possibly render
+  void stop(bool is_rendered) {
+    transport->stop();
     active_step = 0;
-    animation->remove(config->mappings.play_pause);
+    if (is_rendered) transport->render();
   };
 
-  void enqueue_next_part_for_playback(Part *next_part) {
-    if (playback.is_stopping) {
-      // playback for this part is already stopping...
-      // this means that a new part has been enqueued to start
-
-      // set previously enqueued next part to *not* be about to play
-      playback.next_part->playback.is_about_to_start = false;
-    }
-    
-    playback.is_stopping = true;
-    playback.next_part = next_part;
-    playback.next_part->playback.is_about_to_start = true;
+  // transition to a new part to play
+  //
+  // when we are transitioning to a new part, the part
+  // currently in playback is never being rendered, so we
+  // don't give the option to render here.
+  void transition_to(Part *next_part) {
+    transport->transition_to(next_part->transport);
   };
 
   void sync_to_clk(int pulse) {
@@ -324,22 +292,6 @@ public:
     }
   };
 
-  // renders the play/pause button in the ui (monome grid) according to playback state.
-  void render_play_pause_ui() {
-    int play_pause_led_brightness;
-    if (playback.is_playing) {
-      play_pause_led_brightness = led_brightness.playback.play;
-    } else if (playback.is_paused) {
-      play_pause_led_brightness = led_brightness.playback.pause;
-    } else if (!playback.is_playing) {
-      play_pause_led_brightness = led_brightness.playback.stop;
-    }
-    monome_led_level_set(io->output.monome,
-                         config->mappings.play_pause.x,
-                         config->mappings.play_pause.y,
-                         play_pause_led_brightness);
-  };
-
   void render_last_step_ui() {
     if (follow_cursor) {
       waveform w = { .amplitude.max = 9,
@@ -433,11 +385,6 @@ private:
       int under_edit = 15;
       int in_playback = 10;
     } page;
-    struct {
-      int play = 15;
-      int pause = 5;
-      int stop = 0;
-    } playback;
   } led_brightness;
   
   int get_next_step(int step) {
@@ -452,21 +399,19 @@ private:
     return step;
   };
 
+  // TODO on these async updates to state... WE NEED TO BE ABLE TO TELL
+  // IF WE NEED TO RENDER THE CHANGES!
+  // I.E is Instrument::part.in_playback == Instrument::part.under_edit
+  
   void on_cycle_updates() {
-    if (playback.is_stopping) {
-      // relinquish playback status and give the next part a turn!
-      handoff_playback(); 
-    }
+    // relinquish playback status and give the next part a turn!
+    if (transport->is_stopping && transport->is_transitioning)
+      transport->handoff_playback();
   }
   
   void on_beat_updates() {
     // if we are about to begin playing, make sure it starts on the beat
-    if (playback.is_about_to_start) {
-      playback.is_about_to_start = false;
-      playback.is_playing = true;
-      animation->remove(config->mappings.play_pause);
-      render_play_pause_ui();
-    }
+    if (transport->is_about_to_start) transport->play();
 
     // if we are changing the ppqn, wait until beat for it to take effect
     if (ppqn->pending_change) ppqn->set();
@@ -474,24 +419,8 @@ private:
 
   void on_pulse_updates(int pulse) {
     // if we are about to pause, make sure we pause on the beat so we can resume on the beat
-    if (pulse == playback.pause_pulse_offset && playback.is_about_to_unpause) {
-      playback.is_paused = false;
-      playback.is_playing = true;
-      playback.is_about_to_unpause = false;
-      animation->remove(config->mappings.play_pause);
-      render_play_pause_ui();
-    }
-  };
-  
-  void handoff_playback() {
-    // first, stop this part
-    stop_playback();
-
-    // start next part
-    playback.next_part->begin_playback();
-
-    // execute notify handler on instrument
-    swap_part_in_playback(playback.next_part->id.bank, playback.next_part->id.part);
+    if (pulse == transport->pause_pulse_offset && transport->is_about_to_unpause)
+      transport->play();
   };
   
   bool is_step_visible(int coarse_step) {
