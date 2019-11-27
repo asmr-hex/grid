@@ -375,11 +375,6 @@ public:
   int get_last_step() {
     return length - 1;
   };
-
-  int get_page(int absolute_coarse_step) {
-    unsigned int page_size = config->mappings.steps.get_area();
-    return absolute_coarse_step / page_size;
-  };
   
   int get_page_relative_last_step(int page_i) {
     return get_relative_step(page_i, get_last_step());

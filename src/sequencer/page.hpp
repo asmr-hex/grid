@@ -31,21 +31,6 @@ public:
   // 3) "incrementally" render cursor without re-rendering all steps
 
   void advance_cursor(step_idx_t from, step_idx_t to) {
-    // if we maintain cursor state within steps, we need to
-    // (1) know the current page being rendered
-    // (2) know if the part is even being rendered
-    // (3) somehow change the state of the in_playback page in page from within steps...
-
-    // if we pass in the cursor (or active step) from Part
-    // (1) we can update in_playback part in Page as it passes through
-    // (2) determine to advance the steps cursor only if rendered == in_playback within Page
-    // (3)
-    //
-    // i think threading through the cursor from Part is the way to go. means we only have
-    // to maintain that state in one place (good!) and it fits this architecture pretty well.
-    //
-    // BUT question: do we need to pass cursor to these render methods?
-    // i think we should....
 
     // update the page in playback given the next step
     page_idx_t page_to = get_page(to);
@@ -101,7 +86,18 @@ private:
       };
     } collision;
   } led;
+
   
+  //////////////////////////////////////////////
+  //                                          //
+  //    p r i v a t e    u t i l i t i e s    //
+  //                                          //
+  //////////////////////////////////////////////
+  
+  page_idx_t get_page(step_idx_t step) {
+    unsigned int page_size = config->mappings.steps.get_area();
+    return step / page_size;
+  };
 };
 
 #endif
