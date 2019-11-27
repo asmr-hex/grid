@@ -24,6 +24,7 @@ struct page_relative_step_t {
   };
 };
 
+
 class Steps {
 public:
   page_relative_step_t last   = { .page = 1, .step = 32 };
@@ -33,6 +34,13 @@ public:
   Steps(IO *io, Config *config, Animator *animation)
     : io(io), config(config), animation(animation) {};
 
+  
+  //////////////////////////////////////////////
+  //                                          //
+  //    r e n d e r i n g    m e t h o d s    //
+  //                                          //
+  //////////////////////////////////////////////
+  
   // shows the ui cursor on the next step and hides it on the previous step.
   // the ui cursors are only shown or hidden if they fall on the currently
   // rendered page.
@@ -103,6 +111,13 @@ public:
     }
   };
 
+  
+  //////////////////////////////////////
+  //                                  //
+  //    s t a t e    s e t t e r s    //
+  //                                  //
+  //////////////////////////////////////
+  
   // sets the last step position in the sequence
   void set_last_step(int sequence_relative_step) {
     last = get_page_relative_step(sequence_relative_steps);
@@ -131,6 +146,13 @@ public:
     rendered_steps[page_relative.page].erase(page_relative.step);
   }
 
+  
+  ////////////////////////////////////////////
+  //                                        //
+  //    p u b l i c    u t i l i t i e s    //
+  //                                        //
+  ////////////////////////////////////////////
+  
   // check whether a provided sequence relative step is rendered.
   bool is_rendered(int sequence_relative_step) {
     page_relative_step_t page_relative = get_page_relative_step(sequence_relative_step);
@@ -185,6 +207,13 @@ private:
     } collision;
   } led;
 
+  
+  //////////////////////////////////////////////
+  //                                          //
+  //    p r i v a t e    r e n d e r e r s    //
+  //                                          //
+  //////////////////////////////////////////////
+  
   // hide cursor sets the step it falls on back to its orignal state before the
   // cursor was there.
   //
@@ -243,6 +272,13 @@ private:
     // add animations on collision
     if (is_rendered(last)) animations->add(led.collision.last_step_and_step, c);
   };
+
+
+  //////////////////////////////////////////////
+  //                                          //
+  //    p r i v a t e    u t i l i t i e s    //
+  //                                          //
+  //////////////////////////////////////////////
   
   // given a sequence relative step, this converts it to a page relative step.
   page_relative_step_t get_page_relative_step(int sequence_relative_step) {
