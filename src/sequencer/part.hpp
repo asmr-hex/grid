@@ -161,6 +161,19 @@ public:
       render_page_selection_ui();
     }
   };
+
+  // advances the ui cursor of this part from the current step to the next step.
+  //
+  // this method assumes that the current part is under_edit and the instrument
+  // that owns it is also under_edit (e.g. this part is currently being rendered).
+  // checks for those conditions are the responsibility of the caller.
+  void advance_cursor() {
+    // convert active_step, which is a granular step, to a normal step
+    step_idx_t from = active_step / constants::PPQN_MAX;
+    step_idx_t to = get_next_step(active_step) / constants::PPQN_MAX;
+    
+    page->advance_cursor(from, to);
+  };
   
   std::vector<step_event_t> advance() {
     std::vector<step_event_t> next_events;
@@ -381,7 +394,7 @@ public:
   };
     
 private:
-  int active_step = 0;
+  granular_step_idx_t active_step = 0;
   event_uid_t active_layer = 0x0000;  // 0x0000 is the 'all' layer
   Sequence sequence;
   std::string default_note;
@@ -400,8 +413,12 @@ private:
       int in_playback = 10;
     } page;
   } led_brightness;
-  
-  int get_next_step(int step) {
+
+  // given a current granular step, this computes the next granular step in the
+  // current part.
+  //
+  // this takes into account rolling over from the last step to the first step.
+  granular_step_idx_t get_next_step(granular_step_idx_t step) {
     // advance to next step
     step += ppqn->current;
 

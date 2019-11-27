@@ -64,10 +64,23 @@ struct step_event_t {
   std::vector<unsigned char> data;
 };
 
-/*
-  step index type.
- */
+// a page index is a sequential index used to access and denote pages.
+typedef unsigned int page_idx_t;
+
+// a step index is used to index a step in a sequence. unlike its granular
+// counter-part, it represents the index that one actually sees on the sequencer
+// and can be thought of as the sequential index of an event within the sequence.
 typedef unsigned int step_idx_t;
+
+// granular step indices are used to index into sequence steps and are
+// used as the active step maintained within a Part as it is advanced by
+// the sequence scheduler.
+//
+// these indices are "granular" or "fine-grained" because each step represents
+// a 1/constants::PPQN_MAX step (the shortest step possible) and, given how
+// sequences are stored/indexed internally, allows for fluid transitions of a
+// Part's effective ppqn.
+typedef step_idx_t granular_step_idx_t;
 
 typedef std::map<event_uid_t, step_event_t> layer_t;
 
