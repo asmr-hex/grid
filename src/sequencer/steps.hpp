@@ -33,12 +33,6 @@ public:
   Steps(IO *io, Config *config, Animator *animation)
     : io(io), config(config), animation(animation) {};
 
-  // TODO: we need to be able to
-  // (1) render all steps + cursor + last page from scratch
-  // (2) render a new cursor without re-rendering all steps (maximally updating two steps, i.e. previous and new)
-  // (3) render the last step without re-rending all steps (maximally updating one step)
-  // (4) 
-
   // shows the ui cursor on the next step and hides it on the previous step.
   // the ui cursors are only shown or hidden if they fall on the currently
   // rendered page.
@@ -59,9 +53,37 @@ public:
     // only show the next cursor if it is on the currently rendered page
     if (next.page == rendered_page) show_cursor(next);
   };
-  
-  // renders the provided page onto the ui
+
+  // renders the steps on the provided page without a cursor.
   void render(page_idx_t page) {
+    render(page, 0, false);
+  };
+
+  // renders the steps on a provided page with a cursor, if the cursor is on that page.
+  void render(page_idx_t page, step_idx_t cursor_idx) {
+    render(page, cursor_idx, true);
+  };
+  
+  // renders the steps on a provided page with an optional cursor, if the cursor lies on that page.
+  //
+  // this method is called upon initial rendering of a page. as it is currently
+  // implemented, this method is also called whenever we toggle show_last (in the caller)
+  // meaning that even if the last step is on the same page as the currently rendered part,
+  // everything on that page will be rendered as opposed to *just* the last step led
+  // being re-rendered. this results in inefficient re-rendering only in the case that
+  // we decide to show the last step and it happens to be on the currently rendered page.
+  //
+  // Notes: while this is inefficeint in this one case, it affords us the luxury of not
+  // having to include a hide_last_step method and integrating a bunch of hairy logic
+  // elsewhere (e.g. advance_cursor, show_last_step, and more probably) since we get the
+  // "hide_last_step" functionality for "free" by nature of clearing the rendered steps
+  // upon each render.
+  //
+  // it is worth noting that we *do* incrementally render/unrender the cursor within
+  // advance_cursor since this will be called upon each scheduled step if the page is
+  // being rendered, resulting in consistently needless re-renders. since showing the
+  // last step only happens every once in a while, this inefficiency seems fine to ignore.
+  void render(page_idx_t page, step_idx_t cursor_idx, bool render_cursor) {
     // remove all animations on page
     animation->remove(config->mappings.steps, led.off);
     
@@ -71,32 +93,19 @@ public:
       monome_led_level_set(io->output.monome, c.x, c.y, led.on);
     }
 
-    // render cursor (only if it is on the current page)
+    // render last step
+    if (last.page == page) show_last_step();
 
-    // render last step if necessary
-  };
-
-  // TODO have set + render cursor in caller code within Page
-  void render_cursor(int new_cursor) {
-    
-  };
-
-  void render_cursor(int new_cursor, int old_cursor) {
-    
-  };
-
-  // sets the cursor position in the sequence
-  void set_cursor(int sequence_relative_step) {
-    cursor = sequence_relative_steps;
-
-    recompute_collisions();
+    // render cursor
+    if (render_cursor) {
+      page_relative_step_t cursor = get_page_relative_step(cursor_idx);
+      if (cursor.page == page) show_cursor(cursor);
+    }
   };
 
   // sets the last step position in the sequence
   void set_last_step(int sequence_relative_step) {
-    last = sequence_relative_steps;
-
-    recompute_collisions();
+    last = get_page_relative_step(sequence_relative_steps);
   };
   
   // add a rendered step
@@ -105,8 +114,6 @@ public:
 
     // store in rendered_steps
     rendered_steps[page_relative.page].insert(page_relative.step);
-
-    recompute_collisions();
   };
 
   // bulk remove multiple rendered steps
@@ -122,8 +129,6 @@ public:
     
     // remove from rendered_steps
     rendered_steps[page_relative.page].erase(page_relative.step);
-
-    recompute_collisions();
   }
 
   // check whether a provided sequence relative step is rendered.
@@ -182,6 +187,9 @@ private:
 
   // hide cursor sets the step it falls on back to its orignal state before the
   // cursor was there.
+  //
+  // this method assumes that the cursor is located onn the page currently being rendered.
+  // the caller is responsible for checking if this is the case.
   void hide_cursor(page_relative_step_t cursor) {
     mapping_coordinates_t c = config->mappings.steps.get_coordinates_from_sequential_index(cursor.step);
     
@@ -194,6 +202,9 @@ private:
   };
 
   // show cursor sets the step it falls on to display the cursor state
+  //
+  // this method assumes that the cursor is located onn the page currently being rendered.
+  // the caller is responsible for checking if this is the case.
   void show_cursor(page_relative_step_t cursor) {
     mapping_coordinates_t c = config->mappings.steps.get_coordinates_from_sequential_index(cursor.step);
     
@@ -214,7 +225,25 @@ private:
       if (cursor_and_step_collision) animations->add(led.collisions.cursor_and_step, c);
     }
   }
+
+  // shows the last step unless the state tells us we shouldn't be showing the last step.
+  //
+  // this method assumes that the last step is located onn the page currently being rendered.
+  // the caller is responsible for checking if this is the case.
+  void show_last_step() {
+    // return early if we have no business showing the last step
+    if (!show_last) return;
     
+    mapping_coordinates_t c = config->mappings.steps.get_coordinates_from_sequential_index(last.step);
+
+    // first we want to remove any animations that were occuring on this step and
+    // set the led state depending on if that step is a rendered step or not
+    animations->remove(c, led.on ? is_rendered(last) : led.off);
+
+    // add animations on collision
+    if (is_rendered(last)) animations->add(led.collision.last_step_and_step, c);
+  };
+  
   // given a sequence relative step, this converts it to a page relative step.
   page_relative_step_t get_page_relative_step(int sequence_relative_step) {
     return { .page = sequence_relative_step / config->mappings.steps.get_area(),
