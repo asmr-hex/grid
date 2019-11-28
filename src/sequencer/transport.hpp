@@ -135,7 +135,7 @@ public:
     prepare_to_stop();
     is_transitioning = true;
     
-    if (playback.is_stopping) {
+    if (is_stopping) {
       // playback for this part is already stopping...
       // this means that a new part has been enqueued to start
 

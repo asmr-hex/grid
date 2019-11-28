@@ -61,16 +61,9 @@ public:
   void render_part(int bank_idx, int part_idx) {
     ensure_part(bank_idx, part_idx);
     
-    bool force_rerender = true;
     Part *part_to_render = parts[bank_idx][part_idx];
 
-    // TODO have a method on Part called "render" which does all this stuff...
-    // render part and its sub-components
-    part_to_render->render_page(part_to_render->page.rendered, force_rerender);
-    part_to_render->render_page_selection_ui();
-    part_to_render->ppqn->render();
-    part_to_render->render_play_pause_ui();
-    part_to_render->render_last_step_ui();
+    part_to_render->render();
   };
 
   // renders the part selection ui panel.
@@ -165,7 +158,7 @@ public:
 
              // update leds of old part in playback if necessary
              if (part.in_playback == part.under_edit) {
-               get_part_in_playback()->render_play_pause_ui();
+               get_part_in_playback()->transport->render();
              }
     
              bank.in_playback = bank_id;
@@ -173,7 +166,7 @@ public:
 
              // update leds of new part in playback if necessary
              if (part.in_playback == part.under_edit) {
-               get_part_in_playback()->render_play_pause_ui();
+               get_part_in_playback()->transport->render();
              }
 
              // re-render the part/bank ui
@@ -275,8 +268,8 @@ public:
     render_part(bank_idx, part_idx);
   };
     
-Protected:
-  Std::String Name;
+protected:
+  std::string name;
   Config *config;
   IO *io;
   Animator *animation;

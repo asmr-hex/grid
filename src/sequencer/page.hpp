@@ -26,7 +26,7 @@ public:
   
   Page(IO *io, Config *config, Animator *animation)
     : io(io), config(config), animation(animation) {
-    steps = new Steps(op, config, animation);
+    steps = new Steps(io, config, animation);
   };
 
 
@@ -74,17 +74,17 @@ public:
     render_pages_panel();
   };
 
-  void set_follow_cursor(bool follow) {
-    follow_cursor = follow;
+  void toggle_follow_cursor() {
+    follow_cursor = !follow_cursor;
   };
 
-  void set_show_last_step(bool show) {
+  void set_show_last_step(bool show = true) {
     steps->show_last = show;
   };
   
   // sets the provided page as the page under_edit
-  void edit(int page) {
-    
+  void edit(page_idx_t page) {
+    under_edit = page;
   };
 
   
@@ -138,9 +138,9 @@ private:
 
     // check for collisions between in_playback and rendered page
     if (rendered == in_playback) {
-      animation->add(rendered_c, led.collision.in_playback_and_rendered);
+      animation->add(led.collision.in_playback_and_rendered, rendered_c);
     } else {
-      animation->add(in_playback_c, led.in_playback_c);
+      animation->add(led.in_playback, in_playback_c);
       monome_led_level_set(io->output.monome, rendered_c.x, rendered_c.y, led.under_edit);
     }
   };

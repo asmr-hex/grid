@@ -138,7 +138,7 @@ void step_handler(IO *io, Animator *animation, State *state, Config *config, con
     // get step index
     Part *part_under_edit = state->get_rendered_instrument()->get_part_under_edit();
     unsigned int relative_step = config->mappings.steps.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
-    unsigned int absolute_step = part_under_edit->get_absolute_step(part_under_edit->page.under_edit, relative_step);
+    unsigned int absolute_step = part_under_edit->get_absolute_step(part_under_edit->page->under_edit, relative_step);
 
     if (part_under_edit->is_showing_last_step()) {
       // escape hatch if we are in 'last_step' mode.
@@ -149,13 +149,9 @@ void step_handler(IO *io, Animator *animation, State *state, Config *config, con
     if (part_under_edit->is_step_on(absolute_step)) {
       // turn this step off! remove stop from part
       part_under_edit->remove_step(relative_step);
-
-      monome_led_off(io->output.monome, event->grid.x, event->grid.y);
     } else {
       // turn this step on!! add step to part
       part_under_edit->add_step(relative_step);
-      
-      monome_led_on(io->output.monome, event->grid.x, event->grid.y);
     }
     break;
   }
@@ -170,44 +166,37 @@ void last_step_handler(IO *io, Animator *animation, State *state, Config *config
 
   // get last step of current part
   Part *part_under_edit = state->get_rendered_instrument()->get_part_under_edit();
-  int last_step = part_under_edit->length - 1;
 
-  // TODO refactor all this into encapsulated method in Part (?)
-  
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-
     // before we do anything, it shift is being held, this is toggling the 'follow cursor' mode
     if (state->sequencer.shift_enabled) {
-      part_under_edit->follow_cursor = !part_under_edit->follow_cursor;
-      part_under_edit->page.under_edit = part_under_edit->page.cursor;
+      // toggle follow cursor
+      part_under_edit->page->toggle_follow_cursor();
+
+      // immediately switch page under edit to cursor page
+      part_under_edit->page->edit(part_under_edit->page->in_playback);
     }
 
     // set the state for 'show last step'
-    part_under_edit->show_last_step = true;
+    part_under_edit->page->set_show_last_step();
 
+    // render last steps button ui
     part_under_edit->render_last_step_ui();
     
     // render the page of the last step
-    part_under_edit->render_page(part_under_edit->page.last_step);
-
-    // re-render page selection ui
-    part_under_edit->render_page_selection_ui();
+    part_under_edit->page->render(part_under_edit->page->last, part_under_edit->get_cursor());
     
     break;
   case MONOME_BUTTON_UP:
-    // turn off 'last step' button
-    monome_led_off(io->output.monome, event->grid.x, event->grid.y);
-    
-    // set the state
-    part_under_edit->show_last_step = false;
+    // render last steps button ui
+    part_under_edit->render_last_step_ui();
 
+    // set the state for 'show last step'
+    part_under_edit->page->set_show_last_step(false);
+    
     // re-render the page currently being edited
-    part_under_edit->render_page(part_under_edit->page.under_edit);
-
-    // re-render page selection ui
-    part_under_edit->render_page_selection_ui();
-    
+    part_under_edit->page->render(part_under_edit->get_cursor());
     break;
   }
 };
@@ -221,32 +210,26 @@ void page_select_handler(IO *io, Animator *animation, State *state, Config *conf
 
   // get current part & current page
   Part *part_under_edit = state->get_rendered_instrument()->get_part_under_edit();
-  int rendered_page = part_under_edit->page.rendered;
+  page_idx_t rendered_page = part_under_edit->page->rendered;
   mapping_coordinates_t rendered_page_coords = config->mappings.pages.get_coordinates_from_sequential_index(rendered_page);
 
   switch (event->event_type) {
   case MONOME_BUTTON_DOWN:
-    // TODO refactor all this into a method encapsulated in Part
-    
     // if we are following the cursor and then select a new page, turn off follow mode
     // (unless we are selecting a new last step)
-    if (part_under_edit->follow_cursor && !part_under_edit->show_last_step) {
-      part_under_edit->follow_cursor = false;
-      animation->remove(config->mappings.last_step);
-      monome_led_off(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y);
+    if (part_under_edit->page->follow_cursor && !part_under_edit->is_showing_last_step()) {
+      part_under_edit->page->follow_cursor = false;
+      part_under_edit->render_last_step_ui();
     }
     
-    int new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
-
-    // only render the new page if we are not following the cursor, or we are setting the page of the last step
-    part_under_edit->render_page(new_page);
+    page_idx_t new_page = config->mappings.pages.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
 
     // if we are not setting the 'last step' page, set the new page to be the page under edit
-    if (!part_under_edit->show_last_step) {
-      part_under_edit->page.under_edit = new_page;
-      part_under_edit->render_page_selection_ui();
+    if (!part_under_edit->is_showing_last_step()) {
+      part_under_edit->page->edit(new_page);
+      part_under_edit->page->render(part_under_edit->get_cursor());
     } else {
-      part_under_edit->render_page_selection_ui(new_page);
+      part_under_edit->page->render(new_page, part_under_edit->get_cursor());
     }
     
     break;

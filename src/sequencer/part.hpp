@@ -78,7 +78,7 @@ public:
 
   // pause part and render and possibly render
   void pause() {
-    transport->pause();
+    transport->pause(active_step % constants::PPQN_MAX);
     if (is_rendered) transport->render();
   };
 
@@ -120,7 +120,7 @@ public:
   // checks for those conditions are the responsibility of the caller.
   void advance_cursor() {
     // convert active_step, which is a granular step, to a normal step
-    step_idx_t from = active_step / constants::PPQN_MAX;
+    step_idx_t from = get_cursor();
     step_idx_t to = get_next_step(active_step) / constants::PPQN_MAX;
     
     page->advance_cursor(from, to);
@@ -157,7 +157,7 @@ public:
 
   // renders this part from scratch
   void render() {
-    page->render(active_step / constants::PPQN_MAX);
+    page->render(get_cursor());
     ppqn->render();
     transport->render();
     render_last_step_ui(); // TODO encapsulate this somewhere??
@@ -179,7 +179,7 @@ public:
     
     if (page->steps->show_last) {
       monome_led_on(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y);
-    } else if (!show_last_step && !follow_cursor) {
+    } else if (!is_showing_last_step() && !page->follow_cursor) {
       monome_led_off(io->output.monome, config->mappings.last_step.x, config->mappings.last_step.y); 
     }
   }
@@ -192,7 +192,7 @@ public:
   
   // add a step to the sequence. this adds the default midi note to the sequence.
   void add_step(unsigned int coarse_step_idx) {
-    int abs_coarse_step = get_absolute_step(page.under_edit, coarse_step_idx);
+    int abs_coarse_step = get_absolute_step(page->under_edit, coarse_step_idx);
     step_event_t event = midi_note_on(default_note, 0, 127);
     step_idx_t step = get_fine_step_index(abs_coarse_step);
 
@@ -200,16 +200,16 @@ public:
     sequence.add_midi_note_on_event(event, step, 1);
 
     // add step to rendered steps
-    page->steps->add(coarse_step_idx);
+    page->steps->add(abs_coarse_step);
   };
   
   void remove_step(unsigned int coarse_step_idx) {
-    int abs_coarse_step = get_absolute_step(page.under_edit, coarse_step_idx);
+    int abs_coarse_step = get_absolute_step(page->under_edit, coarse_step_idx);
     step_idx_t step = get_fine_step_index(abs_coarse_step);
     sequence.remove_step(step);
 
     // remove step from rendered steps
-    page->steps->remove(coarse_step_idx);
+    page->steps->remove(abs_coarse_step);
   };
 
   // sets the ppqn given a sequential index.
@@ -217,7 +217,7 @@ public:
   // if the part is currently playing, set the next ppqn to be scheduled
   // otherwise, immediately set the current ppqn.
   void set_ppqn(int idx) {
-    if (playback.is_playing) {
+    if (transport->is_playing) {
       ppqn->set_next(idx);
     } else {
       ppqn->set(idx);
@@ -232,11 +232,11 @@ public:
   // the new last step lies. this is important because the coordinates supplied for
   // the new last step are relative to the currently rendered page.
   void set_last_step(mapping_coordinates_t step_c) {
-    step_idx_t last_step = get_absolute_step(page.rendered, config->mappings.steps.get_sequential_index_from_coordinates(step_c.x, step_c.y));
+    step_idx_t last_step = get_absolute_step(page->rendered, config->mappings.steps.get_sequential_index_from_coordinates(step_c.x, step_c.y));
 
     page->steps->set_last_step(last_step);
 
-    page->steps->render(page->rendered, active_step / constants::PPQN_MAX);
+    page->steps->render(page->rendered, get_cursor());
   };
 
   ////////////////////////////////////////////
@@ -248,7 +248,10 @@ public:
   bool is_showing_last_step() {
     return page->steps->show_last;
   }
-  
+
+  step_idx_t get_cursor() {
+    return active_step / constants::PPQN_MAX;
+  }
   
   bool is_step_on(unsigned int coarse_step_idx) {
     step_idx_t step = get_fine_step_index(coarse_step_idx);
@@ -353,8 +356,8 @@ private:
 
   bool is_step_visible(int coarse_step) {
     unsigned int page_size = config->mappings.steps.get_area();
-    int min_visible_step = (page.rendered * page_size);
-    int max_visible_step = ((page.rendered + 1) * page_size) - 1;
+    int min_visible_step = (page->rendered * page_size);
+    int max_visible_step = ((page->rendered + 1) * page_size) - 1;
     return min_visible_step <= coarse_step && coarse_step <= max_visible_step;
   };
 };

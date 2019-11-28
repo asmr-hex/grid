@@ -114,30 +114,36 @@ public:
   
   // sets the last step position in the sequence
   void set_last_step(int sequence_relative_step) {
-    last = get_page_relative_step(sequence_relative_steps);
+    last = get_page_relative_step(sequence_relative_step);
   };
   
   // add a rendered step
-  void add(int sequence_relative_step) {
+  void add(int sequence_relative_step, bool render = true) {
     page_relative_step_t page_relative = get_page_relative_step(sequence_relative_step);
 
     // store in rendered_steps
     rendered_steps[page_relative.page].insert(page_relative.step);
+
+    // render if necessary
+    if (render) render_step_on(page_relative);
   };
 
   // bulk remove multiple rendered steps
-  void remove(std::vector<int> sequence_relative_steps) {
+  void remove(std::vector<int> sequence_relative_steps, bool render = true) {
     for (int step : sequence_relative_steps) {
-      remove(step);
+      remove(step, render);
     }
   };
 
   // remove a rendered step
-  void remove(int sequence_relative_step) {
+  void remove(int sequence_relative_step, bool render = true) {
     page_relative_step_t page_relative = get_page_relative_step(sequence_relative_step);
     
     // remove from rendered_steps
     rendered_steps[page_relative.page].erase(page_relative.step);
+
+    // render if necessary
+    if (render) render_step_off(page_relative);
   }
 
   
@@ -167,7 +173,11 @@ private:
   // steps rendered on each page
   std::map<int, std::set<int> > rendered_steps;
 
-    // led brightness and animation configuration for pages panel
+  IO *io;
+  Config *config;
+  Animator *animation;
+  
+  // led brightness and animation configuration for pages panel
   struct {
     int on        = 10;
     int off       = 0;
@@ -218,10 +228,10 @@ private:
     
     // first we want to remove any animations that were occuring on this step and
     // set the led state depending on if that step is a rendered step or not
-    animations->remove(c, led.on ? is_rendered(cursor) : led.off);
+    animation->remove(c, led.on ? is_rendered(cursor) : led.off);
 
     // add an animation if there is a collision
-    if (show_last && is_rendered(last)) animations->add(led.collision.last_step_and_step, c);
+    if (show_last && is_rendered(last)) animation->add(led.collision.last_step_and_step, c);
   };
 
   // show cursor sets the step it falls on to display the cursor state
@@ -233,7 +243,7 @@ private:
     
     // first we want to remove any animations that were occuring on this step and
     // set the led state to cursor
-    animations->remove(c, led.cursor);
+    animation->remove(c, led.cursor);
 
     // compute collision detection
     bool last_step_and_cursor_collision          = last == cursor && show_last;
@@ -242,13 +252,23 @@ private:
 
     // add animations for collisions
     if (cursor_and_step_and_last_step_collision) {
-      animations->add(led.collision.cursor_and_step_and_last_step_collision, c); 
+      animation->add(led.collision.cursor_and_step_and_last_step, c); 
     } else {
-      if (last_step_and_cursor_collision) animations->add(led.collisions.last_step_and_cursor, c);
-      if (cursor_and_step_collision) animations->add(led.collisions.cursor_and_step, c);
+      if (last_step_and_cursor_collision) animation->add(led.collision.last_step_and_cursor, c);
+      if (cursor_and_step_collision) animation->add(led.collision.cursor_and_step, c);
     }
   }
 
+  void render_step_on(page_relative_step_t step) {
+    mapping_coordinates_t c = config->mappings.steps.get_coordinates_from_sequential_index(step.step);
+    monome_led_level_set(io->output.monome, c.x, c.y, led.on);
+  }
+
+  void render_step_off(page_relative_step_t step) {
+    mapping_coordinates_t c = config->mappings.steps.get_coordinates_from_sequential_index(step.step);
+    monome_led_level_set(io->output.monome, c.x, c.y, led.off);
+  }
+  
   // shows the last step unless the state tells us we shouldn't be showing the last step.
   //
   // this method assumes that the last step is located onn the page currently being rendered.
@@ -261,10 +281,10 @@ private:
 
     // first we want to remove any animations that were occuring on this step and
     // set the led state depending on if that step is a rendered step or not
-    animations->remove(c, led.on ? is_rendered(last) : led.off);
+    animation->remove(c, led.on ? is_rendered(last) : led.off);
 
     // add animations on collision
-    if (is_rendered(last)) animations->add(led.collision.last_step_and_step, c);
+    if (is_rendered(last)) animation->add(led.collision.last_step_and_step, c);
   };
 
 

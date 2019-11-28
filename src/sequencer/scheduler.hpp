@@ -51,7 +51,7 @@ private:
       
       if (instrument_is_rendered && part_in_playback == part_under_edit) {
         // update the ui with the part under edit
-        part_under_edit->advance_ui_cursor();
+        part_under_edit->advance_cursor();
       }
 
       // collect next sonic events

@@ -45,9 +45,13 @@ public:
   
   // remove animations from an entire region and set region to intensity provided.
   void remove(mapping_range_2d_t r, int intensity) {
-    for (mapping_coordinates_t c : r.get_region_coordinates()) {
+    remove(r.get_region_coordinates(), intensity);
+  };
+
+  void remove(std::vector<mapping_coordinates_t> coords, int intensity) {
+    for (mapping_coordinates_t c : coords) {
       remove(c, intensity);
-    }
+    }    
   };
   
   // remove animations, if they exist, from coordinates and set the led to a
