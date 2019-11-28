@@ -29,7 +29,6 @@ class Steps {
 public:
   page_relative_step_t last   = { .page = 1, .step = 32 };
   bool show_last    = false;
-
   
   Steps(IO *io, Config *config, Animator *animation)
     : io(io), config(config), animation(animation) {};
@@ -67,11 +66,6 @@ public:
     render(page, 0, false);
   };
 
-  // renders the steps on a provided page with a cursor, if the cursor is on that page.
-  void render(page_idx_t page, step_idx_t cursor_idx) {
-    render(page, cursor_idx, true);
-  };
-  
   // renders the steps on a provided page with an optional cursor, if the cursor lies on that page.
   //
   // this method is called upon initial rendering of a page. as it is currently
@@ -91,7 +85,7 @@ public:
   // advance_cursor since this will be called upon each scheduled step if the page is
   // being rendered, resulting in consistently needless re-renders. since showing the
   // last step only happens every once in a while, this inefficiency seems fine to ignore.
-  void render(page_idx_t page, step_idx_t cursor_idx, bool render_cursor) {
+  void render(page_idx_t page, step_idx_t cursor_idx, bool render_cursor = true) {
     // remove all animations on page
     animation->remove(config->mappings.steps, led.off);
     

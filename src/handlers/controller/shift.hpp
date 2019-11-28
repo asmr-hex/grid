@@ -140,9 +140,9 @@ void step_handler(IO *io, Animator *animation, State *state, Config *config, con
     unsigned int relative_step = config->mappings.steps.get_sequential_index_from_coordinates(event->grid.x, event->grid.y);
     unsigned int absolute_step = part_under_edit->get_absolute_step(part_under_edit->page.under_edit, relative_step);
 
-    if (part_under_edit->show_last_step) {
+    if (part_under_edit->is_showing_last_step()) {
       // escape hatch if we are in 'last_step' mode.
-      part_under_edit->update_last_step({event->grid.x, event->grid.y});
+      part_under_edit->set_last_step({event->grid.x, event->grid.y});
       return;
     }
     

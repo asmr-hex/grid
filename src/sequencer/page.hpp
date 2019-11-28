@@ -20,53 +20,79 @@ public:
   page_idx_t in_playback = 0;
   page_idx_t last        = 1;
 
+  bool follow_cursor = false;
+
+  Steps *steps;
+  
   Page(IO *io, Config *config, Animator *animation)
     : io(io), config(config), animation(animation) {
     steps = new Steps(op, config, animation);
   };
 
-  // TODO in terms of rendering, we need to be able to do the following
-  // 1) render steps, last step, cursor from scratch
-  // 2) "incrementally" render last step without re-rendering all steps
-  // 3) "incrementally" render cursor without re-rendering all steps
 
   void advance_cursor(step_idx_t from, step_idx_t to) {
-
-    // update the page in playback given the next step
+    // get the page of the next cursor
     page_idx_t page_to = get_page(to);
 
-    // TODO re-render page selection panel if the in_playback page differs from the page_to
+    in_playback = page_to;
 
-    // TODO do something about follow step
+    if (page_to != rendered) {
+      if (follow_cursor) {
+        under_edit = in_playback;
+        // render steps
+        if (!steps->show_last) steps->render(page_to, to);
+      }
+
+      // render only page selection ui
+      render(page_to, to, false);
+    }
     
     steps->advance_cursor(from, to, rendered);
   };
-  
-  // render everything on a provided page
-  void render(int page) {
-    rendered = page;
-
-    steps->render(page);
-
-    // do remaining rendering of page panel
-  };
 
   // render everything on the page_under edit
-  void render() {
-    render(under_edit);
+  void render(step_idx_t cursor) {
+    render(under_edit, cursor);
+  };
+  
+  // render the page provided.
+  //
+  // specifically, render the page selection ui and, unless specified, render
+  // the steps ui (which includes the activated steps, cursor (if is currently
+  // on the page), and the last step (if it is currently on the page and being shown)).
+  void render(page_idx_t page, step_idx_t cursor, bool render_steps = true) {
+    // only render steps if the provided page isn't already rendered and we
+    // wish to render the steps.
+    if (rendered != page && render_steps) {
+      steps->render(page, cursor);
+    }
+
+    // set the provided page as the rendered page
+    rendered = page;
+
+    // render the page selection panel
+    render_pages_panel();
   };
 
+  void set_follow_cursor(bool follow) {
+    follow_cursor = follow;
+  };
+
+  void set_show_last_step(bool show) {
+    steps->show_last = show;
+  };
+  
   // sets the provided page as the page under_edit
   void edit(int page) {
     
   };
+
+  
   
 private:
   IO *io;
   Config *config;
   Animator *animation;
-
-  Steps *steps;
   
   // led brightness and animation configuration for pages panel
   struct {
@@ -87,6 +113,37 @@ private:
     } collision;
   } led;
 
+  //////////////////////////////////////////////
+  //                                          //
+  //    p r i v a t e    r e n d e r e r s    //
+  //                                          //
+  //////////////////////////////////////////////
+
+  void render_pages_panel() {
+    int max_page_idx = config->mappings.pages.get_area() - 1;
+
+    // get coordinates of in_playback and rendered pages
+    mapping_coordinates_t in_playback_c = config->mappings.pages.get_coordinates_from_sequential_index(in_playback);
+    mapping_coordinates_t rendered_c = config->mappings.pages.get_coordinates_from_sequential_index(rendered);
+
+    // get coordinate regions for before last step and after last step
+    std::vector<mapping_coordinates_t> cb = config->mappings.pages.get_region_coordinates(0, last);
+    std::vector<mapping_coordinates_t> ca = config->mappings.pages.get_region_coordinates(last + 1, max_page_idx);
+
+    // remove animations for all pages before last page and set led appriopriately
+    animation->remove(cb, led.within_bounds);
+
+    // remove animations for all pages after last page and set led appriopriately
+    animation->remove(ca, led.out_of_bounds);
+
+    // check for collisions between in_playback and rendered page
+    if (rendered == in_playback) {
+      animation->add(rendered_c, led.collision.in_playback_and_rendered);
+    } else {
+      animation->add(in_playback_c, led.in_playback_c);
+      monome_led_level_set(io->output.monome, rendered_c.x, rendered_c.y, led.under_edit);
+    }
+  };
   
   //////////////////////////////////////////////
   //                                          //

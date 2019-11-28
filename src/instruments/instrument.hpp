@@ -275,8 +275,8 @@ public:
     render_part(bank_idx, part_idx);
   };
     
-protected:
-  std::string name;
+Protected:
+  Std::String Name;
   Config *config;
   IO *io;
   Animator *animation;
