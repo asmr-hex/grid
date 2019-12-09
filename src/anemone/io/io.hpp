@@ -4,23 +4,26 @@
 #include <string>
 #include <iostream>
 
-#include "input.hpp"
-#include "output.hpp"
+#include "grid/grid.hpp"
+#include "midi/midi.hpp"
 
 
 class IO {
 public:
+  IO(Grid *grid, Midi *midi) : grid(grid), midi(midi) {};
+  
   void connect() {
+    // TODO pass addr config in
+    grid->connect();
+    
     connect_to_midi_out();
 
     connect_to_midi_in();
-
-    connect_to_monome();    
+  
   };
   
-  Input  input;
-  Output output;
-
+  Grid *grid;
+  Midi *midi;
 private:
   void connect_to_midi_out() {
     try {
@@ -74,22 +77,6 @@ private:
     }
 
     input.midi->openPort(0);
-  };
-
-  void connect_to_monome() {
-    monome_t *monome;
-
-    // TODO (coco|5.11.2019) parameterize monome serial port location.
-    // rpi : /dev/ttyUSB0
-    // osx : /dev/tty.usbserial-m1000843
-    if( !(monome = monome_open("/dev/tty.usbserial-m1000843")) ) {
-      std::cout << "Could not connect to monome grid!\n";
-      exit( EXIT_FAILURE );
-    }
-    std::cout << "CONNECTED TO MONOME!\n";
-
-    input.monome  = monome;
-    output.monome = monome;
   };
 };
 

@@ -1,4 +1,15 @@
+# -----------------------------  c o m m o n  -------------------------------
+
+
 OS       := $(shell uname -s)
+
+# define compilation variables
+CXX          := g++ -std=c++17
+CXXFLAGS     := -Wall #-Wextra -Werror
+
+#LDFLAGS     := -L/usr/local/include -L/usr/local/lib
+INCLUDE_DIR  := ./vendor
+INCLUDE      := -I/usr/include/rtmidi
 
 # set lib boost shared library name based on OS
 ifeq ($(OS),Linux)
@@ -7,41 +18,52 @@ endif
 ifeq ($(OS),Darwin)
 	LIB_BOOST := -lboost_thread-mt
 endif
+LIBS         := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp
 
-# define compilation variables
-CXX      := g++ -std=c++11
-CXXFLAGS := -Wall #-Wextra -Werror
-#LDFLAGS := -L/usr/local/include -L/usr/local/lib
-INCLUDE  := -I/usr/include/rtmidi
-LIBS     := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp
-BUILD    := ./build
-OBJ_DIR  := $(BUILD)/objects
-BIN_DIR  := $(BUILD)/bin
-TARGET   := grid
-SRC      := $(wildcard src/*cpp)
-CONF     := ./conf/config.yml
+BUILD        := ./build
+OBJ_DIR      := $(BUILD)/objects
+BIN_DIR      := $(BUILD)/bin
 
-# create list of object files to compile
-OBJECTS := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
-# by default, running 'make' will create the build directory and
-# produce the target binary.
-all: build $(BIN_DIR)/$(TARGET)
 
-# compile source files intpo object files.
-$(OBJ_DIR)/%.o: %.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+# -----------------------------  b i n a r y  -------------------------------
 
-# compile object files into binary
-$(BIN_DIR)/$(TARGET): $(OBJECTS)
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(TARGET) $(OBJECTS)
+
+
+BIN_TARGET   := anemone
+ANEMONE_SRC  := $(wildcard src/anemone/*cpp)
+BIN_SRC      := $(ANEMONE_SRC) src/main.cpp
+BIN_OBJECTS  := $(BIN_SRC:%.cpp=$(OBJ_DIR)/%.o)
+CONF         := ./conf/config.yml
+
+
+
+# -----------------------------  t e s t s  -------------------------------
+
+
+
+TEST_DIR             := test
+UNIT_TEST_DIR        := $(TEST_DIR)/unit
+INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
+
+INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil
+
+UNIT_TEST_TARGET     := run_unit_tests
+UNIT_TEST_SRC        := $(ANEMONE_SRC) test/unit/main.cpp
+UNIT_TEST_OBJECTS    := $(UNIT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
+
+
+
+# -----------------------------  t e s t s  -------------------------------
 
 # list all phony targets, i.e. non-file target commands
-.PHONY: packages all build clean debug release
+.PHONY: default packages all build clean debug test release
+
+# make the all target the default target
+default: all
 
 # install all packages needed
+# TODO: install catch2 & tromploiel for testing on raspbian!
 packages:
 ifeq ($(OS),Linux)
 	@echo "installing packages for Linux..."
@@ -80,23 +102,51 @@ ifeq ($(OS),Darwin)
 endif
 
 
-# create build dire tories
-build:
-	@mkdir -p $(BIN_DIR)
-	@mkdir -p $(OBJ_DIR)
+# ---------------------- c o m p i l a t i o n -------------------------------
+
+
+# compile source files into object files
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
+
+# compile object files into binary
+$(BIN_DIR)/$(BIN_TARGET): $(BIN_OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(BIN_TARGET) $(BIN_OBJECTS)
+
+# compile object files into binary
+$(BIN_DIR)/$(UNIT_TEST_TARGET): $(UNIT_TEST_OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(UNIT_TEST_TARGET) $(UNIT_TEST_OBJECTS)
+
+
+# by default, running 'make' will create the build directory and
+# produce the target binary.
+all: build
+
+# create build directories
+build: $(BIN_DIR)/$(BIN_TARGET)
 
 # include debugging flags for compilation
 debug: CXXFLAGS += -DDEBUG -g
 debug: all
+
+# run tests (for now just unit tests)
+test: INCLUDE += $(INCLUDE_TEST)
+test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
+	@$(BIN_DIR)/$(UNIT_TEST_TARGET)
+
 
 # include release flags for compilation
 release: CXXFLAGS += -O2
 release: all
 
 # run the compiled binary. compile the binary if not done so already.
-run: build $(BIN_DIR)/$(TARGET)
-	@$(BIN_DIR)/$(TARGET) $(CONF)
+run: build
+	@$(BIN_DIR)/$(BIN_TARGET) $(CONF)
 
 # clean up
 clean:
 	-@rm -rvf $(BUILD)
+

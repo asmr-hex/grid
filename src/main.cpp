@@ -1,6 +1,8 @@
 #include <iostream>
 
-#include "controller.hpp"
+#include "anemone/anemone.hpp"
+// #include "anemone/io/grid/monome.hpp"
+// #include "anemone/io/midi/rtmidi.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -9,8 +11,14 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  Controller *controller = new Controller(argv[1]);
-  controller->run();
+  // Anemone *anemone = new Anemone(argv[1],
+  //                                new Monome(),
+  //                                new RTMidi());
+  // anemone->run();
+
+  Anemone anemone(666);
+
+  anemone.run();
   
   return 0;
 }
