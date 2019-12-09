@@ -1,45 +1,49 @@
 # -----------------------------  c o m m o n  -------------------------------
 
 
-OS       := $(shell uname -s)
+OS                  := $(shell uname -s)
 
-# define compilation variables
-CXX          := g++ -std=c++17
-CXXFLAGS     := -Wall #-Wextra -Werror
 
-#LDFLAGS     := -L/usr/local/include -L/usr/local/lib
-INCLUDE_DIR  := ./vendor
-INCLUDE      := -I/usr/include/rtmidi
+CXX                 := g++ -std=c++17
+CXXFLAGS            := -Wall #-Wextra -Werror
 
-# set lib boost shared library name based on OS
+
+INCLUDE_DIR         := ./vendor
+INCLUDE             := -I/usr/include/rtmidi
+
+
 ifeq ($(OS),Linux)
-	LIB_BOOST := -lboost_system -lboost_thread
+	LIB_BOOST   := -lboost_system -lboost_thread
 endif
 ifeq ($(OS),Darwin)
-	LIB_BOOST := -lboost_thread-mt
+	LIB_BOOST   := -lboost_thread-mt
 endif
-LIBS         := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp
-
-BUILD        := ./build
-OBJ_DIR      := $(BUILD)/objects
-BIN_DIR      := $(BUILD)/bin
+LIBS                := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp
+#LDFLAGS            := -L/usr/local/include -L/usr/local/lib
 
 
+BUILD_DIR           := ./build
+OBJ_DIR             := $(BUILD_DIR)/objects
+BIN_DIR             := $(BUILD_DIR)/bin
 
-# -----------------------------  b i n a r y  -------------------------------
 
+# -----------------------------  b i n a r y  -----------------------------
+
+
+SRC_DIR      := src
+ANEMONE_DIR  := $(SRC_DIR)/anemone
 
 
 BIN_TARGET   := anemone
-ANEMONE_SRC  := $(wildcard src/anemone/*cpp)
-BIN_SRC      := $(ANEMONE_SRC) src/main.cpp
+ANEMONE_SRC  := $(shell find $(ANEMONE_DIR) -type f -name '*.cpp')
+BIN_SRC      := $(ANEMONE_SRC) $(SRC_DIR)/main.cpp
 BIN_OBJECTS  := $(BIN_SRC:%.cpp=$(OBJ_DIR)/%.o)
+
+
 CONF         := ./conf/config.yml
 
 
-
 # -----------------------------  t e s t s  -------------------------------
-
 
 
 TEST_DIR             := test
@@ -49,18 +53,22 @@ INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil
 
 UNIT_TEST_TARGET     := run_unit_tests
-UNIT_TEST_SRC        := $(ANEMONE_SRC) test/unit/main.cpp
+UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
 UNIT_TEST_OBJECTS    := $(UNIT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 
+# -----------------------------  c o m m a n d s  -------------------------
 
-# -----------------------------  t e s t s  -------------------------------
 
 # list all phony targets, i.e. non-file target commands
-.PHONY: default packages all build clean debug test release
+.PHONY: all build clean debug default  packages test release
 
-# make the all target the default target
-default: all
+
+default: build
+
+
+all: packages clean test clean release
+
 
 # install all packages needed
 # TODO: install catch2 & tromploiel for testing on raspbian!
@@ -102,35 +110,30 @@ ifeq ($(OS),Darwin)
 endif
 
 
-# ---------------------- c o m p i l a t i o n -------------------------------
-
-
-# compile source files into object files
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
-# compile object files into binary
+
+# binary target
 $(BIN_DIR)/$(BIN_TARGET): $(BIN_OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(BIN_TARGET) $(BIN_OBJECTS)
 
-# compile object files into binary
+
+# test target
 $(BIN_DIR)/$(UNIT_TEST_TARGET): $(UNIT_TEST_OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(UNIT_TEST_TARGET) $(UNIT_TEST_OBJECTS)
 
 
-# by default, running 'make' will create the build directory and
-# produce the target binary.
-all: build
-
-# create build directories
+# binary target (alias)
 build: $(BIN_DIR)/$(BIN_TARGET)
 
-# include debugging flags for compilation
+
 debug: CXXFLAGS += -DDEBUG -g
-debug: all
+debug: run
+
 
 # run tests (for now just unit tests)
 test: INCLUDE += $(INCLUDE_TEST)
@@ -138,15 +141,14 @@ test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
 	@$(BIN_DIR)/$(UNIT_TEST_TARGET)
 
 
-# include release flags for compilation
 release: CXXFLAGS += -O2
-release: all
+release: build
 
-# run the compiled binary. compile the binary if not done so already.
+
 run: build
 	@$(BIN_DIR)/$(BIN_TARGET) $(CONF)
 
-# clean up
+
 clean:
-	-@rm -rvf $(BUILD)
+	-@rm -rvf $(BUILD_DIR)
 
