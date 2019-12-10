@@ -12,7 +12,7 @@ class Observer;
 template<typename Event>
 class Observable {
 public:
-  void notify(const Event&);
+  void broadcast(const Event&);
   void register_observer(const std::shared_ptr< Observer<Event> >&);
   void unregister_observer(const std::shared_ptr< Observer<Event> >&);
 
@@ -36,7 +36,7 @@ private:
 
 
 template<typename Event>
-void Observable<Event>::notify(const Event& event) {
+void Observable<Event>::broadcast(const Event& event) {
   for (auto observer : observers) {
     observer->handle(event);
   }
@@ -46,6 +46,7 @@ void Observable<Event>::notify(const Event& event) {
 template<typename Event>
 void Observable<Event>::register_observer(const std::shared_ptr< Observer<Event> >& observer) {
   observers.insert(observer);
+  
 };
 
 
