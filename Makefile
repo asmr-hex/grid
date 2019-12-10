@@ -137,8 +137,10 @@ debug: run
 
 # run tests (for now just unit tests)
 test: INCLUDE += $(INCLUDE_TEST)
+#test: CXXFLAGS += -g --coverage
 test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
 	@$(BIN_DIR)/$(UNIT_TEST_TARGET) -s
+#	@lcov -c -d build/objects -o coverage.info
 
 
 release: CXXFLAGS += -O2
