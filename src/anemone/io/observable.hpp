@@ -13,8 +13,8 @@ template<typename Event>
 class Observable {
 public:
   void notify(const Event&);
-  void register_observer(std::shared_ptr< Observer<Event> >&);
-  void unregister_observer(std::shared_ptr< Observer<Event> >&);
+  void register_observer(const std::shared_ptr< Observer<Event> >&);
+  void unregister_observer(const std::shared_ptr< Observer<Event> >&);
 
 private:
   std::set< std::shared_ptr< Observer<Event> > > observers;
@@ -44,13 +44,13 @@ void Observable<Event>::notify(const Event& event) {
 
 
 template<typename Event>
-void Observable<Event>::register_observer(std::shared_ptr< Observer<Event> >& observer) {
+void Observable<Event>::register_observer(const std::shared_ptr< Observer<Event> >& observer) {
   observers.insert(observer);
 };
 
 
 template<typename Event>
-void Observable<Event>::unregister_observer(std::shared_ptr< Observer<Event> >& observer) {
+void Observable<Event>::unregister_observer(const std::shared_ptr< Observer<Event> >& observer) {
   observers.erase(observer);
 };
 

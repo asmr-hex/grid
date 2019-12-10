@@ -138,7 +138,7 @@ debug: run
 # run tests (for now just unit tests)
 test: INCLUDE += $(INCLUDE_TEST)
 test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
-	@$(BIN_DIR)/$(UNIT_TEST_TARGET)
+	@$(BIN_DIR)/$(UNIT_TEST_TARGET) -s
 
 
 release: CXXFLAGS += -O2
