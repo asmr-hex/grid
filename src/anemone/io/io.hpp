@@ -10,11 +10,11 @@
 
 class IO {
 public:
-  IO(Grid *grid, Midi *midi) : grid(grid), midi(midi) {};
+  IO(Grid&& grid, Midi&& midi) : grid(grid), midi(midi) {};
   
   void connect() {
     // TODO pass addr config in
-    grid->connect();
+    grid.connect();
     
     connect_to_midi_out();
 
@@ -22,8 +22,8 @@ public:
   
   };
   
-  Grid *grid;
-  Midi *midi;
+  Grid grid;
+  Midi midi;
 private:
   void connect_to_midi_out() {
     try {

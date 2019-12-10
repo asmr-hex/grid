@@ -1,15 +1,26 @@
 #ifndef ANEMONE_H
 #define ANEMONE_H
 
+#include <string>
+
+#include "io/io.hpp"
+#include "io/grid/grid.hpp"
+#include "io/midi/midi.hpp"
+
+
 class Anemone {
 public:
-  Anemone(int a) : a(a) {};
+  Anemone(Grid&& grid, Midi&& midi)
+    : io(grid, midi) {};
   
-  int a = 0;
-
   void run() {
     
   };
+
+private:
+  // Clock clock;
+  IO    io;
+  // Config config;
 };
 
 // #include <map>

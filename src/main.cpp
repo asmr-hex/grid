@@ -1,8 +1,9 @@
+#include <utility>
 #include <iostream>
 
 #include "anemone/anemone.hpp"
-// #include "anemone/io/grid/monome.hpp"
-// #include "anemone/io/midi/rtmidi.hpp"
+#include "anemone/io/grid/monome.hpp"
+#include "anemone/io/midi/rtmidi.hpp"
 
 
 int main(int argc, char *argv[]) {
@@ -16,7 +17,9 @@ int main(int argc, char *argv[]) {
   //                                new RTMidi());
   // anemone->run();
 
-  Anemone anemone(666);
+  Anemone anemone(argv[1],
+                  Monome(),
+                  RTMidi());
 
   anemone.run();
   
