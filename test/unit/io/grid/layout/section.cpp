@@ -4,10 +4,10 @@
 
 
 SCENARIO( "we need to know details about sections of the Grid" ) {
-  grid_region_t region = { .min = { .x = 0, .y = 0}, .max = { .x = 15, .y = 1} };
-  GridSectionName name = GridSectionName::Steps;
-
   GIVEN( "a GridSection" ) {
+    grid_region_t region = { .min = { .x = 0, .y = 0}, .max = { .x = 15, .y = 1} };
+    GridSectionName name = GridSectionName::Steps;
+
     auto section = GridSection(name, region);
 
     WHEN( "width() is called" ) {
@@ -64,6 +64,26 @@ SCENARIO( "we need to know details about sections of the Grid" ) {
       
       THEN( "it returns the proper coordinates" ) {
         REQUIRE( section.index_of(coordinates) == 20 );
+      }
+    }
+  }
+
+  GIVEN( "another GridSection" ) {
+    grid_region_t region = { .min = { .x = 0, .y = 0}, .max = { .x = 2, .y = 0} };
+    GridSectionName name = GridSectionName::Steps;
+
+    auto section = GridSection(name, region);
+
+    WHEN( "coordinates_in() is called" ) {
+      std::vector<grid_coordinates_t> expected = {
+                                                  { .x = 0, .y = 0 },
+                                                  { .x = 1, .y = 0 },
+                                                  { .x = 2, .y = 0 },
+      };
+      std::vector<grid_coordinates_t> result = section.coordinates_in();
+      
+      THEN( "it returns all coordinates within the GridSection" ) {
+        REQUIRE( result == expected );
       }
     }
   }

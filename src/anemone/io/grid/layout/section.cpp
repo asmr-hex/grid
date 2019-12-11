@@ -31,7 +31,7 @@ grid_coordinates_t GridSection::coordinates_of(unsigned int index) {
 }
 
 std::vector<grid_coordinates_t> GridSection::coordinates_in() {
-  return coordinates_in(0, size());
+  return coordinates_in(0, size() - 1);
 }
 
 std::vector<grid_coordinates_t> GridSection::coordinates_in(unsigned int start, unsigned int end) {
