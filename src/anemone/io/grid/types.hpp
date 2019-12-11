@@ -13,4 +13,9 @@ struct grid_event_t : public mapping_coordinates_t {
   grid_event_type_t type;
 };
 
+
+struct grid_addr_t {
+  
+};
+
 #endif
