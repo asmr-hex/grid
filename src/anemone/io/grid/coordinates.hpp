@@ -8,12 +8,12 @@ struct grid_coordinates_t {
   unsigned int x;
   unsigned int y;
 
-  // overload logical equality operator so coordinates can be used as a map key
+  // override logical equality operator so coordinates can be used as a map key
   bool operator==(const grid_coordinates_t &m) const {
     return x == m.x && y == m.y;
   };
 
-  // overload logical less than  operator so coordinates can be used as a map key
+  // override logical less than  operator so coordinates can be used as a map key
   bool operator<(const grid_coordinates_t &m) const {
     if (x < m.x && y <= m.y) return true;
     if (x <= m.x && y < m.y) return true;

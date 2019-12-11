@@ -1,7 +1,7 @@
 #ifndef IO_GRID_SECTION_H
 #define IO_GRID_SECTION_H
 
-#include "coordinates.hpp"
+#include "anemone/io/grid/coordinates.hpp"
 
 
 enum class
@@ -24,6 +24,16 @@ GridSectionName {
                  
                  PPQN,
 };
+
+
+typedef unsigned int grid_section_index;
+
+
+struct grid_addr_t {
+  GridSectionName section;
+  grid_section_index index;
+};
+
 
 class GridSection {
 public:

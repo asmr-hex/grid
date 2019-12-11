@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include "anemone/io/grid/section.hpp"
+#include "anemone/io/grid/layout/section.hpp"
 
 
 SCENARIO( "we need to know details about sections of the Grid" ) {

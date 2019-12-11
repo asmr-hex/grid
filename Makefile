@@ -33,6 +33,7 @@ BIN_DIR             := $(BUILD_DIR)/bin
 SRC_DIR      := src
 ANEMONE_DIR  := $(SRC_DIR)/anemone
 
+INCLUDE      += -I$(SRC_DIR)
 
 BIN_TARGET   := anemone
 ANEMONE_SRC  := $(shell find $(ANEMONE_DIR) -type f -name '*.cpp')
@@ -50,7 +51,7 @@ TEST_DIR             := test
 UNIT_TEST_DIR        := $(TEST_DIR)/unit
 INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 
-INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(SRC_DIR)
+INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil
 
 UNIT_TEST_TARGET     := run_unit_tests
 UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
@@ -61,7 +62,7 @@ UNIT_TEST_OBJECTS    := $(UNIT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 
 # list all phony targets, i.e. non-file target commands
-.PHONY: all build clean debug default  packages test release
+.PHONY: all build clean debug default  packages test coverage release
 
 
 default: build
@@ -137,10 +138,16 @@ debug: run
 
 # run tests (for now just unit tests)
 test: INCLUDE += $(INCLUDE_TEST)
-#test: CXXFLAGS += -g --coverage
 test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
 	@$(BIN_DIR)/$(UNIT_TEST_TARGET) -s
-#	@lcov -c -d build/objects -o coverage.info
+
+
+coverage: CXXFLAGS += -O0 -g --coverage
+coverage: test
+	@lcov -c -d . -o coverage.info
+	@lcov --extract coverage.info "$(PWD)/$(ANEMONE_DIR)/*" -o coverage.info
+	@genhtml coverage.info -o coverage
+	@open coverage/index.html
 
 
 release: CXXFLAGS += -O2
