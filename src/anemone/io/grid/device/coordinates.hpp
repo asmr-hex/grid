@@ -1,10 +1,11 @@
-#ifndef IO_GRID_COORDINATES_H
-#define IO_GRID_COORDINATES_H
+#ifndef IO_GRID_DEVICE_COORDINATES_H
+#define IO_GRID_DEVICE_COORDINATES_H
 
 #include <functional>
 
 
 struct grid_coordinates_t {
+public:
   unsigned int x;
   unsigned int y;
 

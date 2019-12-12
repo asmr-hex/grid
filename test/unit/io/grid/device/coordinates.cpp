@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include "anemone/io/grid/coordinates.hpp"
+#include "anemone/io/grid/device/coordinates.hpp"
 
 
 SCENARIO( "grid_coordinates_t can be compared to one another" ) {

@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "anemone/io/grid/coordinates.hpp"
+#include "anemone/io/grid/device/coordinates.hpp"
 #include "section.hpp"
 
 

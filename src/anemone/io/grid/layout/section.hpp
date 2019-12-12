@@ -1,7 +1,7 @@
 #ifndef IO_GRID_SECTION_H
 #define IO_GRID_SECTION_H
 
-#include "anemone/io/grid/coordinates.hpp"
+#include "anemone/io/grid/device/coordinates.hpp"
 
 
 enum class
