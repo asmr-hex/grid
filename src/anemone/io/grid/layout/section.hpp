@@ -2,37 +2,7 @@
 #define IO_GRID_SECTION_H
 
 #include "anemone/io/grid/device/coordinates.hpp"
-
-
-enum class
-GridSectionName {
-                 PlayPause,
-                 Stop,
-                 Record,
-                 Metronome,
-                 
-                 Shift,
-                 
-                 InstrumentSelect,
-                 InstrumentPanel,
-                 
-                 Steps,
-                 Pages,
-                 
-                 Parts,
-                 Banks,
-                 
-                 PPQN,
-};
-
-
-typedef unsigned int grid_section_index;
-
-
-struct grid_addr_t {
-  GridSectionName section;
-  grid_section_index index;
-};
+#include "anemone/io/grid/layout/names.hpp"
 
 
 class GridSection {
@@ -42,11 +12,14 @@ public:
   GridSection(GridSectionName name, const grid_region_t& region)
     : name(name), region_m(region) {};
 
+  virtual ~GridSection() = default;
+
   unsigned int width();
   unsigned int height();
   unsigned int size();
   grid_region_t region() { return region_m; };
 
+  // should the below be protected? i.e. will anyone have to use them except for derived classes?
   grid_coordinates_t coordinates_of(unsigned int index);
   std::vector<grid_coordinates_t> coordinates_in();
   std::vector<grid_coordinates_t> coordinates_in(unsigned int start, unsigned int end);

@@ -146,7 +146,7 @@ coverage: CXXFLAGS += -O0 -g --coverage
 coverage: test
 	@lcov -c -d . -o coverage.info
 	@lcov --extract coverage.info "$(PWD)/$(ANEMONE_DIR)/*" -o coverage.info
-	@genhtml coverage.info -o coverage
+	@genhtml --legend coverage.info -o coverage
 	@open coverage/index.html
 
 
