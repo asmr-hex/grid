@@ -44,6 +44,15 @@ std::vector<grid_coordinates_t> GridSection::coordinates_in(unsigned int start, 
   return coordinates;
 }
 
+bool GridSection::contains(const grid_coordinates_t& c) {
+  return
+    c.x >= region_m.min.x &&
+    c.x <= region_m.max.x &&
+    c.y >= region_m.min.y &&
+    c.y <= region_m.max.y;
+    
+}
+
 unsigned int GridSection::index_of(const grid_coordinates_t& coordinates) {
   // normalize
   unsigned int x = coordinates.x - region_m.min.x;

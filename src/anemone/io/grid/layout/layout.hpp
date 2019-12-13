@@ -22,16 +22,18 @@ class Layout {
 public:
   LayoutName name;
   
-  Layout(LayoutName name) : name(name);
+  Layout(LayoutName name) : name(name) = default;
   virtual ~Layout() = default;
 
-  void notify(LayoutContext&, grid_device_event_t&&);
-  grid_coordinates_t translate(grid_addr_t&&);
+  // accept LayoutContext in order to change layout from within handler.
+  void notify(LayoutContext&, const grid_device_event_t&);
+  grid_coordinates_t translate(const grid_addr_t&);
 
 private:
-  // TODO implement algorithm for choosing layout section
-  // given a set of coordinates! (basically a better implementation
-  // of the "relevant" variable within the old handlers)
+  std::vector< std::reference_wrapper<GridSection> > sections;
+  std::map< GridSectionName, std::reference_wrapper<GridSection> > section_by_name;
+
+  GridSection& section_of(const grid_coordinates_t&);
 };
 
 

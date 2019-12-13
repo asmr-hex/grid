@@ -12,8 +12,6 @@ public:
   GridSection(GridSectionName name, const grid_region_t& region)
     : name(name), region_m(region) {};
 
-  virtual ~GridSection() = default;
-
   unsigned int width();
   unsigned int height();
   unsigned int size();
@@ -24,6 +22,8 @@ public:
   std::vector<grid_coordinates_t> coordinates_in();
   std::vector<grid_coordinates_t> coordinates_in(unsigned int start, unsigned int end);
 
+  bool contains(const grid_coordinates_t& c);
+  
   unsigned int index_of(const grid_coordinates_t& coordinates);
   
 private:
