@@ -2,6 +2,7 @@
 #define IO_GRID_H
 
 #include "anemone/io/grid/device/grid.hpp"
+#include "anemone/io/grid/layout/context.hpp"
 
 
 // what does this class do?
@@ -11,7 +12,7 @@
 //   - handle must properly map grid_coordinates to grid_addr
 // has an in-mem mapping of grid-coordinates -> grid section
 
-class Grid : public Observable<grid_event_t>, public Observer<grid_device_event_t> {
+class Grid : public Observer<grid_device_event_t> {
 public:
   // on handle grid_device_event, delegate event to layout (which will use the current layout and delegate to appropriate layout section (which are observables which will then broadcast (to controllers)))
   // on calls to update grid, translate to grid_coordinates using layout (which will use current layout and delegate to appropriate section to do translation), should return coordinates which are used by this class to send to GridDevice
@@ -23,7 +24,7 @@ public:
   // (2) translate grid_addr (high abstraction) to grid_coordinates (low abstraction) and return
   LayoutContext layout;
 private:
-  GridDevice device;
+  std::unique_ptr<GridDevice> device;
 };
 
 #endif

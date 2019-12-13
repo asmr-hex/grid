@@ -8,7 +8,7 @@
 #include "anemone/io/grid/device/events.hpp"
 #include "anemone/io/grid/device/coordinates.hpp"
 #include "anemone/io/grid/layout/layout.hpp"
-#include "anemone/io/grid/layout/address.hpp"
+#include "anemone/io/grid/address.hpp"
 #include "anemone/io/grid/layout/names.hpp"
 
 
@@ -18,8 +18,8 @@ class LayoutContext {
 public:
   LayoutContext(layout_initializer_list layouts);
 
-  void notify(grid_device_event_t&&);
-  grid_coordinates_t translate(grid_addr_t&&);
+  void notify(const grid_device_event_t&);
+  grid_coordinates_t translate(const grid_addr_t&);
   
 private:
   std::shared_ptr<Layout> current_layout;

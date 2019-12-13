@@ -1,11 +1,13 @@
 #ifndef IO_GRID_SECTION_H
 #define IO_GRID_SECTION_H
 
+#include "anemone/io/observable.hpp"
 #include "anemone/io/grid/device/coordinates.hpp"
 #include "anemone/io/grid/layout/names.hpp"
+#include "anemone/io/grid/event.hpp"
 
 
-class GridSection {
+class GridSection : public Observable<grid_event_t> {
 public:
   GridSectionName name;
 

@@ -59,6 +59,22 @@ SCENARIO( "we need to know details about sections of the Grid" ) {
       }
     }
 
+    WHEN( "contains(...) is called on a coordinate within the section" ) {
+      grid_coordinates_t coordinates = { .x = 1, .y = 0 };
+      
+      THEN( "it returns true") {
+        REQUIRE( section.contains(coordinates) );
+      }
+    }
+
+    WHEN( "contains(...) is called on a coordinate outside of the section" ) {
+      grid_coordinates_t coordinates = { .x = 1, .y = 5 };
+      
+      THEN( "it returns false") {
+        REQUIRE( !section.contains(coordinates) );
+      }
+    }
+    
     WHEN( "index_of(...) is called" ) {
       grid_coordinates_t coordinates = { .x = 4, .y = 1 };
       

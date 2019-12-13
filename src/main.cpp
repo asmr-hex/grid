@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "anemone/anemone.hpp"
-#include "anemone/io/grid/monome.hpp"
+#include "anemone/io/grid/device/monome.hpp"
 #include "anemone/io/midi/rtmidi.hpp"
 
 
