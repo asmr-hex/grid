@@ -23,17 +23,19 @@ public:
   virtual ~Layout() = default;
 
   // accept LayoutContext in order to change layout from within handler.
-  void notify(LayoutContext&, const grid_device_event_t&);
-  grid_coordinates_t translate(const grid_addr_t&);
+  void notify(LayoutContext&, const grid_device_event_t&) const;
+  grid_coordinates_t translate(const grid_addr_t&) const;
 
-private:
-  std::vector< std::shared_ptr<GridSection> > sections;
-  std::map< GridSectionName, std::shared_ptr<GridSection> > section_by_name;
+protected:
+  std::vector<GridSection *> sections;
+  std::map< GridSectionName, GridSection *> section_by_name;
 
-  grid_event_t translate(GridSection&, const grid_device_event_t&);
+  void register_section(GridSection&);
   
-  GridSection& section_of(const grid_coordinates_t&);
+  void switch_layout(LayoutContext&, const grid_event_t&) const;
+  
+  grid_event_t translate(const GridSection&, const grid_device_event_t&) const;
+  GridSection& section_of(const grid_coordinates_t&) const;
 };
-
 
 #endif

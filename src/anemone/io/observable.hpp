@@ -4,7 +4,6 @@
 #include <set>
 #include <memory>
 
-
 template<typename Event>
 class Observer;
 
@@ -16,7 +15,7 @@ public:
   void register_observer(const std::shared_ptr< Observer<Event> >&);
   void unregister_observer(const std::shared_ptr< Observer<Event> >&);
 
-private:
+protected:
   std::set< std::shared_ptr< Observer<Event> > > observers;
 };
 
@@ -46,7 +45,6 @@ void Observable<Event>::broadcast(const Event& event) {
 template<typename Event>
 void Observable<Event>::register_observer(const std::shared_ptr< Observer<Event> >& observer) {
   observers.insert(observer);
-  
 };
 
 

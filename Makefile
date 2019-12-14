@@ -51,7 +51,7 @@ TEST_DIR             := test
 UNIT_TEST_DIR        := $(TEST_DIR)/unit
 INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 
-INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil
+INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(TEST_DIR)
 
 UNIT_TEST_TARGET     := run_unit_tests
 UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
@@ -139,7 +139,7 @@ debug: run
 # run tests (for now just unit tests)
 test: INCLUDE += $(INCLUDE_TEST)
 test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
-	@$(BIN_DIR)/$(UNIT_TEST_TARGET) -s
+	@$(BIN_DIR)/$(UNIT_TEST_TARGET) -r compact -s
 
 
 coverage: CXXFLAGS += -O0 -g --coverage

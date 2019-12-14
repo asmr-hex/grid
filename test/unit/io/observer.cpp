@@ -2,8 +2,8 @@
 
 #include <catch.hpp>
 
-#include "anemone/io/observer.hpp"
 #include "anemone/io/observable.hpp"
+#include "anemone/io/observer.hpp"
 
 
 class TestObserver : public Observer<std::string> {
@@ -14,7 +14,6 @@ public:
 
   std::vector<std::string> events;
 };
-
 
 SCENARIO( "io Observers can subscribe to io Observables" ) {
 

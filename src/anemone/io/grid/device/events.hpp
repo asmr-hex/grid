@@ -8,6 +8,15 @@ enum class GridDeviceEvent { ButtonUp, ButtonDown };
 
 struct grid_device_event_t : public grid_coordinates_t {
   GridDeviceEvent type;
+
+  static grid_device_event_t make(unsigned int xi, unsigned int yi, GridDeviceEvent e) {
+    return {{
+             .x = xi,
+             .y = yi
+             },
+            .type = e,
+    };
+  }
 };
 
 #endif

@@ -26,7 +26,8 @@ GridSectionName {
 
 enum class
 LayoutName {
-            
+            SequencerAndInstrument,
+            ParallelSequencer,
 };
 
 #endif
