@@ -14,6 +14,11 @@
 
 class Grid : public Observer<grid_device_event_t> {
 public:
+  Grid(layout_initializer_list layouts, std::unique_ptr<GridDevice> device)
+    : layout(layouts), device(device)
+  {
+    subscribe(*device);
+  };
   // on handle grid_device_event, delegate event to layout (which will use the current layout and delegate to appropriate layout section (which are observables which will then broadcast (to controllers)))
   // on calls to update grid, translate to grid_coordinates using layout (which will use current layout and delegate to appropriate section to do translation), should return coordinates which are used by this class to send to GridDevice
   // on calls which use animator (like add animation, the addresses are translated and THEN stored in the animator) (animator has a shared_ptr of the GridDevice)
