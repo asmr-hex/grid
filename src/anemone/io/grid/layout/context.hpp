@@ -20,7 +20,8 @@ public:
 
   void notify(const grid_device_event_t&);
   grid_coordinates_t translate(const grid_addr_t&);
-  
+
+  LayoutName name() { return current_layout->name; };
 private:
   std::shared_ptr<Layout> current_layout;
   std::map< LayoutName, std::shared_ptr<Layout> > layout_by_name;

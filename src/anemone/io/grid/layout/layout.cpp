@@ -1,4 +1,5 @@
 #include "anemone/io/grid/layout/layout.hpp"
+#include "anemone/io/grid/layout/context.hpp"
 
 
 void Layout::notify(LayoutContext& ctx, const grid_device_event_t& device_event) const {
@@ -8,7 +9,7 @@ void Layout::notify(LayoutContext& ctx, const grid_device_event_t& device_event)
   section.broadcast(grid_event);
 
   // optionally switch layout.
-  switch_layout(ctx, grid_event);
+  change_layout_wrapper(ctx, grid_event);
 }
 
 
@@ -46,7 +47,13 @@ void Layout::register_section(GridSection& section) {
   section_by_name[section.name] = &section;
 }
 
-void Layout::switch_layout(LayoutContext& ctx, const grid_event_t& event) const {};
+void Layout::change_layout_wrapper(LayoutContext& ctx, const grid_event_t& event) const {
+  auto new_layout = change_layout(event);
+  if ( new_layout.has_value() )
+    ctx.use_layout(new_layout.value());
+};
+
+std::optional<LayoutName> Layout::change_layout(const grid_event_t& event) const { return std::nullopt; };
 
 GridSection& Layout::section_of(const grid_coordinates_t& coordinates) const {
   for (auto section : sections) {

@@ -1,49 +1,20 @@
 #include <memory>
 #include <vector>
-#include <iostream>
 
 #include <catch.hpp>
 
-#include "anemone/io/observer.hpp"
+#include "fixtures/observers.hpp"
+#include "fixtures/layouts.hpp"
 
 #include "anemone/io/grid/layout/context.hpp"
 #include "anemone/io/grid/layout/layout.hpp"
 #include "anemone/io/grid/layout/names.hpp"
-
-
-class TestLayoutObserver : public Observer<grid_event_t> {
-public:
-  virtual void handle(const grid_event_t& event) override {
-    events.push_back(event);
-  }
-
-  std::vector<grid_event_t> events;
-};
-
-
-// derive a small test layout
-class TestLayout : public Layout {
-public:
-  GridSection steps;
-  GridSection play_pause;
-
-  TestLayout() : Layout(LayoutName::SequencerAndInstrument) {
-    steps = GridSection(GridSectionName::Steps,
-                        { .min = { .x = 0, .y = 0},
-                          .max = { .x = 15, .y = 1} });
-    play_pause = GridSection(GridSectionName::PlayPause,
-                             { .min = { .x = 0, .y = 2},
-                               .max = { .x = 0, .y = 2} });
-
-    register_section(steps);
-    register_section(play_pause);
-  };
-};
+#include "anemone/io/grid/event.hpp"
 
 
 SCENARIO( "a grid Layout delegates events to its constituent sections" ) {
   GIVEN( "a layout" ) {
-    TestLayout layout;
+    TestSequencerLayout layout;
 
     WHEN( "the layout translates a grid address" ) {
       grid_addr_t addr = { .layout = LayoutName::SequencerAndInstrument,
@@ -60,11 +31,11 @@ SCENARIO( "a grid Layout delegates events to its constituent sections" ) {
   }
 
   GIVEN( "a layout and observers subscribed to its sections" ) {
-    TestLayout layout;
-    LayoutContext ctx({std::make_shared<TestLayout>(layout)});
+    TestSequencerLayout layout;
+    LayoutContext ctx({std::make_shared<TestSequencerLayout>()}); // dummy ctx for the sake of this test
     
-    auto observer_a = std::make_shared<TestLayoutObserver>();
-    auto observer_b = std::make_shared<TestLayoutObserver>();
+    auto observer_a = std::make_shared<TestGridEventObserver>();
+    auto observer_b = std::make_shared<TestGridEventObserver>();
     
     observer_a->subscribe(layout.steps);
     observer_b->subscribe(layout.play_pause);

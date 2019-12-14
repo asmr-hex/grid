@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <optional>
 
 #include "anemone/io/grid/device/events.hpp"
 #include "anemone/io/grid/device/coordinates.hpp"
@@ -31,8 +32,12 @@ protected:
   std::map< GridSectionName, GridSection *> section_by_name;
 
   void register_section(GridSection&);
-  
-  void switch_layout(LayoutContext&, const grid_event_t&) const;
+
+  // we introduce this wrapper because LayoutContext declares Layout as a friend
+  // class, though friend-ness isn't derivable. thus any deriving classes can't
+  // access LayoutContext's protected 'use_layout' method.
+  void change_layout_wrapper(LayoutContext&, const grid_event_t&) const;
+  virtual std::optional<LayoutName> change_layout(const grid_event_t&) const;
   
   grid_event_t translate(const GridSection&, const grid_device_event_t&) const;
   GridSection& section_of(const grid_coordinates_t&) const;

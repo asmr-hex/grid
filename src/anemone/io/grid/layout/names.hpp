@@ -21,6 +21,8 @@ GridSectionName {
                  Banks,
                  
                  PPQN,
+
+                 SwitchLayout,
 };
 
 

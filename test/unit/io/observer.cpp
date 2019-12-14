@@ -2,23 +2,17 @@
 
 #include <catch.hpp>
 
+#include "fixtures/observers.hpp"
+
 #include "anemone/io/observable.hpp"
 #include "anemone/io/observer.hpp"
 
 
-class TestObserver : public Observer<std::string> {
-public:
-  virtual void handle(const std::string& event) override {
-    events.push_back(event);
-  }
-
-  std::vector<std::string> events;
-};
 
 SCENARIO( "io Observers can subscribe to io Observables" ) {
 
   GIVEN( "an io Observable and an io Observer" ) {
-    auto observer = std::make_shared<TestObserver>();
+    auto observer = std::make_shared<TestStringObserver>();
     Observable<std::string> observable;
 
     REQUIRE( observer->events.size() == 0 );
@@ -33,7 +27,7 @@ SCENARIO( "io Observers can subscribe to io Observables" ) {
   }
 
   GIVEN( "an io Observer subscribed to an io Observable" ) {
-    auto observer = std::make_shared<TestObserver>();
+    auto observer = std::make_shared<TestStringObserver>();
     Observable<std::string> observable;
     observer->subscribe(observable);
 
@@ -64,8 +58,8 @@ SCENARIO( "io Observers can subscribe to io Observables" ) {
   }
 
   GIVEN( "multiple io Observers subscribed to an io Observable" ) {
-    auto observer1 = std::make_shared<TestObserver>();
-    auto observer2 = std::make_shared<TestObserver>();
+    auto observer1 = std::make_shared<TestStringObserver>();
+    auto observer2 = std::make_shared<TestStringObserver>();
     Observable<std::string> observable;
     
     observer1->subscribe(observable);
@@ -97,7 +91,7 @@ SCENARIO( "io Observers can subscribe to io Observables" ) {
 SCENARIO( "io Observers can unsubscribe to io Observables" ) {
 
   GIVEN( "an io Observable and an io Observer" ) {
-    auto observer = std::make_shared<TestObserver>();
+    auto observer = std::make_shared<TestStringObserver>();
     Observable<std::string> observable;
 
     REQUIRE( observer->events.size() == 0 );
@@ -112,7 +106,7 @@ SCENARIO( "io Observers can unsubscribe to io Observables" ) {
   }
 
   GIVEN( "an io Observer subscribed to an io Observable" ) {
-    auto observer = std::make_shared<TestObserver>();
+    auto observer = std::make_shared<TestStringObserver>();
     Observable<std::string> observable;
     observer->subscribe(observable);
 
@@ -138,8 +132,8 @@ SCENARIO( "io Observers can unsubscribe to io Observables" ) {
   }
 
   GIVEN( "multiple io Observers subscribed to an io Observable" ) {
-    auto observer1 = std::make_shared<TestObserver>();
-    auto observer2 = std::make_shared<TestObserver>();
+    auto observer1 = std::make_shared<TestStringObserver>();
+    auto observer2 = std::make_shared<TestStringObserver>();
     Observable<std::string> observable;
     
     observer1->subscribe(observable);
