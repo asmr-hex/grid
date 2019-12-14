@@ -14,22 +14,27 @@
 
 class Grid : public Observer<grid_device_event_t> {
 public:
-  Grid(layout_initializer_list layouts, std::unique_ptr<GridDevice> device)
-    : layout(layouts), device(device)
-  {
-    subscribe(*device);
-  };
+  LayoutContext layout;
+  
+  Grid(std::shared_ptr<GridDevice> device, layout_initializer_list layouts)
+    : layout(layouts), device(device) {};
+
+  // we need a connect method which subscribes the Grid to the GridDevice because
+  // we cannot subscribe within the constructor. this is because the subscribe method
+  // uses shared_from_this which assumes that there is a smart pointer managing this
+  // object already, though by the time the constructor is called (even if it is called
+  // wrapped within std::make_shared), the smart pointer has yet to be constructed itself.
+  void connect();
+  
   // on handle grid_device_event, delegate event to layout (which will use the current layout and delegate to appropriate layout section (which are observables which will then broadcast (to controllers)))
   // on calls to update grid, translate to grid_coordinates using layout (which will use current layout and delegate to appropriate section to do translation), should return coordinates which are used by this class to send to GridDevice
   // on calls which use animator (like add animation, the addresses are translated and THEN stored in the animator) (animator has a shared_ptr of the GridDevice)
-  //
-  //
-  // so layout must implement really two types of functionality:
-  // (1) translate and broadcast grid_device_events from layout (to its observers (or more correctly, its current_layout's sections' observers))
-  // (2) translate grid_addr (high abstraction) to grid_coordinates (low abstraction) and return
-  LayoutContext layout;
+
+protected:
+  virtual void handle(const grid_device_event_t&) override;
+
 private:
-  std::unique_ptr<GridDevice> device;
+  std::shared_ptr<GridDevice> device;
 };
 
 #endif

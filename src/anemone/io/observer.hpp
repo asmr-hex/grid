@@ -13,10 +13,12 @@ class Observer : public std::enable_shared_from_this< Observer<Event> > {
 public:
   virtual ~Observer() = default;
   
-  virtual void handle(const Event&) = 0;
-
   void subscribe(Observable<Event>&);
   void unsubscribe(Observable<Event>&);
+protected:
+  virtual void handle(const Event&) = 0;
+
+  friend class Observable<Event>;
 };
 
 

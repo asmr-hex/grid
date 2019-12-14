@@ -6,6 +6,7 @@
 
 #include "anemone/io/observer.hpp"
 #include "anemone/io/grid/event.hpp"
+#include "anemone/io/grid/device/events.hpp"
 
 
 
@@ -16,6 +17,16 @@ public:
   }
 
   std::vector<std::string> events;
+};
+
+
+class TestGridDeviceEventObserver : public Observer<grid_device_event_t> {
+public:
+  virtual void handle(const grid_device_event_t& event) override {
+    events.push_back(event);
+  }
+
+  std::vector<grid_device_event_t> events;
 };
 
 
