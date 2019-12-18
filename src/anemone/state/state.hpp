@@ -20,15 +20,20 @@ namespace State {
   template<typename T>
   struct State {
     template<typename A>
-    state_t<T, A> static with_reducer(typename type_identity<reducer_fn_t<T, A> >::type fn, T t) {
-      return state_t<T, A>(std::make_unique<Leaf<T, A> >(fn, t));
+    std::shared_ptr<state_t<T, A> >
+    static with_reducer(T initial_state, typename type_identity<reducer_fn_t<T, A> >::type fn)
+    {
+      return std::make_shared<state_t<T, A> >
+        (std::make_unique<Leaf<T, A> >(fn, initial_state));
     };
 
     template<typename A>
     struct with_actions {
       template<typename...S>
-      static state_t<T, A> compose(typename type_identity<compose_fn_t<T, S...> >::type fn, std::shared_ptr<state_t<S, A> >...s) {
-        return state_t<T, A>(std::make_unique<Composition<T, A, S...> >(fn, s...));
+      static std::shared_ptr<state_t<T, A> >
+      compose(typename type_identity<compose_fn_t<T, S...> >::type fn, std::shared_ptr<state_t<S, A> >...s) {
+        return std::make_shared<state_t<T, A> >
+          (std::make_unique<Composition<T, A, S...> >(fn, s...));
       };
     };
   };
