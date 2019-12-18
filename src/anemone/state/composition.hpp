@@ -4,6 +4,7 @@
 #include <memory>
 #include <functional>
 
+#include "anemone/util/match.hpp"
 #include "anemone/state/node.hpp"
 
 
@@ -27,7 +28,7 @@ namespace State {
   private:
     T state;
     std::function<T()> compose;
-    // std::vector< std::variant<Node<S> *...> > nodes;
+    std::vector<std::shared_ptr<Reducible<A> > > nodes;
 
     void curry(compose_fn_t<T, S...> fn, std::shared_ptr<state_t<S, A> >...s);
   };
@@ -40,11 +41,12 @@ namespace State {
 
 namespace State {
 
-  
   template<typename T, typename A, typename...S>
-  Composition<T, A, S...>::Composition(compose_fn_t<T, S...> fn, std::shared_ptr<state_t<S, A> >...s) {
+  Composition<T, A, S...>::Composition(compose_fn_t<T, S...> fn, std::shared_ptr<state_t<S, A> >...s)
+    : nodes({s...}) {
     curry(fn, s...);
-  }
+    state = compose();
+  };
 
   template<typename T, typename A, typename...S>
   T Composition<T, A, S...>::value() {
@@ -53,7 +55,10 @@ namespace State {
 
   template<typename T, typename A, typename...S>
   void Composition<T, A, S...>::reduce(A a) {
-    // reduce over all sub states
+    // // reduce over all sub states
+    for (auto node : nodes) {
+      node->reduce(a);
+    }
 
     state = compose();
   };
@@ -62,8 +67,6 @@ namespace State {
   void Composition<T, A, S...>::curry(compose_fn_t<T, S...> fn, std::shared_ptr<state_t<S, A> >...s) {
     compose = [fn, s...] () -> T { return fn(s->value()...); };
   }
-  
 };
-
 
 #endif

@@ -15,7 +15,6 @@ struct type_identity {
   using type = T;
 };
 
-
 namespace State {
 
   template<typename T>
@@ -28,12 +27,12 @@ namespace State {
     template<typename A>
     struct with_actions {
       template<typename...S>
-      state_t<T, A> static compose(typename type_identity<compose_fn_t<T, S...> >::type fn, std::shared_ptr<State<S> >...s) {
+      static state_t<T, A> compose(typename type_identity<compose_fn_t<T, S...> >::type fn, std::shared_ptr<state_t<S, A> >...s) {
         return state_t<T, A>(std::make_unique<Composition<T, A, S...> >(fn, s...));
       };
     };
-
   };
+
   
   template<typename T, typename A>
   class state_t : public Node<T, A> {
