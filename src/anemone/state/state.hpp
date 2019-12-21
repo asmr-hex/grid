@@ -8,6 +8,7 @@
 #include "anemone/state/reducer.hpp"
 #include "anemone/state/leaf.hpp"
 #include "anemone/state/composition.hpp"
+#include "anemone/state/observable.hpp"
 
 
 template<typename T>
@@ -40,7 +41,7 @@ namespace State {
 
   
   template<typename T, typename A>
-  class state_t : public Node<T, A> {
+  class state_t : public Node<T, A>, public Observable<T> {
   public:
     state_t(std::unique_ptr<Node<T, A> > node) : node(std::move(node)) {};
     
@@ -59,7 +60,12 @@ namespace State {
 
   template<typename T, typename A>
   void state_t<T, A>::reduce(A a) {
+    T old_value = node->value();
+    
     node->reduce(a);
+    
+    if ( !(node->value() == old_value) )
+      this->broadcast(node->value());
   };
 
 }

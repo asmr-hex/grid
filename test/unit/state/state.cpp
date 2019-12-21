@@ -8,10 +8,6 @@
 #include "anemone/state/state.hpp"
 #include "anemone/util/match.hpp"
 
-struct composite {
-  std::string a;
-  int b;
-};
 
 namespace TestAction {
   struct change_str {
@@ -32,11 +28,23 @@ namespace TestState {
   struct metronome {
     std::string tempo = "deterministic";
     int tick = 0;
+
+    bool operator==(const metronome& rhs) {
+      return
+        tempo == rhs.tempo &&
+        tick  == rhs.tick;
+    };
   };
 
   struct composite_state {
     int a;
     metronome m;
+
+    bool operator==(const composite_state& rhs) {
+      return
+        a == rhs.a &&
+        m == rhs.m;
+    };
   };
 }
 
@@ -197,7 +205,7 @@ SCENARIO( "a State can represent a single value, collection, or composition of v
                  [&] (const TestAction::clear& a) {
                    return 0;
                  },
-                 [&] (const auto& a) {
+                 [&] (const auto& a) {  // note: for default case, make sure it is const qualified...
                    return state;
                  });
        });
