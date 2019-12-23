@@ -21,6 +21,8 @@ private:
   // Clock clock;
   IO    io;
   // Config config;
+
+  void setup_state_and_dispatcher();
 };
 
 // #include <map>

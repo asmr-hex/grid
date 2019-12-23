@@ -41,6 +41,10 @@ namespace State {
 
   
   template<typename T, typename A>
+  using state_ptr = std::shared<state_t<T, A> >;
+
+  
+  template<typename T, typename A>
   class state_t : public Node<T, A>, public Observable<T> {
   public:
     state_t(std::unique_ptr<Node<T, A> > node) : node(std::move(node)) {};

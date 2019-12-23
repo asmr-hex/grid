@@ -16,17 +16,25 @@
 // (5) direct (read-only) access to the state
 class Controller : public Observer<grid_event_t> {
 public:
-  Controller(std::shared_ptr<GridSection> section)
-    : section(section) {};
+  Controller(std::shared_ptr<GridSection> section,
+             std::shared_ptr<Dispatcher> dispatcher,
+             std::shared_ptr<State::Tree::Root> state_tree)
+    : section(section), dispatcher(dispatcher), state_tree(state_tree) {};
 
   void connect() {
     subscribe(*section);
   };
   
 protected:
+  std::shared_ptr<Dispatcher> dispatcher;
   std::shared_ptr<GridSection> section;
+  std::shared_ptr<State::Tree::Root> state_tree;
 
-  virtual void handle(const grid_event_t&) = 0;
+  virtual void handle(const grid_event_t& event) override {
+    handle(event, state_tree->state->value());
+  };
+
+  virtual void handle(const grid_event_t&, const State::Tree:root_t& state) = 0;
 };
 
 #endif
