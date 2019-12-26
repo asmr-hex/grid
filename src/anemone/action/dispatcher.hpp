@@ -10,7 +10,7 @@
 
 class Dispatcher {
 public:
-  Dispatcher(std::shared_ptr<Queue>);
+  Dispatcher(std::shared_ptr< Queue<action_t> >);
   void dispatch(const action_t& action);
   void dispatch(action_t&& action);
   void dispatch(std::vector<action_t> actions);
@@ -19,7 +19,7 @@ public:
   void dispatch_wait  (action_t action);
 
 private:
-  std::shared_ptr<Queue<action_t> > queue;
+  std::shared_ptr< Queue<action_t> > queue;
 };
 
 #endif

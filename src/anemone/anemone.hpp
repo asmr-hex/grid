@@ -3,26 +3,25 @@
 
 #include <string>
 
-#include "io/io.hpp"
+// #include "io/io.hpp"
 #include "io/grid/grid.hpp"
-#include "io/midi/midi.hpp"
+// #include "io/midi/midi.hpp"
 
 
 class Anemone {
 public:
-  Anemone(Grid&& grid, Midi&& midi)
-    : io(grid, midi) {};
+  // Anemone(Grid&& grid, Midi&& midi);
   
-  void run() {
-    
-  };
+  void run();
 
 private:
   // Clock clock;
-  IO    io;
+  // IO    io;
+  // std::shared_ptr<State::Tree::Root> state;
+  // std::shared_ptr<Dispatcher> dispatcher;
   // Config config;
 
-  void setup_state_and_dispatcher();
+  void init_state();
 };
 
 // #include <map>

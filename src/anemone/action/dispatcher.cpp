@@ -1,7 +1,7 @@
 #include "anemone/action/dispatcher.hpp"
 
 
-Dispatcher::Dispatcher(std::shared_ptr<Queue<action_t> > q) : queue(q) {};
+Dispatcher::Dispatcher(std::shared_ptr< Queue<action_t> > q) : queue(q) {};
 
 
 void Dispatcher::dispatch(const action_t& action) {

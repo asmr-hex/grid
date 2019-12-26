@@ -4,21 +4,21 @@
 #include "anemone/state/tree/node.hpp"
 
 
-namespace State {
-  namespace Tree {
+// namespace State {
+//   namespace Tree {
 
-    struct sequencer_t {
-      // TODO implement me
-    };
+//     struct sequencer_t {
+//       // TODO implement me
+//     };
 
-    class Sequencer : public Node<sequencer_t> {
-    public:
-      Sequencer() {
-        // implement me
-      };
-    };
+//     class Sequencer : public Node<sequencer_t> {
+//     public:
+//       Sequencer() {
+//         // implement me
+//       };
+//     };
     
-  }
-}
+//   }
+// }
 
 #endif
