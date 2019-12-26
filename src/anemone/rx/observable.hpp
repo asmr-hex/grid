@@ -20,6 +20,8 @@ namespace rx {
 
   private:
     void register_observer(std::function<void(T)>);
+
+    friend class Observer;
   };
 
 

@@ -8,6 +8,9 @@
 #include "anemone/io/grid/event.hpp"
 #include "anemone/io/grid/device/events.hpp"
 
+#include "anemone/rx/observer.hpp"
+
+#include "fixtures/state/composite_state.hpp"
 
 
 class TestStringObserver : public Observer<std::string> {
@@ -38,6 +41,20 @@ public:
 
   std::vector<grid_event_t> events;
 };
+
+namespace fixture {
+  namespace observer {
+      namespace rx {
+
+      class Simple : public ::rx::Observer {
+      public:
+        int count = 0;
+        bool on = false;
+      };
+      
+    }
+  }
+}
 
 
 #endif

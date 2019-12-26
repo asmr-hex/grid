@@ -7,6 +7,10 @@
 
 
 namespace rx {
+  
+  template<typename T>
+  class Observable;  // forward declaration
+  
   namespace dag {
 
     
@@ -18,6 +22,8 @@ namespace rx {
 
     protected:
       std::vector< std::function<void(T)> > observers;
+
+      friend class rx::Observable<T>;
     };
 
 
@@ -31,7 +37,7 @@ namespace rx {
 
     template<typename T>
     void Observable<T>::register_observer(std::function<void(T)> handler) {
-      observers.append(handler);
+      observers.push_back(handler);
     }
   }
 }

@@ -34,7 +34,7 @@ namespace fixture {
                        return old_state;
                      },
                      [&] (const auto& a) {
-                       return old_state; 
+                       return old_state;
                      });
            });
       }

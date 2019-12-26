@@ -19,7 +19,7 @@ namespace rx {
 
   // an rx::Observer can subscribe to an rx::Observable or an rx::dag::Observable
   // directly. recall that rx::Observable is a wrapper over an rx::dag::Observable.
-  class Observer : public std::enable_shared_from_this<Observer> {
+  class Observer {
   public:
     template<typename T>
     void subscribe(std::shared_ptr<Observable<T> >, std::function<void(T)>);
