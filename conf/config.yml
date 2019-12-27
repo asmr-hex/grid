@@ -12,3 +12,14 @@ controllers:
   - nanokey
   - glove
 mapping_file: "controller_mapping.yml"
+
+layouts:
+  sequencer:
+    layout_file: "sequencer/layout.yml"
+  pattern:
+    layout_file: "pattern/layout.yml"
+instruments:
+  sp404:
+    layout_file: ""
+  ms20:
+    layout_file: ""
