@@ -4,11 +4,10 @@
 #include <string>
 
 
-class Config {
+class Config : public Base {
 public:
   Conf::Layouts layouts;
   Conf::Instruments instruments;
-  float bpm = 120.0;
 
   Config(std::string config_path);
 };

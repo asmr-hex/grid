@@ -1,18 +1,3 @@
-instruments:
-  sp404:
-    mapping_file: "sp404_mapping.yml"
-  ms20:
-    mapping_file: "ms20_mapping.yml"
-  gr1:
-    chan: 10
-    mapping_file: "gr1_mapping.yml"
-  er1:
-    mapping_file: "er1_mapping.yml"
-controllers:
-  - nanokey
-  - glove
-mapping_file: "controller_mapping.yml"
-
 layouts:
   sequencer:
     layout_file: "sequencer/layout.yml"
@@ -20,6 +5,14 @@ layouts:
     layout_file: "pattern/layout.yml"
 instruments:
   sp404:
-    layout_file: ""
+    layout_file: "sp404_layout.yml"
   ms20:
-    layout_file: ""
+    layout_file: "ms20_layout.yml"
+  gr1:
+    chan: 10
+    layout_file: "gr1_layout.yml"
+  er1:
+    layout_file: "er1_layout.yml"
+controllers:
+  - nanokey
+  - glove
