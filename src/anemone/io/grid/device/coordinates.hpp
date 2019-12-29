@@ -38,6 +38,12 @@ struct grid_coordinates_hasher {
 struct grid_region_t {
   grid_coordinates_t min;
   grid_coordinates_t max;
+
+  bool operator==(const grid_region_t &rhs) const {
+    return
+      min == rhs.min &&
+      max == rhs.max;
+  };
 };
 
 

@@ -15,6 +15,7 @@ GridSectionName {
                  InstrumentPanel,
                  
                  Steps,
+                 LastStep,
                  Pages,
                  
                  Parts,

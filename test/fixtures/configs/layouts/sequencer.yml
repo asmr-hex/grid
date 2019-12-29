@@ -6,7 +6,7 @@ instrument_select:
   y:
     min: 2
     max: 7
-instrument_region:
+instrument_panel:
   x:
     min: 8
     max: 15
@@ -24,30 +24,22 @@ pages:
   x:
     min: 1
     max: 6
-  y:
-    min: 2
-    max: 2
+  y: 2
 parts:
   x:
     min: 0
     max: 6
-  y:
-    min: 3
-    max: 3
+  y: 3
 banks:
   x:
     min: 0
     max: 6
-  y:
-    min: 4
-    max: 4
+  y: 4
 ppqn:
   x:
     min: 0
     max: 6
-  y:
-    min: 5
-    max: 5
+  y: 5
 shift:
   x: 0
   y: 7
@@ -63,7 +55,7 @@ record:
 last_step:
   x: 0
   y: 2
-tempo:
+metronome:
   x: 6
   y: 7
 ...
