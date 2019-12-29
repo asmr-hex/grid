@@ -1,0 +1,5 @@
+---
+layouts:
+  sequencer:
+    layout_file: "layouts/sequencer.yml"
+...

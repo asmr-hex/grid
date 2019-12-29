@@ -3,11 +3,13 @@
 
 #include <string>
 
+#include "anemone/config/base.hpp"
+#include "anemone/config/layouts/layouts.hpp"
 
-class Config : public Base {
+
+class Config : public Conf::Base {
 public:
   Conf::Layouts layouts;
-  Conf::Instruments instruments;
 
   Config(std::string config_path);
 };
