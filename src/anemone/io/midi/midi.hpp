@@ -3,21 +3,25 @@
 
 #include <string>
 
-#include "observer.hpp"
+#include "anemone/config/config.hpp"
+#include "anemone/io/observable.hpp"
+#inlcude "anemone/io/midi/device/midi.hpp"
 
 
-class Midi {
+// TODO (coco|12.29.2019) currently, this is abstraction layer doesn't do anything. eventually
+// this should be a shim between the raw midi signals and the application controllers which
+// translates incoming signal channels to controller specific signals (for the glove for example)
+// and translates outbound midi messages. is this a good idea?
+class Midi : public Observer<midi_event_t> {
 public:
-  virtual void connect_midi_in(std::string port_name) = 0;
-  virtual void connect_midi_out(std::string port_name) = 0;
+  Midi(std::shared_ptr<Config>, std::shared_ptr<MidiDevice>);
 
-  virtual void get_midi_in_port_names() = 0;
-  virtual void get_midi_out_port_names() = 0;
-  
-  virtual void register_observer(MidiObserver *) = 0;
-  virtual void listen() = 0;
+  void connect();
 
-  // TODO function for midi emit messages
+  // TODO (coco|12.29.2019) support emitting midi out msgs.
+
+private:
+  std::shared_ptr<MidiDevice> device;
 };
 
 #endif

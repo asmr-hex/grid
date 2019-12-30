@@ -10,6 +10,7 @@
 class Config : public Conf::Base {
 public:
   Conf::Layouts layouts;
+  std::string grid_address = "/dev/tty.usbserial-m1000843";
 
   Config(std::string config_path);
 };

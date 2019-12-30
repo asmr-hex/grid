@@ -1,20 +1,21 @@
 #include "anemone/anemone.hpp"
 
 
-// Anemone::Anemone(Grid&& grid, Midi&& midi) : io(std::move(grid), std::move(midi)) {
-//   // read config
+Anemone::Anemone(std::string config_path, GridDevice grid_device, MidiDevice midi_device)
+  : config(config_path), io(std::move(grid), std::move(midi)) {
+  // read config
 
-//   // setup layouts
+  // setup layouts
   
-//   // setup state and dispatcher (pre-req is the concurrent queue)
-//   init_state();
+  // setup state and dispatcher (pre-req is the concurrent queue)
+  init_state();
 
-//   // setup clock
+  // setup clock
 
-//   // setup controllers
+  // setup controllers
   
-//   // setup ui
-// }
+  // setup ui
+}
 
 void Anemone::run() {
   // start listening to io

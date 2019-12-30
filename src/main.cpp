@@ -12,11 +12,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  // Anemone *anemone = new Anemone(argv[1],
-  //                                new Monome(),
-  //                                new RTMidi());
-  // anemone->run();
-
   Anemone anemone(argv[1],
                   Monome(),
                   RTMidi());

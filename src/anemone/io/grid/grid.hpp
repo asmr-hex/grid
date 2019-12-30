@@ -1,6 +1,7 @@
 #ifndef IO_GRID_H
 #define IO_GRID_H
 
+#include "anemone/config/config.hpp"
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/grid/layout/context.hpp"
 
@@ -16,8 +17,7 @@ class Grid : public Observer<grid_device_event_t> {
 public:
   LayoutContext layout;
   
-  Grid(std::shared_ptr<GridDevice> device, layout_initializer_list layouts)
-    : layout(layouts), device(device) {};
+  Grid(std::shared_ptr<Config>, std::shared_ptr<GridDevice>, layout_initializer_list);
 
   // we need a connect method which subscribes the Grid to the GridDevice because
   // we cannot subscribe within the constructor. this is because the subscribe method
@@ -34,6 +34,7 @@ protected:
   virtual void handle(const grid_device_event_t&) override;
 
 private:
+  std::string grid_device_addr;
   std::shared_ptr<GridDevice> device;
 };
 
