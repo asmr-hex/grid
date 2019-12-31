@@ -17,9 +17,9 @@ typedef unsigned short midi_event_uid_t;
 class midi_event_t {
 public:
   midi_event_uid_t id;
-  std::vector<unsigned char> raw;
+  std::vector<unsigned char> data;
   
-  midi_event_t(double timestamp, std::vector<unsigned char> *msg);
+  midi_event_t(double timestamp, std::vector<unsigned char> *data);
 
   // TODO (coco|30.12.2019) add more member variables for command type, etc.
   // need to look at the midi spec for this.

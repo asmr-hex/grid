@@ -1,3 +1,9 @@
+ports:
+  midi:
+    in: "idk"
+    out: "idk"
+  grid: "/dev/tty.usbserial-m1000843"
+
 layouts:
   sequencer:
     layout_file: "sequencer/layout.yml"

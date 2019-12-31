@@ -103,7 +103,7 @@ void RTMidi::listen() {
 }
 
 void RTMidi::emit(midi_event_t event) {
-  // TODO
+  out->sendMessage(&event.data);
 }
 
 void RTMidi::callback_wrapper(double deltatime, std::vector<unsigned char> *msg, void *user_data) {

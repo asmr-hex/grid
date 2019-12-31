@@ -1,4 +1,4 @@
-#include <utility>
+#include <memory>
 #include <iostream>
 
 #include "anemone/anemone.hpp"
@@ -13,8 +13,8 @@ int main(int argc, char *argv[]) {
   }
 
   Anemone anemone(argv[1],
-                  Monome(),
-                  RTMidi());
+                  std::make_shared<Monome>(),
+                  std::make_shared<RTMidi>());
 
   anemone.run();
   

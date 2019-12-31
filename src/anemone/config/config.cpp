@@ -5,8 +5,8 @@ Config::Config(std::string config_path)
   : Conf::Base(config_path),
     layouts((*this)["layouts"]) {
 
-  if ( yml["grid_address"].IsDefined() ) {
-    grid_address = yml["grid_address"].as<std::string>();
-  }
+  ports.grid     = yml["ports"]["grid"].as<std::string>();
+  ports.midi.in  = yml["ports"]["midi"]["in"].as<std::string>();
+  ports.midi.out = yml["ports"]["midi"]["out"].as<std::string>();
   
 }

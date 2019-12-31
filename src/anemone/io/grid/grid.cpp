@@ -4,12 +4,10 @@
 Grid::Grid(std::shared_ptr<Config> config,
            std::shared_ptr<GridDevice> device,
            layout_initializer_list layouts)
-  : layout(layouts), device(device), device_addr(config->grid_address) {}
+  : layout(layouts), device(device), device_addr(config->ports.grid) {}
 
 void Grid::connect() {
-  // TODO ?  connect with address
-  subscribe(*device);  // QUESTION: why are we dereferencing here?
-
+  subscribe(*device);
   device->connect(device_addr);
 }
 

@@ -2,9 +2,10 @@
 #define ANEMONE_H
 
 #include <string>
+#include <memory>
 
 #include "anemone/config/config.hpp"
-// #include "io/io.hpp"
+#include "anemone/io/io.hpp"
 #include "anemone/io/grid/grid.hpp"
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/midi/device/midi.hpp"
@@ -13,14 +14,19 @@
 
 class Anemone {
 public:
-  Anemone(std::string config_path, GridDevice grid_device, MidiDevice midi);
+  Anemone(std::string config_path, std::shared_ptr<GridDevice>, std::shared_ptr<MidiDevice>);
   
   void run();
 
 private:
-  Config config;
+  std::shared_ptr<Config> config;
+  std::shared_ptr<IO> io;
+  
+  struct {
+    std::shared_ptr<GridLayout::Sequencer> sequencer;
+  } layouts;
+  
   // Clock clock;
-  // IO    io;
   // std::shared_ptr<State::Tree::Root> state;
   // std::shared_ptr<Dispatcher> dispatcher;
 

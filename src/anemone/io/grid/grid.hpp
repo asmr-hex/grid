@@ -1,7 +1,11 @@
 #ifndef IO_GRID_H
 #define IO_GRID_H
 
+#include <string>
+#include <memory>
+
 #include "anemone/config/config.hpp"
+#include "anemone/io/observer.hpp"
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/grid/layout/context.hpp"
 

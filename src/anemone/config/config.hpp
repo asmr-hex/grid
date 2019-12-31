@@ -10,8 +10,17 @@
 class Config : public Conf::Base {
 public:
   Conf::Layouts layouts;
-  std::string grid_address = "/dev/tty.usbserial-m1000843";
 
+  struct {
+    
+    struct {
+      std::string in;
+      std::string out;
+    } midi;
+    
+    std::string grid = "/dev/tty.usbserial-m1000843";
+  } ports;
+  
   Config(std::string config_path);
 };
 
