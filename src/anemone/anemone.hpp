@@ -12,6 +12,8 @@
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/midi/device/midi.hpp"
 
+#include "anemone/clock/clock.hpp"
+
 #include "anemone/state/root.hpp"
 #include "anemone/action/dispatcher.hpp"
 
@@ -27,14 +29,12 @@ private:
   std::shared_ptr<IO> io;
   std::shared_ptr<State::Root> state;
   std::shared_ptr<Dispatcher> dispatcher;
+  std::unique_ptr<Clock> clock;
   
   struct {
     std::shared_ptr<GridLayout::Sequencer> sequencer;
   } layouts;
   
-  // Clock clock;
-
-
   void init_state();
 };
 

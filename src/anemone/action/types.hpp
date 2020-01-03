@@ -3,7 +3,9 @@
 
 #include <variant>
 
+#include "anemone/action/sequencer.hpp"
 
-using action_t = std::variant<int>;
+
+using action_t = std::variant<action::update_bpm>;
 
 #endif

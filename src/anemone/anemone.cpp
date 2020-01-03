@@ -19,6 +19,7 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
   dispatcher = std::make_shared<Dispatcher>(state);
 
   // setup clock
+  clock = std::make_unique<Clock>(state);
 
   // setup controllers
   

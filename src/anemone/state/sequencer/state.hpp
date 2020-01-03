@@ -12,15 +12,16 @@
 #include "anemone/rx/dag/node.hpp"
 #include "anemone/rx/dag/observable.hpp"
 
+#include "anemone/action/types.hpp"
+
 
 namespace State {
 
   struct sequencer_t {
-    // TODO implement me
-    int idk = 666;
+    float bpm = 120.0;
 
     bool operator==(const sequencer_t& rhs) {
-      return idk == rhs.idk;
+      return bpm == rhs.bpm;
     };
   };
   
@@ -34,10 +35,11 @@ namespace State {
          [] (sequencer_t old_state, action_t action) -> sequencer_t {
            return
              match(action,
-                   [&] (const int& a) {
-                     return sequencer_t{999};
+                   [&old_state] (const action::update_bpm& a) {
+                     old_state.bpm = a.bpm;
+                     return old_state;
                    },
-                   [&] (const auto& a) {
+                   [&old_state] (const auto& a) {
                      return old_state;
                    });
          });      
