@@ -10,6 +10,7 @@
 namespace GridLayout {
 
   class Sequencer : public Layout {
+  public:
     GridSection instrument_select;
     GridSection instrument_panel;
     GridSection steps;

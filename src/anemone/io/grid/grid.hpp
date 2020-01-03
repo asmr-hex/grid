@@ -38,7 +38,7 @@ protected:
   virtual void handle(const grid_device_event_t&) override;
 
 private:
-  std::string grid_device_addr;
+  std::string device_addr;
   std::shared_ptr<GridDevice> device;
 };
 

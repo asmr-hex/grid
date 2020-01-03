@@ -1,4 +1,9 @@
 ---
+ports:
+  grid: "/dev/monome.usb"
+  midi:
+    in: "/dev/midi.in"
+    out: "/dev/midi.out"
 layouts:
   sequencer:
     layout_file: "layouts/sequencer.yml"

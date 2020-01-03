@@ -3,7 +3,7 @@
 
 #include "anemone/anemone.hpp"
 #include "anemone/io/grid/device/monome.hpp"
-#include "anemone/io/midi/rtmidi.hpp"
+#include "anemone/io/midi/device/rtmidi.hpp"
 
 
 int main(int argc, char *argv[]) {

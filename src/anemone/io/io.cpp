@@ -1,7 +1,7 @@
 #include "anemone/io/io.hpp"
 
 
-IO:IO(std::shared_ptr<Config> config,
+IO::IO(std::shared_ptr<Config> config,
       std::shared_ptr<GridDevice> grid_device,
       std::shared_ptr<MidiDevice> midi_device,
       layout_initializer_list layouts) {

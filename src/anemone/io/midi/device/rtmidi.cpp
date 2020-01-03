@@ -33,6 +33,7 @@ void RTMidi::connect_in(std::string port_name) {
 }
 
 void RTMidi::connect_out(std::string port_name) {
+  unsigned int port;
   ports = get_port_names();
 
   try {
@@ -69,7 +70,7 @@ std::map<std::string, unsigned int> RTMidi::get_input_port_names() {
   for (unsigned int i = 0; i < n_ports; i++) {
     try {
       port_names[in->getPortName(i)] = i;
-    } catch (RtMidi &error) {
+    } catch (RtMidiError &error) {
       error.printMessage();
     }
   }
@@ -90,7 +91,7 @@ std::map<std::string, unsigned int> RTMidi::get_output_port_names() {
   for (unsigned int i = 0; i < n_ports; i++) {
     try {
       port_names[out->getPortName(i)] = i;
-    } catch (RtMidi &error) {
+    } catch ( RtMidiError &error ) {
       error.printMessage();
     }
   }
@@ -103,7 +104,7 @@ void RTMidi::listen() {
 }
 
 void RTMidi::emit(midi_event_t event) {
-  out->sendMessage(&event.data);
+  out->sendMessage(event.data);
 }
 
 void RTMidi::callback_wrapper(double deltatime, std::vector<unsigned char> *msg, void *user_data) {
@@ -114,6 +115,6 @@ void RTMidi::callback_wrapper(double deltatime, std::vector<unsigned char> *msg,
   this_rtmidi->broadcast(event);
 }
 
-midi_event_t RTMidi::transform(double timestep, std::vector<unsigned char> *msg) {
+midi_event_t RTMidi::transform(double timestamp, std::vector<unsigned char> *msg) {
   return midi_event_t(timestamp, msg);
 }

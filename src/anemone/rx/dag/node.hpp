@@ -1,6 +1,7 @@
 #ifndef RX_DAG_NODE_H
 #define RX_DAG_NODE_H
 
+
 namespace rx {
 
   namespace dag {

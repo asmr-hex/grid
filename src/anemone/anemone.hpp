@@ -5,11 +5,15 @@
 #include <memory>
 
 #include "anemone/config/config.hpp"
+
 #include "anemone/io/io.hpp"
 #include "anemone/io/grid/grid.hpp"
+#include "anemone/io/grid/layout/layouts/sequencer.hpp"
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/midi/device/midi.hpp"
-// #include "io/midi/midi.hpp"
+
+#include "anemone/state/root.hpp"
+#include "anemone/action/dispatcher.hpp"
 
 
 class Anemone {
@@ -21,14 +25,15 @@ public:
 private:
   std::shared_ptr<Config> config;
   std::shared_ptr<IO> io;
+  std::shared_ptr<State::Root> state;
+  std::shared_ptr<Dispatcher> dispatcher;
   
   struct {
     std::shared_ptr<GridLayout::Sequencer> sequencer;
   } layouts;
   
   // Clock clock;
-  // std::shared_ptr<State::Tree::Root> state;
-  // std::shared_ptr<Dispatcher> dispatcher;
+
 
   void init_state();
 };

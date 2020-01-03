@@ -4,7 +4,7 @@
 Grid::Grid(std::shared_ptr<Config> config,
            std::shared_ptr<GridDevice> device,
            layout_initializer_list layouts)
-  : layout(layouts), device(device), device_addr(config->ports.grid) {}
+  : layout(layouts), device_addr(config->ports.grid), device(device) {}
 
 void Grid::connect() {
   subscribe(*device);

@@ -5,12 +5,12 @@
 #include <memory>
 
 #include "anemone/action/types.hpp"
-#include "anemone/util/concurrent_queue.hpp"
+#include "anemone/rx/root.hpp"
 
 
 class Dispatcher {
 public:
-  Dispatcher(std::shared_ptr< Queue<action_t> >);
+  Dispatcher(std::shared_ptr<rx::Root<action_t> >);
   void dispatch(const action_t& action);
   void dispatch(action_t&& action);
   void dispatch(std::vector<action_t> actions);
@@ -19,7 +19,7 @@ public:
   void dispatch_wait  (action_t action);
 
 private:
-  std::shared_ptr< Queue<action_t> > queue;
+  std::shared_ptr<rx::Root<action_t> > root;
 };
 
 #endif

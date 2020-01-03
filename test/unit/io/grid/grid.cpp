@@ -3,7 +3,9 @@
 #include "mocks/device/grid.hpp"
 #include "fixtures/layouts.hpp"
 #include "fixtures/observers.hpp"
+#include "fixtures/configs/config.hpp"
 
+#include "anemone/config/config.hpp"
 #include "anemone/io/grid/grid.hpp"
 #include "anemone/io/grid/layout/names.hpp"
 
@@ -13,7 +15,8 @@ SCENARIO( "a Grid handles events from a GridDevice and propogates grid events" )
     auto sqncr_layout = std::make_shared<TestSequencerLayout>();
     auto p_sqncr_layout = std::make_shared<TestParallelSequencerLayout>();
     auto grid_device = std::make_shared<MockGridDevice>();
-    auto grid = std::make_shared<Grid>(Grid(grid_device, {sqncr_layout, p_sqncr_layout}));
+    auto config = std::make_shared<Config>(fixture::config::default_conf);
+    auto grid = std::make_shared<Grid>(Grid(config, grid_device, {sqncr_layout, p_sqncr_layout}));
 
     WHEN( "the Grid is constructed" ) {
       THEN( "the layout is correctly set" ) {
