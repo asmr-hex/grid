@@ -15,7 +15,7 @@ State::Root::Root() {
     ::compose<sequencer_t>
     ([] (sequencer_t s) -> root_t {
        return {
-               .sequencer           = s,
+               .sequencer = s,
        };
      }, sequencer.state);
 }
@@ -27,7 +27,7 @@ void State::Root::listen() {
                   while (true) {
                     action_t action = queue->pop();
                     spdlog::debug("state: received action");
-                    state->reduce(action);                          
+                    state->reduce(action);       
                   }
                 });
 

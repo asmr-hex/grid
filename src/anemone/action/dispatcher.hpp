@@ -13,6 +13,7 @@ public:
   Dispatcher(std::shared_ptr<rx::Root<action_t> >);
 
   void connect();
+  void hydrate();
   
   void dispatch(const action_t& action);
   void dispatch(action_t&& action);

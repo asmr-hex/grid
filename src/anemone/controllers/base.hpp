@@ -21,6 +21,7 @@ public:
   void listen();
 protected:
   State::root_t state;
+  std::shared_ptr<State::Root> state_wrapper;
   std::shared_ptr<Dispatcher> dispatcher;
   std::shared_ptr<Observable<T> > observable;
 
@@ -29,18 +30,20 @@ protected:
 
 
 template<typename T>
-Controller<T>::Controller(std::shared_ptr<State::Root> state_p,
+Controller<T>::Controller(std::shared_ptr<State::Root> state_wrapper,
                           std::shared_ptr<Dispatcher> dispatcher,
                           std::shared_ptr<Observable<T> > observable)
-  : dispatcher(dispatcher), observable(observable) {
-  subscribe<State::root_t>(state_p, [this] (State::root_t s) {
-                                      state = s;
-                                    });
-};
+  : state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
 
 
 template<typename T>
 void Controller<T>::listen() {
+  // listen to state changes
+  subscribe<State::root_t>(state_wrapper, [this] (State::root_t s) {
+                                            state = s;
+                                          });
+
+  // listen to io/clock observable
   ::Observer<T>::subscribe(*observable);
 };
 

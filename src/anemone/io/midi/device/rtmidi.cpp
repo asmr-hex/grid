@@ -39,6 +39,8 @@ void RTMidi::connect_in(std::string port_name) {
   }
 
   in->openPort(port);
+
+  spdlog::info("  connected -> midi in");
 }
 
 void RTMidi::connect_out(std::string port_name) {
@@ -61,6 +63,8 @@ void RTMidi::connect_out(std::string port_name) {
   }
 
   out->openPort(port);
+
+  spdlog::info("  connected -> midi out");
 }
 
 midi_ports_t RTMidi::get_port_names() {

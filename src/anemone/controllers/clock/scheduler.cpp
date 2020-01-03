@@ -1,6 +1,6 @@
 #include "anemone/controllers/clock/scheduler.hpp"
 
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 
 ctrl::clock::Scheduler::Scheduler(std::shared_ptr<State::Root> state,
@@ -11,6 +11,6 @@ ctrl::clock::Scheduler::Scheduler(std::shared_ptr<State::Root> state,
 
 void ctrl::clock::Scheduler::handle(const tick_t& tick) {
   // advance steps
-  std::cout << "TICK: " << tick << "\n";
+  spdlog::debug("clock tick: {}", tick);
 }
 

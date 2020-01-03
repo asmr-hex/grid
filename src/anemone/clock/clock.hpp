@@ -16,12 +16,13 @@ public:
   Clock(std::shared_ptr<State::Root>);
 
   void start();
-  void step();
+  void connect_to_state();
 private:
   std::shared_ptr<State::Root> state;
   std::chrono::microseconds period;
   tick_t tick_m = 0;
 
+  void step();
   void tick();
   void update_period(float bpm);
 };

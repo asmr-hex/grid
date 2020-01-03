@@ -18,7 +18,7 @@ void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
     spdlog::error("could not connect to monome grid");
     exit( EXIT_FAILURE );
   }
-  spdlog::info("connnected to monome");
+  spdlog::info("  connected -> monome");
 }
 
 

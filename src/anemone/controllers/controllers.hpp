@@ -20,6 +20,7 @@ public:
               std::shared_ptr<State::Root>,
               std::shared_ptr<Dispatcher>);
 
+  void connect_to_state();
   
 protected:
   std::shared_ptr<IO> io;

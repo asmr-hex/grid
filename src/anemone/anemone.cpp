@@ -40,13 +40,20 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
   
   // setup ui
 
-  spdlog::info("=========================================");
+  spdlog::info("");
+  spdlog::info("========== state initialization =========");
+  dispatcher->connect();
+  clock->connect_to_state();
+  controllers->connect_to_state();
+  dispatcher->hydrate();
 }
 
 void Anemone::run() {
+  
+  
+  spdlog::info("============= connecting ================");
   io->connect();
 
-  dispatcher->connect();
-
+  // clock is blocking (non-detatched thread)
   clock->start();
 }

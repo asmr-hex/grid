@@ -1,3 +1,4 @@
+#include "anemone/action/types.hpp"
 #include "anemone/action/dispatcher.hpp"
 
 #include <spdlog/spdlog.h>
@@ -6,7 +7,12 @@
 Dispatcher::Dispatcher(std::shared_ptr<rx::Root<action_t> > root) : root(root) {}
 
 void Dispatcher::connect() {
-  spdlog::info("connecting \tdispatcher -> state");
+  root->listen();
+  spdlog::info("  connected -> state to dispatcher");
+}
+
+void Dispatcher::hydrate() {
+  root->send_action(action::hydrate_state{});
 }
 
 void Dispatcher::dispatch(const action_t& action) {
