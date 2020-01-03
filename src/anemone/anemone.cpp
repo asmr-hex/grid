@@ -6,11 +6,11 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
   // initialize configuration
   config = std::make_shared<Config>(config_path);
   
-  // initialize layouts
-  layouts.sequencer = std::make_shared<GridLayout::Sequencer>(config);
+  // initialize layouts (TODO move to GridLayouts constructor)
+  layouts->sequencer = std::make_shared<GridLayout::Sequencer>(config);
   
   // initialize io
-  io = std::make_shared<IO>(IO(config, grid_device, midi_device, {layouts.sequencer}));
+  io = std::make_shared<IO>(IO(config, grid_device, midi_device, {layouts->sequencer}));
 
   // initialize state
   state = std::make_shared<State::Root>();
@@ -19,24 +19,17 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
   dispatcher = std::make_shared<Dispatcher>(state);
 
   // setup clock
-  clock = std::make_unique<Clock>(state);
+  clock = std::make_shared<Clock>(state);
 
   // setup controllers
+  controllers = std::make_shared<Controllers>
+    (Controllers(io, clock, layouts, state, dispatcher));
   
   // setup ui
 }
 
 void Anemone::run() {
-  // start listening to io
+  io->connect();
 
-  // start clock
-
-  // 
-}
-
-void Anemone::init_state() {
-  // auto queue = std::make_shared< Queue<action_t> >();
-
-  // dispatcher = std::make_shared<Dispatcher>(queue);
-  // state = std::make_shared<State::Tree::Root>(queue);
+  clock->start();
 }

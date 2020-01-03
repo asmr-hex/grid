@@ -8,7 +8,7 @@
 
 #include "anemone/io/io.hpp"
 #include "anemone/io/grid/grid.hpp"
-#include "anemone/io/grid/layout/layouts/sequencer.hpp"
+#include "anemone/io/grid/layout/layouts/layouts.hpp"
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/midi/device/midi.hpp"
 
@@ -16,6 +16,8 @@
 
 #include "anemone/state/root.hpp"
 #include "anemone/action/dispatcher.hpp"
+
+#include "anemone/controllers/controllers.hpp"
 
 
 class Anemone {
@@ -27,15 +29,12 @@ public:
 private:
   std::shared_ptr<Config> config;
   std::shared_ptr<IO> io;
+  std::shared_ptr<Clock> clock;
+  std::shared_ptr<GridLayouts> layouts;
   std::shared_ptr<State::Root> state;
   std::shared_ptr<Dispatcher> dispatcher;
-  std::unique_ptr<Clock> clock;
-  
-  struct {
-    std::shared_ptr<GridLayout::Sequencer> sequencer;
-  } layouts;
-  
-  void init_state();
+  std::shared_ptr<Controllers> controllers;
+
 };
 
 // #include <map>
