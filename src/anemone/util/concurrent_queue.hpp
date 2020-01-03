@@ -5,6 +5,8 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <spdlog/spdlog.h>
+
 
 template<typename T>
 class Queue {
@@ -23,7 +25,8 @@ private:
 template<typename T>
 T Queue<T>::pop() {
   std::unique_lock<std::mutex> mlock(mutex);
-  condition.wait(mlock, [this]{ return queue.empty(); });
+  condition.wait(mlock, [this]{ return !queue.empty(); });
+
   auto item = queue.front();
   queue.pop();
 

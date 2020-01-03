@@ -42,15 +42,18 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
 
   spdlog::info("");
   spdlog::info("========== state initialization =========");
+  
   dispatcher->connect();
+  
   clock->connect_to_state();
   controllers->connect_to_state();
+  
   dispatcher->hydrate();
+
+  spdlog::info("");
 }
 
 void Anemone::run() {
-  
-  
   spdlog::info("============= connecting ================");
   io->connect();
 

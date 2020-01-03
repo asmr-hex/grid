@@ -4,15 +4,13 @@
 #include <spdlog/spdlog.h>
 
 
-Clock::Clock(std::shared_ptr<State::Root> state) : state(state) {
-  // initialize period with configured bpm
-  update_period(120.0);
-}
+Clock::Clock(std::shared_ptr<State::Root> state) : state(state) {}
 
 void Clock::start() {
   spdlog::info("  connected -> clock");
   std::thread t([this] { step(); });
-
+  spdlog::info("");
+  
   // wait forever for clock thread!
   t.join();
 }
@@ -21,7 +19,7 @@ void Clock::connect_to_state() {
   spdlog::info("  initializing state -> clock");
   subscribe<State::root_t>(state, [this] (State::root_t s) {
                                     update_period(s.sequencer.bpm);
-                                  });  
+                                  });
 }
 
 void Clock::step() {

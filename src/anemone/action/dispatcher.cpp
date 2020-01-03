@@ -12,6 +12,7 @@ void Dispatcher::connect() {
 }
 
 void Dispatcher::hydrate() {
+  spdlog::info("  hydrating state tree");
   root->send_action(action::hydrate_state{});
 }
 

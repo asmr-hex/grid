@@ -23,7 +23,6 @@ State::Root::Root() {
 
 void State::Root::listen() {
   std::thread t([this]{
-                  spdlog::info("state: listening for incoming actions");
                   while (true) {
                     action_t action = queue->pop();
                     spdlog::debug("state: received action");

@@ -18,6 +18,7 @@ namespace rx {
     
     protected:
       std::unique_ptr<Node<T, Action> > node;
+      bool dehydrated = true;
     };
 
   
@@ -34,8 +35,10 @@ namespace rx {
 
       T new_value = node->get();
       
-      if ( !(new_value == old_value) )
+      if ( !(new_value == old_value) || dehydrated )
         this->broadcast(new_value);
+
+      dehydrated = false;
     };
 
     
