@@ -13,6 +13,7 @@ namespace rx {
 
     virtual void send_action(const Action&) = 0;
     virtual void send_action(Action&&) = 0;
+    virtual void listen() = 0;
   };
 
 }

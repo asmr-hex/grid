@@ -5,7 +5,7 @@ instrument_select:
   y:
     min: 2
     max: 7
-instrument_region:
+instrument_panel:
   x:
     min: 8
     max: 15
@@ -62,6 +62,6 @@ record:
 last_step:
   x: 0
   y: 2
-tempo:
+metronome:
   x: 6
   y: 7

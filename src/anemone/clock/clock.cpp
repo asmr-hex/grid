@@ -1,14 +1,18 @@
 #include "anemone/clock/clock.hpp"
 #include "anemone/clock/constants.hpp"
 
+#include <spdlog/spdlog.h>
 
-Clock::Clock(std::shared_ptr<State::Root> state) {
+
+Clock::Clock(std::shared_ptr<State::Root> state) : state(state) {}
+
+void Clock::start() {
+
   subscribe<State::root_t>(state, [this] (State::root_t s) {
                                     update_period(s.sequencer.bpm);
                                   });
-}
 
-void Clock::start() {
+  spdlog::info("clock:: running");
   std::thread t([this] { step(); });
   t.detach();
 }
@@ -28,6 +32,7 @@ void Clock::step() {
 
 void Clock::tick() {
   broadcast(tick_m);
+  tick_m++;
 }
 
 void Clock::update_period(float bpm) {

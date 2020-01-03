@@ -1,5 +1,7 @@
 #include "anemone/state/root.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 State::Root::Root() {
   sequencer = State::Sequencer();
@@ -16,16 +18,15 @@ State::Root::Root() {
                .sequencer           = s,
        };
      }, sequencer.state);
-
-  // begin listening for inbound actions
-  listen_for_actions();
 }
 
 
-void State::Root::listen_for_actions() {
+void State::Root::listen() {
   std::thread t([this]{
+                  spdlog::info("state: listening for incoming actions");
                   while (true) {
                     action_t action = queue->pop();
+                    spdlog::debug("state: received action");
                     state->reduce(action);                          
                   }
                 });

@@ -40,10 +40,10 @@ namespace State {
     virtual void send_action(const action_t&) override;
     virtual void send_action(action_t&&) override;
     
+    virtual void listen() override;
+    
   private:
     std::unique_ptr<Queue<action_t> > queue;
-    
-    void listen_for_actions();
   };
   
 }

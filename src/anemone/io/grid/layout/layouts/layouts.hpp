@@ -3,11 +3,15 @@
 
 #include <memory>
 
+#include "anemone/config/config.hpp"
 #include "anemone/io/grid/layout/layouts/sequencer.hpp"
 
 
-struct GridLayouts {
+class GridLayouts {
+public:
   std::shared_ptr<GridLayout::Sequencer> sequencer;
+
+  GridLayouts(std::shared_ptr<Config>);
 };
 
 #endif

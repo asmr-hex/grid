@@ -18,8 +18,9 @@ public:
   void start();
   void step();
 private:
+  std::shared_ptr<State::Root> state;
   std::chrono::microseconds period;
-  tick_t tick_m;
+  tick_t tick_m = 0;
 
   void tick();
   void update_period(float bpm);

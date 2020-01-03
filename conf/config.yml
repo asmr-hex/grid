@@ -1,7 +1,7 @@
 ports:
   midi:
-    in: "idk"
-    out: "idk"
+    in: "AudioBox USB 96"
+    out: "AudioBox USB 96"
   grid: "/dev/tty.usbserial-m1000843"
 
 layouts:
@@ -9,6 +9,7 @@ layouts:
     layout_file: "sequencer/layout.yml"
   pattern:
     layout_file: "pattern/layout.yml"
+
 instruments:
   sp404:
     layout_file: "sp404_layout.yml"
@@ -19,6 +20,7 @@ instruments:
     layout_file: "gr1_layout.yml"
   er1:
     layout_file: "er1_layout.yml"
+
 controllers:
   - nanokey
   - glove

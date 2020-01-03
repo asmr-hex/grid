@@ -1,5 +1,6 @@
 #include "anemone/io/midi/device/rtmidi.hpp"
 
+#include <spdlog/spdlog.h>
 
 RTMidi::RTMidi() {
   try {
@@ -25,7 +26,15 @@ void RTMidi::connect_in(std::string port_name) {
   try {
     port = ports.in.at(port_name);
   } catch (std::out_of_range &error) {
-    std::cout << "port '" << port_name << "' unavailable!\n";
+    
+    std::string port_names_str;
+    for (auto port : ports.in) {
+      port_names_str += "'" + port.first + "' ";
+    }
+
+    spdlog::error("midi in port '{}' unavailable!", port_name);
+    spdlog::error("available midi in ports are: {}", port_names_str);
+    
     exit( EXIT_FAILURE );
   }
 
@@ -39,7 +48,15 @@ void RTMidi::connect_out(std::string port_name) {
   try {
     port = ports.out.at(port_name);
   } catch (std::out_of_range &error) {
-    std::cout << "port '" << port_name << "' unavailable!\n";
+
+    std::string port_names_str;
+    for (auto port : ports.out) {
+      port_names_str += "'" + port.first + "' ";
+    }
+    
+    spdlog::error("midi in port '{}' unavailable!", port_name);
+    spdlog::error("available midi out ports are: {}", port_names_str);
+    
     exit( EXIT_FAILURE );
   }
 
@@ -53,7 +70,7 @@ midi_ports_t RTMidi::get_port_names() {
              .out = get_output_port_names(),
     };    
   }
-
+  
   return ports;
 }
 
@@ -61,7 +78,7 @@ std::map<std::string, unsigned int> RTMidi::get_input_port_names() {
   // make sure there are ports available
   unsigned int n_ports = in->getPortCount();
   if (n_ports == 0) {
-    std::cout << "no midi input ports available!\n";
+    spdlog::error("no midi input ports available");
     exit( EXIT_FAILURE );
   }
 

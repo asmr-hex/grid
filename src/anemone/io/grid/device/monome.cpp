@@ -1,6 +1,8 @@
 #include <string>
 #include <iostream>
 
+#include <spdlog/spdlog.h>
+
 #include <monome.h>
 
 #include "anemone/io/grid/device/monome.hpp"
@@ -13,10 +15,10 @@ void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
   // rpi : /dev/ttyUSB0
   // osx : /dev/tty.usbserial-m1000843
   if( !(monome = monome_open(addr.c_str())) ) {
-    std::cout << "Could not connect to monome grid!\n";
+    spdlog::error("could not connect to monome grid");
     exit( EXIT_FAILURE );
   }
-  std::cout << "CONNECTED TO MONOME!\n";
+  spdlog::info("connnected to monome");
 }
 
 

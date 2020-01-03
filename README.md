@@ -32,7 +32,12 @@
 * [yaml-cpp](https://github.com/jbeder/yaml-cpp) - a yaml serialization library
   ```shell
   $ brew install yaml-cpp  # on osx
-  $ ????                   on raspbian
+  $ ????                   # on raspbian
+  ```
+* [spdlog](https://github.com/gabime/spdlog) - a fast logging library
+  ``` shell
+  $ brew install spdlog  #on osx
+  $ ???                  # on raspbian
   ```
 
 ### Troubleshooting
