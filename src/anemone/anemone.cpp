@@ -4,7 +4,7 @@
 
 
 Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_device, std::shared_ptr<MidiDevice> midi_device) {
-  spdlog::set_level(spdlog::level::debug);
+  spdlog::set_level(spdlog::level::info);
 
   spdlog::info("============= initialization ============");
   

@@ -10,6 +10,7 @@ void Clock::start() {
   spdlog::info("  connected -> clock");
   std::thread t([this] { step(); });
   spdlog::info("");
+  spdlog::info("ready...");
   
   // wait forever for clock thread!
   t.join();
