@@ -12,5 +12,10 @@ ctrl::clock::Scheduler::Scheduler(std::shared_ptr<State::Root> state,
 void ctrl::clock::Scheduler::handle(const tick_t& tick) {
   // advance steps
   spdlog::debug("clock tick: {}", tick);
+
+  // for each instrument in playback
+  //   get events for current tick
+  //   dispatch all midi events
+  //   increment current tick
 }
 

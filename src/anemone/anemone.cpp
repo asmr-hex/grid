@@ -4,7 +4,7 @@
 
 
 Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_device, std::shared_ptr<MidiDevice> midi_device) {
-  spdlog::set_level(spdlog::level::info);
+  spdlog::set_level(spdlog::level::debug);
 
   spdlog::info("============= initialization ============");
   
@@ -12,8 +12,7 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
   spdlog::info("  initializing \tconfiguration");
   config = std::make_shared<Config>(config_path);
   
-  
-  // initialize layouts (TODO move to GridLayouts constructor)
+  // initialize layouts
   spdlog::info("  initializing \tlayouts");
   layouts = std::make_shared<GridLayouts>(config);
   

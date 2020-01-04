@@ -4,7 +4,7 @@
 
 
 State::Root::Root() {
-  sequencer = State::Sequencer();
+  spdlog::debug("    - constructing root");
 
   // instantiate queue
   queue = std::make_unique<Queue<action_t> >();
@@ -12,12 +12,13 @@ State::Root::Root() {
   // instantiate root composite state
   state = rx::State<root_t>
     ::with_actions<action_t>
-    ::compose<sequencer_t>
-    ([] (sequencer_t s) -> root_t {
+    ::compose<sequencer_t, instruments_t>
+    ([] (sequencer_t s, instruments_t i) -> root_t {
        return {
-               .sequencer = s,
+               .sequencer   = s,
+               .instruments = i,
        };
-     }, sequencer.state);
+     }, sequencer.state, instruments.state);
 }
 
 

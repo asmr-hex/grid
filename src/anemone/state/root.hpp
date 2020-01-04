@@ -11,11 +11,11 @@
 #include "anemone/rx/types.hpp"
 #include "anemone/rx/root.hpp"
 #include "anemone/rx/observable.hpp"
-
 #include "anemone/rx/dag/observable.hpp"
 
 #include "anemone/action/types.hpp"
 #include "anemone/state/sequencer/state.hpp"
+#include "anemone/state/instruments/state.hpp"
 
 
 namespace State {
@@ -23,17 +23,20 @@ namespace State {
   // define composite root type
   struct root_t {
     sequencer_t sequencer;
+    instruments_t instruments;
     
     bool operator==(const root_t& rhs) {
       return
-        sequencer == rhs.sequencer;
+        sequencer   == rhs.sequencer &&
+        instruments == rhs.instruments;
     };
   };
 
   class Root : public rx::Observable<root_t>, public rx::Root<action_t> {
   public:
     rx::types::state_ptr<root_t, action_t> state;
-    Sequencer sequencer;
+    Sequencer   sequencer;
+    Instruments instruments;
     
     Root();
     virtual std::shared_ptr<rx::dag::Observable<root_t> > get() override;

@@ -14,6 +14,8 @@
 
 #include "anemone/action/types.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 namespace State {
 
@@ -30,6 +32,8 @@ namespace State {
     rx::types::state_ptr<sequencer_t, action_t> state;
     
     Sequencer() {
+      spdlog::debug("    - constructing sequencer");
+
       state = rx::State<sequencer_t>::with_reducer<action_t>
         (sequencer_t{},
          [] (sequencer_t old_state, action_t action) -> sequencer_t {
