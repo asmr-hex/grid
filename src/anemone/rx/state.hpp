@@ -39,7 +39,7 @@ namespace rx {
       };
 
       // compose vector states
-      static types::state_ptr<T, A>
+      static types::state_ptr<std::vector<T> *, A>
       compose_vector(std::vector<types::state_ptr<T, A> > v,
                      dag::filter_fn_t<A> fn = ([] (A a) -> std::vector<int> { return {}; }) )
       {
