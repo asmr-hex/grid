@@ -1,11 +1,11 @@
 #include "anemone/state/instruments/instrument/parts/part/ppqn.hpp"
 
-#include "anemone/utils/match.hpp"
+#include "anemone/util/match.hpp"
 
 
 State::Ppqn::Ppqn() {
   state = rx::State<ppqn_t>
-    ::with_reducers<action_t>
+    ::with_reducer<action_t>
     (ppqn_t{},
      [] (ppqn_t old_state, action_t action) -> ppqn_t {
        return

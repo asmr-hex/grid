@@ -10,6 +10,11 @@
 
 #include "anemone/action/types.hpp"
 
+#include "anemone/state/instruments/instrument/parts/part/ppqn.hpp"
+#include "anemone/state/instruments/instrument/parts/part/page.hpp"
+#include "anemone/state/instruments/instrument/parts/part/transport.hpp"
+#include "anemone/state/instruments/instrument/parts/part/steps.hpp"
+
 
 namespace State {
 
@@ -18,23 +23,30 @@ namespace State {
     ppqn_t ppqn;
     page_t page;
     transport_t transport;
-    steps_t steps; // include last_step, current_step, rendered_steps,
-    sequence_t sequence;
+    steps_t steps;
+    // sequence_t sequence;
     
     // ????
-    bool unsaved;
+    // bool unsaved;
 
 
     bool operator==(const part_t& rhs) {
       return
         id        == rhs.id &&
-        change_me == rhs.change_me;
+        ppqn      == rhs.ppqn &&
+        page      == rhs.page &&
+        transport == rhs.transport &&
+        steps     == rhs.steps;
     };
   };
 
   class Part : public rx::Observable<part_t> {
   public:
     rx::types::state_ptr<part_t, action_t> state;
+    Ppqn      ppqn;
+    Page      page;
+    Transport transport;
+    Steps     steps;
 
     Part(int);
     

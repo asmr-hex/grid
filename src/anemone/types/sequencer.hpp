@@ -17,7 +17,23 @@ namespace types {
   namespace page {
     typedef unsigned int idx_t;
   }
-  
+
+  namespace step {
+    typedef unsigned int idx_t;
+
+    typedef unsigned int granular_idx_t;
+    
+    struct page_relative_idx_t {
+      page::idx_t page;
+      idx_t       step;
+
+      bool operator==(const page_relative_idx_t& rhs) {
+        return
+          page == rhs.page &&
+          step == rhs.step;
+      };
+    };
+  }
 }
 
 #endif

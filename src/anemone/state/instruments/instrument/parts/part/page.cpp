@@ -1,11 +1,11 @@
 #include "anemone/state/instruments/instrument/parts/part/page.hpp"
 
-#include "anemone/utils/match.hpp"
+#include "anemone/util/match.hpp"
 
 
 State::Page::Page() {
   state = rx::State<page_t>
-    ::with_reducers<action_t>
+    ::with_reducer<action_t>
     (page_t{},
      [] (page_t old_state, action_t action) -> page_t {
        return
