@@ -15,7 +15,15 @@ namespace State {
 
   struct part_t {
     int id;
-    bool change_me = false;
+    ppqn_t ppqn;
+    page_t page;
+    transport_t transport;
+    steps_t steps; // include last_step, current_step, rendered_steps,
+    sequence_t sequence;
+    
+    // ????
+    bool unsaved;
+
 
     bool operator==(const part_t& rhs) {
       return

@@ -8,7 +8,7 @@
 State::Parts::Parts() {
   spdlog::debug("    - constructing parts");
 
-  int n_parts = 49;
+  int n_parts = 49; // TODO maybe read in a config?
   std::vector<rx::types::state_ptr<part_t, action_t> > part_states;
       
   for (int i = 0; i < n_parts; i++) {
