@@ -10,22 +10,18 @@
 
 #include "anemone/action/types.hpp"
 
+#include "anemone/state/instruments/instrument/parts/part/state.hpp"
+
 
 namespace State {
 
-  struct parts_t {
-    bool change_me = false;
-    
-    bool operator==(const parts_t& rhs) {
-      return
-        change_me == rhs.change_me;
-    };
-  };
-
-
+  // MIGHT NEED TO REDEFINE THE == operator for this typedef... (can we do this within the vector composition code?)
+  typedef std::vector<part_t> *parts_t;
+  
   class Parts : public rx::Observable<parts_t> {
   public:
     rx::types::state_ptr<parts_t, action_t> state;
+    std::vector<Part> parts;
 
     Parts();
 

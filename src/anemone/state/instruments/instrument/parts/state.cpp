@@ -7,14 +7,25 @@
 
 State::Parts::Parts() {
   spdlog::debug("    - constructing parts");
-  
-  state = rx::State<parts_t>::with_reducer<action_t>
-    (parts_t{},
-     [] (parts_t old_state, action_t action) -> parts_t {
+
+  int n_parts = 49;
+  std::vector<rx::types::state_ptr<part_t, action_t> > part_states;
+      
+  for (int i = 0; i < n_parts; i++) {
+    auto part = Part(i);
+    parts.push_back(part);
+    part_states.push_back(part.state);
+  }
+      
+  state = rx::State<part_t>
+    ::with_actions<action_t>
+    ::compose_vector
+    (part_states,
+     [] (action_t action) -> std::vector<int> {
        return
          match(action,
-               [&] (const auto& a) {
-                 return old_state;
+               [] (const auto& a) -> std::vector<int> {
+                 return {};
                });
      });
 }
