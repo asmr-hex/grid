@@ -39,7 +39,7 @@ namespace State {
          [] (sequencer_t old_state, action_t action) -> sequencer_t {
            return
              match(action,
-                   [&old_state] (const action::update_bpm& a) {
+                   [&old_state] (const action::bpm_updated& a) {
                      old_state.bpm = a.bpm;
                      return old_state;
                    },

@@ -13,7 +13,7 @@
 #include "anemone/state/instruments/instrument/parts/part/ppqn.hpp"
 #include "anemone/state/instruments/instrument/parts/part/page.hpp"
 #include "anemone/state/instruments/instrument/parts/part/transport.hpp"
-#include "anemone/state/instruments/instrument/parts/part/steps.hpp"
+#include "anemone/state/instruments/instrument/parts/part/step.hpp"
 
 
 namespace State {
@@ -23,7 +23,7 @@ namespace State {
     ppqn_t ppqn;
     page_t page;
     transport_t transport;
-    steps_t steps;
+    step_t step;
     // sequence_t sequence;
     
     // ????
@@ -36,7 +36,7 @@ namespace State {
         ppqn      == rhs.ppqn &&
         page      == rhs.page &&
         transport == rhs.transport &&
-        steps     == rhs.steps;
+        step     == rhs.step;
     };
   };
 
@@ -46,7 +46,7 @@ namespace State {
     Ppqn      ppqn;
     Page      page;
     Transport transport;
-    Steps     steps;
+    Step     step;
 
     Part(int);
     

@@ -2,23 +2,32 @@
 #define CONTROLLERS_BASE_H
 
 #include <memory>
+#include <vector>
 
+#include "anemone/io/io.hpp"
 #include "anemone/io/observer.hpp"
 #include "anemone/io/observable.hpp"
 #include "anemone/rx/observer.hpp"
 
 #include "anemone/state/root.hpp"
+#include "anemone/action/types.hpp"
 #include "anemone/action/dispatcher.hpp"
+#include "anemone/action/creators/creators.hpp"
 
 
 template<typename T>
 class Controller : public Observer<T>, public rx::Observer {
 public:
-  Controller(std::shared_ptr<State::Root>,
+  action::Creators make_action;
+
+  Controller(std::shared_ptr<IO>,
+             std::shared_ptr<State::Root>,
              std::shared_ptr<Dispatcher>,
              std::shared_ptr<Observable<T> >);
 
   void listen();
+  void dispatch(action_t);
+  void dispatch(std::vector<action_t>);
 protected:
   State::root_t state;
   std::shared_ptr<State::Root> state_wrapper;
@@ -30,10 +39,11 @@ protected:
 
 
 template<typename T>
-Controller<T>::Controller(std::shared_ptr<State::Root> state_wrapper,
+Controller<T>::Controller(std::shared_ptr<IO> io,
+                          std::shared_ptr<State::Root> state_wrapper,
                           std::shared_ptr<Dispatcher> dispatcher,
                           std::shared_ptr<Observable<T> > observable)
-  : state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
+  : make_action(io), state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
 
 
 template<typename T>
@@ -45,6 +55,16 @@ void Controller<T>::listen() {
 
   // listen to io/clock observable
   ::Observer<T>::subscribe(*observable);
+};
+
+template<typename T>
+void Controller<T>::dispatch(action_t action_) {
+  dispatcher->dispatch(action_);
+};
+
+template<typename T>
+void Controller<T>::dispatch(std::vector<action_t> actions) {
+  dispatcher->dispatch(actions);
 };
 
 #endif

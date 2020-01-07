@@ -11,7 +11,7 @@ Controllers::Controllers(std::shared_ptr<IO> io,
   : io(io), clock(clock), layouts(layouts), state(state), dispatcher(dispatcher) {
 
   scheduler = std::make_shared<ctrl::clock::Scheduler>
-    (ctrl::clock::Scheduler(state, dispatcher, clock));
+    (ctrl::clock::Scheduler(io, state, dispatcher, clock));
 }
 
 void Controllers::connect_to_state() {

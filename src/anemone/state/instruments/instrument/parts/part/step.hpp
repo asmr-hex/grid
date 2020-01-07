@@ -17,14 +17,14 @@
 
 namespace State {
 
-  struct steps_t {
+  struct step_t {
     types::step::granular_idx_t      current   = 0;
     types::step::page_relative_idx_t last      = { .page = 1, .step = 32 };
     bool                             show_last = false;
 
     std::map<types::page::idx_t, std::set<types::step::idx_t> > *rendered;
 
-    bool operator==(const steps_t& rhs) {
+    bool operator==(const step_t& rhs) {
       return
         current     == rhs.current   &&
         last        == rhs.last      &&
@@ -33,13 +33,13 @@ namespace State {
     };
   };
 
-  class Steps : public rx::Observable<steps_t> {
+  class Step : public rx::Observable<step_t> {
   public:
-    rx::types::state_ptr<steps_t, action_t> state;
+    rx::types::state_ptr<step_t, action_t> state;
 
-    Steps();
+    Step();
     
-    virtual std::shared_ptr<rx::dag::Observable<steps_t> > get() override;
+    virtual std::shared_ptr<rx::dag::Observable<step_t> > get() override;
 
   private:
     std::map<types::page::idx_t, std::set<types::step::idx_t> > *rendered;

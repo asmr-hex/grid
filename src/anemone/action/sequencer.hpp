@@ -4,7 +4,7 @@
 
 namespace action {
 
-  struct update_bpm { float bpm; };
+  struct bpm_updated { float bpm; };
 }
 
 #endif

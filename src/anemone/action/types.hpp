@@ -4,6 +4,8 @@
 #include <variant>
 
 #include "anemone/action/sequencer.hpp"
+#include "anemone/action/steps.hpp"
+
 
 namespace action {
   // used to initialize state tree and all connected components
@@ -13,6 +15,7 @@ namespace action {
 }
 
 using action_t = std::variant<action::hydrate_state,
-                              action::update_bpm>;
+                              action::bpm_updated,
+                              action::step_updated>;
 
 #endif

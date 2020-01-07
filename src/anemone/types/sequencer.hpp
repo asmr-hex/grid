@@ -32,6 +32,10 @@ namespace types {
           page == rhs.page &&
           step == rhs.step;
       };
+
+      idx_t to_absolute_idx(unsigned int page_size) {
+        return (page * page_size) + step;
+      };
     };
   }
 }

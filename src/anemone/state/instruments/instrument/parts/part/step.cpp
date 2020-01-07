@@ -1,15 +1,15 @@
-#include "anemone/state/instruments/instrument/parts/part/steps.hpp"
+#include "anemone/state/instruments/instrument/parts/part/step.hpp"
 
 #include "anemone/util/match.hpp"
 
 
-State::Steps::Steps() {
+State::Step::Step() {
   rendered = new std::map<types::page::idx_t, std::set<types::step::idx_t> >();
   
-  state = rx::State<steps_t>
+  state = rx::State<step_t>
     ::with_reducer<action_t>
-    (steps_t{ .rendered = rendered },
-     [] (steps_t old_state, action_t action) -> steps_t {
+    (step_t{ .rendered = rendered },
+     [] (step_t old_state, action_t action) -> step_t {
        return
          match(action,
                [&] (const auto& a) {
@@ -19,6 +19,6 @@ State::Steps::Steps() {
 }
 
 
-std::shared_ptr<rx::dag::Observable<State::steps_t> > State::Steps::get() {
+std::shared_ptr<rx::dag::Observable<State::step_t> > State::Step::get() {
   return state;
 }

@@ -9,7 +9,7 @@ State::InstrumentStatus::InstrumentStatus() {
   spdlog::debug("    - constructing instrument status");
   
   is_playing = rx::State<bool>::with_reducer<action_t>
-    (false,
+    (true,
      [] (bool old_state, action_t action) -> bool {
        return
          match(action,
