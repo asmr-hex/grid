@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "anemone/io/io.hpp"
+#include "anemone/io/grid/layout/layouts/layouts.hpp"
 
 #include "anemone/controllers/base.hpp"
 
@@ -19,6 +20,7 @@ namespace ctrl {
     class Scheduler : public Controller<tick_t> {
     public:
       Scheduler(std::shared_ptr<IO>,
+                std::shared_ptr<GridLayouts>,
                 std::shared_ptr<State::Root>,
                 std::shared_ptr<Dispatcher>,
                 std::shared_ptr<Clock>);

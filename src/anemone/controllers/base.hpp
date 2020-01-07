@@ -8,6 +8,7 @@
 #include "anemone/io/observer.hpp"
 #include "anemone/io/observable.hpp"
 #include "anemone/rx/observer.hpp"
+#include "anemone/io/grid/layout/layouts/layouts.hpp"
 
 #include "anemone/state/root.hpp"
 #include "anemone/action/types.hpp"
@@ -21,6 +22,7 @@ public:
   action::Creators make_action;
 
   Controller(std::shared_ptr<IO>,
+             std::shared_ptr<GridLayouts>,
              std::shared_ptr<State::Root>,
              std::shared_ptr<Dispatcher>,
              std::shared_ptr<Observable<T> >);
@@ -40,10 +42,11 @@ protected:
 
 template<typename T>
 Controller<T>::Controller(std::shared_ptr<IO> io,
+                          std::shared_ptr<GridLayouts> layouts,
                           std::shared_ptr<State::Root> state_wrapper,
                           std::shared_ptr<Dispatcher> dispatcher,
                           std::shared_ptr<Observable<T> > observable)
-  : make_action(io), state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
+  : make_action(io, layouts), state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
 
 
 template<typename T>

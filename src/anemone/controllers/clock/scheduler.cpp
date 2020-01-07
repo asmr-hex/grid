@@ -5,10 +5,11 @@
 
 
 ctrl::clock::Scheduler::Scheduler(std::shared_ptr<IO> io,
+                                  std::shared_ptr<GridLayouts> layouts,
                                   std::shared_ptr<State::Root> state,
                                   std::shared_ptr<Dispatcher> dispatcher,
                                   std::shared_ptr<Clock> clock)
-  : Controller(io, state, dispatcher, clock) {}
+  : Controller(io, layouts, state, dispatcher, clock) {}
 
 
 void ctrl::clock::Scheduler::handle(const tick_t& tick) {

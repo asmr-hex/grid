@@ -6,6 +6,8 @@
 #include "anemone/rx/dag/node.hpp"
 #include "anemone/rx/types.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 namespace rx {
   namespace dag{
@@ -53,14 +55,14 @@ namespace rx {
       : filter(fn), nodes(v) {
       state = new std::vector<T>();
       state->reserve(nodes.size());
-
+      
       compose();
     };
 
     template<typename T, typename A>
     void VectorComposition<T, A>::compose() {
       for (int i = 0; i < nodes.size(); i++) {
-        (*state)[i] = nodes[i]->get();
+        state->insert(state->begin() + i, nodes[i]->get());
       }      
     }
 

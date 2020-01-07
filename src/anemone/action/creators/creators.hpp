@@ -6,6 +6,7 @@
 #include "anemone/io/io.hpp"
 #include "anemone/state/root.hpp"
 #include "anemone/action/types.hpp"
+#include "anemone/io/grid/layout/layouts/layouts.hpp"
 
 
 namespace action {
@@ -19,8 +20,9 @@ namespace action {
   class Creators {
   public:
     std::shared_ptr<IO> io;
+    std::shared_ptr<GridLayouts> layouts;
 
-    Creators(std::shared_ptr<IO>);
+    Creators(std::shared_ptr<IO>, std::shared_ptr<GridLayouts>);
 
     step_updated advance_step(State::instrument_t);
     

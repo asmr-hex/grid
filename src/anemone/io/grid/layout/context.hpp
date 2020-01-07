@@ -22,9 +22,9 @@ public:
   grid_coordinates_t translate(const grid_addr_t&);
 
   LayoutName name() { return current_layout->name; };
-  std::map< LayoutName, std::shared_ptr<Layout> > layout_by_name;
 private:
   std::shared_ptr<Layout> current_layout;
+  std::map< LayoutName, std::shared_ptr<Layout> > layout_by_name;
 
   void use_layout(LayoutName);
 

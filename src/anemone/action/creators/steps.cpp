@@ -6,22 +6,24 @@
 #include "anemone/io/grid/layout/names.hpp"
 #include "anemone/io/grid/layout/layouts/sequencer.hpp"
 
+#include <spdlog/spdlog.h>
 
 
 action::step_updated action::Creators::advance_step(State::instrument_t instrument) {
+  spdlog::debug("dispatching advance step action");
+  
   // get currently playing part
   auto idx = instrument.status.part.in_playback;
+
+  spdlog::debug("getting part at {}", idx);
+  
   auto playing_part = instrument.parts->at(idx);
 
   // get page size
   unsigned int page_size = 0;
-  // TODO refactor this to be easier!
-  // TODO might need to refacto Layouts to avoid dynamic cast....! it is costly!
+  // TODO refactor this to be easier?
   if (io->grid->layout.name() == LayoutName::SequencerAndInstrument ) {
-    auto sequencer_layout = std::dynamic_pointer_cast<GridLayout::Sequencer>
-      (io->grid->layout.layout_by_name[LayoutName::SequencerAndInstrument]);
-
-    page_size = sequencer_layout->steps.size();
+    page_size = layouts->sequencer->steps.size();
   }
   
   // get current ppqn
@@ -35,7 +37,7 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
 
   if ( step > ((last_step * static_cast<unsigned int>(PPQN::Max)) - 1) )
     step = 0;
-
+  
   return {
           .instrument_name = instrument.name,
           .step            = step,
