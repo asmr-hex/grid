@@ -24,7 +24,7 @@ yes, these should also be handled seperately from the traditional redux-style st
 
 ## Implementation ideas (satisfying above requirements)
 ### First of all, what would the High Frequency State look like on its own (not nested)?
-* we want to be able to send actions to it to update it. we could use the match logic similar to what reducers use i think. in this case, each "reducer" function will just directly mutate the High Frequency State of interest rather than propogating the actions to substates. (AN ASSUMPTION HERE IS THAT THE VARIANT-STYLE "REDUCERS" (USING MATCH) ARE EFFICIENT ENOUGH TO HANDLE HIG FREQUENCY UPDATES...SHOULD BENCHMARK THIS).
+* use actions: we want to be able to send actions to it to update it. we could use the match logic similar to what reducers use i think. in this case, each "reducer" function will just directly mutate the High Frequency State of interest rather than propogating the actions to substates. (AN ASSUMPTION HERE IS THAT THE VARIANT-STYLE "REDUCERS" (USING MATCH) ARE EFFICIENT ENOUGH TO HANDLE HIG FREQUENCY UPDATES...SHOULD BENCHMARK THIS).
 ``` c++
 
 namespace high_frequency {
@@ -51,7 +51,32 @@ state = rx::HighFrequency::State<steps_t> // internaly setup steps_t state
 
 ```
 
-* we need the processing of High Frequency State to have access to the Low Frequency State in order to make smart decisions about when to issue Low Frequency Actions as a result of High Frequency changes... we *could* include this logic inside the High Frequency "Reducer" functions which would make the logic more self-contained, but there are two reasons that this might be an anti-pattern
+* access to Low Frequency State: we need the processing of High Frequency State to have access to the Low Frequency State in order to make smart decisions about when to issue Low Frequency Actions as a result of High Frequency changes... we *could* include this logic inside the High Frequency "Reducer" functions which would make the logic more self-contained, but there are two reasons that this might be an anti-pattern
   1. redux principles say that reducers should never dispatch actions since this is the job of the controllers to dispatch actions
   2. including all dispatch logic within the controllers is more explicit w.r.t. business logic.
-additionally, the typing templates might get a bit messy and could possibly cause cirular dependencies if we move ahead with trying to nest High Frequency States within the Low Frequency State tree.
+additionally, the typing templates might get a bit messy and could possibly cause cirular dependencies if we move ahead with trying to nest High Frequency States within the Low Frequency State tree. Therefore, it seems best to handle all subsequent Low Frequency Action dispatching resulting from High Frequency Actions within the controllers which are doing the dispatching.
+* observable: we could easily reuse the observable pattern we already have for Low Frequency State nodes. However, since we would want some filtering (sinnce we aren't ALWAYS innterested in broadcasting updates) we need to flesh that out. One option is to pass in a predicate upon subscription! This predicate could be an object with its own state (possibly even subscribed to some part of the Low Frequency State!). In fact, maybe having this type of subscription predicate would be beneficial for even Low Frequency States!
+Yes, this would be a worthwhile refactor...add an optional predicate to subscribers.
+``` c++
+
+class ObservablePredicate { // derived classes can also be Observers!
+    virtual bool operator()() = 0; // use overloaded () operator!
+}
+
+class Observable<T> {
+    ...
+    void register_observer(Observable observer, ObservablePredicate pred) {
+
+    }
+}
+```
+
+* nested: okay...how to nest...so it would be nice if could just define our High Frequency States as Low Frequency State leaves! In fact, high Frequency States ARE leaves! so, this means composing must be aware of any High Frequency States which are being composed...
+if the composition nodes are able to have a function which returns pointers to all High Frequency States, they can be bubbled up and aggregated onn state initialization up to the Root node. Then the Root node can implement one "reducer function" comprised of all the reducers of each High Frequency State (thus bypassing the "normal" Low Frequency State tree).
+
+## Generally refactor rx::State stuff a little so we don't have to write so much boiler-plate code...
+### big pain points currently
+* having to define the `get` method for State wrappers
+* defining custom equality operator!
+* maybe invoke the match call internally within the library code!
+* add a map composition type!
