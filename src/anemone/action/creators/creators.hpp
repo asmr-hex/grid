@@ -20,6 +20,7 @@ namespace action {
   class Creators {
   public:
     std::shared_ptr<IO> io;
+    State::root_t state;
     std::shared_ptr<GridLayouts> layouts;
 
     Creators(std::shared_ptr<IO>, std::shared_ptr<GridLayouts>);

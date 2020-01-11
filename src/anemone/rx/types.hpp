@@ -9,6 +9,11 @@ namespace rx {
   namespace dag {
     template<typename T, typename A>
     class State;  // forward declaration
+
+    namespace high_frequency {
+      template<typename T, typename A>
+      class State;  // forward declaration      
+    }
   }
   
   namespace types {
@@ -16,6 +21,10 @@ namespace rx {
     template<typename T, typename A>
     using state_ptr = std::shared_ptr<dag::State<T, A> >;
 
+    namespace high_frequency {
+      template<typename T, typename A>
+      using state_ptr = std::shared_ptr<dag::high_frequency::State<T, A> >;
+    }
   }
 }
 

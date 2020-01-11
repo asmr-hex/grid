@@ -15,7 +15,8 @@ namespace action {
 }
 
 using action_t = std::variant<action::hydrate_state,
-                              action::bpm_updated,
-                              action::step_updated>;
+                              action::bpm_updated>;
+
+using high_freq_action_t = std::variant<action::step_updated>;
 
 #endif

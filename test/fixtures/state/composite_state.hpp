@@ -37,7 +37,7 @@ namespace fixture {
       CompositeState() {
         vector_substate = VectorState();
         struct_substate = StructState();
-        
+
         state = rx::State<composite_state_t>
           ::with_actions<fixture::action_t>
           ::compose<std::vector<int>, struct_state_t>

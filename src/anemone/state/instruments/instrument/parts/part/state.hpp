@@ -19,7 +19,7 @@
 namespace State {
 
   struct part_t {
-    int id;
+    unsigned int id;
     ppqn_t ppqn;
     page_t page;
     transport_t transport;
@@ -48,7 +48,7 @@ namespace State {
     Transport transport;
     Step     step;
 
-    Part(int);
+    Part(unsigned int);
     
     virtual std::shared_ptr<rx::dag::Observable<part_t> > get() override;
   };

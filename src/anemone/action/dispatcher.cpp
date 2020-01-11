@@ -4,7 +4,7 @@
 #include <spdlog/spdlog.h>
 
 
-Dispatcher::Dispatcher(std::shared_ptr<rx::Root<action_t> > root) : root(root) {}
+Dispatcher::Dispatcher(std::shared_ptr<rx::Root<action_t, high_freq_action_t> > root) : root(root) {}
 
 void Dispatcher::connect() {
   root->listen();
@@ -23,6 +23,15 @@ void Dispatcher::dispatch(const action_t& action) {
 void Dispatcher::dispatch(action_t&& action) {
   root->send_action(std::move(action));
 }
+
+void Dispatcher::dispatch(const high_freq_action_t& action) {
+  root->send_action(action);
+}
+
+void Dispatcher::dispatch(high_freq_action_t&& action) {
+  root->send_action(std::move(action));
+}
+
 
 void Dispatcher::dispatch(std::vector<action_t> actions) {
   for (auto action : actions) {

@@ -1,7 +1,9 @@
 #ifndef RX_STATE_H
 #define RX_STATE_H
 
+#include <memory>
 #include <vector>
+#include <functional>
 
 #include "anemone/util/type_identity.hpp"
 #include "anemone/rx/types.hpp"
@@ -10,6 +12,7 @@
 #include "anemone/rx/dag/vector_composition.hpp"
 #include "anemone/rx/dag/leaf.hpp"
 #include "anemone/rx/dag/state.hpp"
+#include "anemone/rx/dag/high_frequency_state.hpp"
 
 
 namespace rx {
@@ -48,6 +51,22 @@ namespace rx {
       };
       
     };
+  };
+
+
+  struct HighFrequency {
+    template<typename T>
+    struct State {
+    
+      template<typename A>
+      static types::high_frequency::state_ptr<T, A>
+      with_reducer(T initial_state,
+                   typename type_identity<high_freq_reducer_fn_t<T, A> >::type fn,
+                   typename type_identity<std::function<bool(A)> >::type pred)
+      {
+        return std::make_shared<dag::high_frequency::State<T, A> >(fn, pred, initial_state);
+      };
+    };    
   };
 
 }

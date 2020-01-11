@@ -10,6 +10,7 @@ namespace action {
   struct step_updated {
     State::InstrumentName instrument_name;
     types::step::idx_t step;
+    types::page::idx_t page;
   };
 
 }

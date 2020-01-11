@@ -18,15 +18,12 @@ namespace State {
   struct page_t {
     types::page::idx_t rendered      = 0;
     types::page::idx_t under_edit    = 0;
-    types::page::idx_t in_playback   = 0;
     types::page::idx_t last          = 1;
     bool               follow_cursor = false;
 
     bool operator==(const page_t& rhs) {
       return
         rendered      == rhs.rendered    &&
-        under_edit    == rhs.under_edit  &&
-        in_playback   == rhs.in_playback &&
         last          == rhs.last        &&
         follow_cursor == rhs.follow_cursor;
     };

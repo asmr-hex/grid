@@ -24,7 +24,7 @@ yes, these should also be handled seperately from the traditional redux-style st
 
 ## Implementation ideas (satisfying above requirements)
 ### First of all, what would the High Frequency State look like on its own (not nested)?
-* use actions: we want to be able to send actions to it to update it. we could use the match logic similar to what reducers use i think. in this case, each "reducer" function will just directly mutate the High Frequency State of interest rather than propogating the actions to substates. (AN ASSUMPTION HERE IS THAT THE VARIANT-STYLE "REDUCERS" (USING MATCH) ARE EFFICIENT ENOUGH TO HANDLE HIG FREQUENCY UPDATES...SHOULD BENCHMARK THIS).
+* use actions: we want to be able to send actions to it to update it. we could use the match logic similar to what reducers use i think. in this case, each "reducer" function will just directly mutate the High Frequency State of interest rather than propogating the actions to substates. (AN ASSUMPTION HERE IS THAT THE VARIANT-STYLE "REDUCERS" (USING MATCH) ARE EFFICIENT ENOUGH TO HANDLE HIG FREQUENCY UPDATES...SHOULD BENCHMARK THIS). importantly, there should be *no* nested states in high frequency states! it should be a flat hierarchy since traversinng a dag for high frequency operations is costly!
 ``` c++
 
 namespace high_frequency {
@@ -73,6 +73,7 @@ class Observable<T> {
 
 * nested: okay...how to nest...so it would be nice if could just define our High Frequency States as Low Frequency State leaves! In fact, high Frequency States ARE leaves! so, this means composing must be aware of any High Frequency States which are being composed...
 if the composition nodes are able to have a function which returns pointers to all High Frequency States, they can be bubbled up and aggregated onn state initialization up to the Root node. Then the Root node can implement one "reducer function" comprised of all the reducers of each High Frequency State (thus bypassing the "normal" Low Frequency State tree).
+
 
 ## Generally refactor rx::State stuff a little so we don't have to write so much boiler-plate code...
 ### big pain points currently

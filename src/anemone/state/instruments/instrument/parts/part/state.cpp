@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 
 
-State::Part::Part(int id) {
+State::Part::Part(unsigned int id) {
   spdlog::debug("    - constructing part ({})", id);
   
   state = rx::State<part_t>

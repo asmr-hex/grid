@@ -29,6 +29,7 @@ public:
 
   void listen();
   void dispatch(action_t);
+  void dispatch(high_freq_action_t);
   void dispatch(std::vector<action_t>);
 protected:
   State::root_t state;
@@ -53,6 +54,7 @@ template<typename T>
 void Controller<T>::listen() {
   // listen to state changes
   subscribe<State::root_t>(state_wrapper, [this] (State::root_t s) {
+                                            make_action.state = s;
                                             state = s;
                                           });
 
@@ -64,6 +66,12 @@ template<typename T>
 void Controller<T>::dispatch(action_t action_) {
   dispatcher->dispatch(action_);
 };
+
+template<typename T>
+void Controller<T>::dispatch(high_freq_action_t action_) {
+  dispatcher->dispatch(action_);
+};
+
 
 template<typename T>
 void Controller<T>::dispatch(std::vector<action_t> actions) {
