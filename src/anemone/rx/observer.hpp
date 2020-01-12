@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 
+#include "anemone/rx/predicate.hpp"
+
 
 namespace rx {
 
@@ -25,7 +27,13 @@ namespace rx {
     void subscribe(std::shared_ptr<Observable<T> >, std::function<void(T)>);
 
     template<typename T>
+    void subscribe(std::shared_ptr<Observable<T> >, std::function<void(T)>, std::shared_ptr<Predicate<T> >);
+
+    template<typename T>
     void subscribe(std::shared_ptr<dag::Observable<T> >, std::function<void(T)>);
+
+    template<typename T>
+    void subscribe(std::shared_ptr<dag::Observable<T> >, std::function<void(T)>, std::shared_ptr<Predicate<T> >);
   };
   
 }
@@ -36,17 +44,33 @@ namespace rx {
 
 
 namespace rx {
-  
+
   template<typename T>
   void Observer::subscribe(std::shared_ptr<Observable<T> > observable, std::function<void(T)> fn) {
-    observable->register_observer(fn);
+    std::shared_ptr<Predicate<T> > predicate = std::make_shared<DefaultPredicate<T> >();
+    observable->register_observer(fn, predicate);
+  };
+
+  template<typename T>
+  void Observer::subscribe(std::shared_ptr<Observable<T> > observable,
+                           std::function<void(T)> fn,
+                           std::shared_ptr<Predicate<T> > predicate) {
+    observable->register_observer(fn, predicate);
   };
 
   template<typename T>
   void Observer::subscribe(std::shared_ptr<dag::Observable<T> > observable, std::function<void(T)> fn) {
-    observable->register_observer(fn);
+    std::shared_ptr<Predicate<T> > predicate = std::make_shared<DefaultPredicate<T> >();
+    observable->register_observer(fn, predicate);
   };
-  
+
+  template<typename T>
+  void Observer::subscribe(std::shared_ptr<dag::Observable<T> > observable,
+                           std::function<void(T)> fn,
+                           std::shared_ptr<Predicate<T> > predicate) {
+    observable->register_observer(fn, predicate);
+  };
+
 }
 
 #endif

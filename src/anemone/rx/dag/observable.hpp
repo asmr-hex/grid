@@ -5,6 +5,8 @@
 #include <memory>
 #include <functional>
 
+#include "anemone/rx/predicate.hpp"
+
 
 namespace rx {
   
@@ -18,7 +20,7 @@ namespace rx {
     class Observable  {
     public:
       void broadcast(const T&);
-      void register_observer(std::function<void(T)>);
+      void register_observer(std::function<void(T)>, std::shared_ptr<Predicate<T> >);
 
     protected:
       std::vector< std::function<void(T)> > observers;
@@ -36,8 +38,13 @@ namespace rx {
     };
 
     template<typename T>
-    void Observable<T>::register_observer(std::function<void(T)> handler) {
-      observers.push_back(handler);
+    void Observable<T>::register_observer(std::function<void(T)> handler,
+                                          std::shared_ptr<Predicate<T> > predicate) {
+      // wrap handler and predicate in a lambda s.t. handler is only executed if predicate returns true
+      observers.push_back([predicate, handler] (T t) -> void {
+                            if ( (*predicate)(t) )
+                              handler(t);
+                          });
     }
   }
 }

@@ -6,6 +6,8 @@
 #include "anemone/rx/dag/node.hpp"
 #include "anemone/rx/dag/observable.hpp"
 
+#include "anemone/rx/predicate.hpp"
+
 
 namespace rx {
 
@@ -19,15 +21,16 @@ namespace rx {
     virtual std::shared_ptr< dag::Observable<T> > get() = 0;
 
   private:
-    void register_observer(std::function<void(T)>);
+    void register_observer(std::function<void(T)>, std::shared_ptr<Predicate<T> >);
 
     friend class Observer;
   };
 
 
   template<typename T>
-  void Observable<T>::register_observer(std::function<void(T)> handler) {
-    get()->register_observer(handler);
+  void Observable<T>::register_observer(std::function<void(T)> handler,
+                                        std::shared_ptr<Predicate<T> > predicate) {
+    get()->register_observer(handler, predicate);
   };
   
 }
