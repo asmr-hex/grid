@@ -133,7 +133,8 @@ build: $(BIN_DIR)/$(BIN_TARGET)
 
 
 debug: CXXFLAGS += -DDEBUG -g
-debug: run
+debug: build
+	@sudo gdb --args $(BIN_DIR)/$(BIN_TARGET) $(CONF)
 
 
 # run tests (for now just unit tests)

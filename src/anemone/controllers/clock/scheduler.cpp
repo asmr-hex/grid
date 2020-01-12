@@ -23,6 +23,7 @@ void ctrl::clock::Scheduler::handle(const tick_t& tick) {
 
   for ( auto instrument : get_playing_instruments(state)) {
     dispatch(make_action.advance_step(instrument));
+    
   }
 }
 

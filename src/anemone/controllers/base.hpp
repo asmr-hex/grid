@@ -15,6 +15,8 @@
 #include "anemone/action/dispatcher.hpp"
 #include "anemone/action/creators/creators.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 template<typename T>
 class Controller : public Observer<T>, public rx::Observer {

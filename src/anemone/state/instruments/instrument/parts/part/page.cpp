@@ -2,6 +2,8 @@
 
 #include "anemone/util/match.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 State::Page::Page() {
   state = rx::State<page_t>

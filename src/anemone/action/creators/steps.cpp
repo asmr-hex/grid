@@ -11,13 +11,9 @@
 #include <spdlog/spdlog.h>
 
 
-action::step_updated action::Creators::advance_step(State::instrument_t instrument) {
-  spdlog::debug("dispatching advance step action");
-  
+action::step_updated action::Creators::advance_step(State::instrument_t instrument) {  
   // get currently playing part
   auto part_idx = instrument.status.part.in_playback;
-
-  spdlog::debug("getting part at {}", part_idx);
   
   auto playing_part = instrument.parts->at(part_idx);
 
@@ -38,6 +34,8 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   auto step = step_cursor.current_step;
   auto last_step = playing_part.step.last.to_absolute_idx(page_size);
 
+  spdlog::debug("step = {}", step);
+  
   step += static_cast<unsigned int>(ppqn);
 
   if ( step > ((last_step * static_cast<unsigned int>(PPQN::Max)) - 1) )
@@ -48,6 +46,7 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   
   return {
           .instrument_name = instrument.name,
+          .part            = part_idx,
           .step            = step,
           .page            = page_idx,
   };

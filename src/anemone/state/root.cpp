@@ -11,12 +11,12 @@ State::Root::Root() {
 
   // get high frequency state ptrs
   std::shared_ptr<State::step_cursors_t> step_cursors_ptr = step_cursors.state->get();
-  
+
   // instantiate root composite state
   state = rx::State<root_t>
     ::with_actions<action_t>
     ::compose<sequencer_t, instruments_t>
-    ([&step_cursors_ptr] (sequencer_t s, instruments_t i) -> root_t {
+    ([step_cursors_ptr] (sequencer_t s, instruments_t i) -> root_t {
        return {
                .sequencer   = s,
                .instruments = i,
@@ -30,8 +30,7 @@ void State::Root::listen() {
   std::thread t([this]{
                   while (true) {
                     action_t action = queue->pop();
-                    spdlog::debug("state: received action");
-                    state->reduce(action);       
+                    state->reduce(action);
                   }
                 });
 

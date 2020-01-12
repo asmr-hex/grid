@@ -2,6 +2,8 @@
 
 #include "anemone/util/match.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 State::Step::Step() {
   rendered = new std::map<types::page::idx_t, std::set<types::step::idx_t> >();

@@ -21,6 +21,7 @@ namespace State {
     types::step::granular_idx_t current_step = 0;
     types::page::idx_t          current_page = 0;
   };
+  
 
   typedef std::map<InstrumentName, std::map<unsigned int, step_cursor_t> > step_cursors_t;
 
