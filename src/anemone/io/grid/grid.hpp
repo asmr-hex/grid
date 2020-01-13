@@ -30,11 +30,15 @@ public:
   // wrapped within std::make_shared), the smart pointer has yet to be constructed itself.
   void connect();
   
-  // on handle grid_device_event, delegate event to layout (which will use the current layout and delegate to appropriate layout section (which are observables which will then broadcast (to controllers)))
+  
   // on calls to update grid, translate to grid_coordinates using layout (which will use current layout and delegate to appropriate section to do translation), should return coordinates which are used by this class to send to GridDevice
+  // TODO implement update grid (grid_event_t)
+  
   // on calls which use animator (like add animation, the addresses are translated and THEN stored in the animator) (animator has a shared_ptr of the GridDevice)
+  // TODO implement animator...
 
 protected:
+  // on handle grid_device_event, delegate event to layout (which will use the current layout and delegate to appropriate layout section (which are observables which will then broadcast (to controllers)))
   virtual void handle(const grid_device_event_t&) override;
 
 private:
