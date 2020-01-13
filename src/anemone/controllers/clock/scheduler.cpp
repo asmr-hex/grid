@@ -22,6 +22,10 @@ void ctrl::clock::Scheduler::handle(const tick_t& tick) {
   //   increment current tick
 
   for ( auto instrument : get_playing_instruments(state)) {
+    // TODO get all midi events for current tick
+    // TODO dispatch all midi events to appropriate midi output ports
+
+    // advance to next step
     dispatch(make_action.advance_step(instrument));
     
   }

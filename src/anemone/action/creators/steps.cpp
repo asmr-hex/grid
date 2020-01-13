@@ -25,7 +25,7 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   }
   
   // get current ppqn
-  auto ppqn = playing_part.ppqn.current;
+  auto ppqn = static_cast<unsigned int>(playing_part.ppqn.current);
 
   // get step cursor for current innstrument/part
   auto step_cursor = get_step_cursor_for(instrument, part_idx, state);
@@ -34,16 +34,16 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   auto step = step_cursor.current_step;
   auto last_step = playing_part.step.last.to_absolute_idx(page_size);
 
-  spdlog::debug("step = {}", step);
-  
-  step += static_cast<unsigned int>(ppqn);
+  // increment step (by ppqn)
+  step += ppqn;
 
-  if ( step > ((last_step * static_cast<unsigned int>(PPQN::Max)) - 1) )
+  // cycle step if we are at the end of the sequence
+  if ( step > (last_step * static_cast<unsigned int>(PPQN::Max)) )
     step = 0;
 
-  // TODO calculate the current page in playback
-  types::page::idx_t page_idx = 0;
-  
+  // calculate the current page in playback
+  types::page::idx_t page_idx = (step / static_cast<unsigned int>(PPQN::Max)) / page_size;
+
   return {
           .instrument_name = instrument.name,
           .part            = part_idx,
