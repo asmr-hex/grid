@@ -4,7 +4,7 @@
 #include <memory>
 #include <functional>
 
-#include "anemone/rx/predicate.hpp"
+#include "anemone/rx/filter.hpp"
 
 
 namespace rx {
@@ -27,13 +27,20 @@ namespace rx {
     void subscribe(std::shared_ptr<Observable<T> >, std::function<void(T)>);
 
     template<typename T>
-    void subscribe(std::shared_ptr<Observable<T> >, std::function<void(T)>, std::shared_ptr<Predicate<T> >);
+    void subscribe(std::shared_ptr<Observable<T> >, std::function<void(T)>, std::shared_ptr<Filter<T, T> >);
+    
+    template<typename T, typename S>
+    void subscribe(std::shared_ptr<Observable<T> >, std::function<void(S)>, std::shared_ptr<Filter<T, S> >);
 
+    
     template<typename T>
     void subscribe(std::shared_ptr<dag::Observable<T> >, std::function<void(T)>);
 
     template<typename T>
-    void subscribe(std::shared_ptr<dag::Observable<T> >, std::function<void(T)>, std::shared_ptr<Predicate<T> >);
+    void subscribe(std::shared_ptr<dag::Observable<T> >, std::function<void(T)>, std::shared_ptr<Filter<T, T> >);
+    
+    template<typename T, typename S>
+    void subscribe(std::shared_ptr<dag::Observable<T> >, std::function<void(S)>, std::shared_ptr<Filter<T, S> >);
   };
   
 }
@@ -47,30 +54,44 @@ namespace rx {
 
   template<typename T>
   void Observer::subscribe(std::shared_ptr<Observable<T> > observable, std::function<void(T)> fn) {
-    std::shared_ptr<Predicate<T> > predicate = std::make_shared<DefaultPredicate<T> >();
-    observable->register_observer(fn, predicate);
+    std::shared_ptr<Filter<T, T> > filter = std::make_shared<DefaultFilter<T> >();
+    observable->template register_observer<T>(fn, filter);
   };
 
   template<typename T>
   void Observer::subscribe(std::shared_ptr<Observable<T> > observable,
                            std::function<void(T)> fn,
-                           std::shared_ptr<Predicate<T> > predicate) {
-    observable->register_observer(fn, predicate);
+                           std::shared_ptr<Filter<T, T> > filter) {
+    observable->template register_observer<T>(fn, filter);
   };
 
+  template<typename T, typename S>
+  void Observer::subscribe(std::shared_ptr<Observable<T> > observable,
+                           std::function<void(S)> fn,
+                           std::shared_ptr<Filter<T, S> > filter) {
+    observable->template register_observer<S>(fn, filter);
+  };
+
+  
   template<typename T>
   void Observer::subscribe(std::shared_ptr<dag::Observable<T> > observable, std::function<void(T)> fn) {
-    std::shared_ptr<Predicate<T> > predicate = std::make_shared<DefaultPredicate<T> >();
-    observable->register_observer(fn, predicate);
+    std::shared_ptr<Filter<T, T> > filter = std::make_shared<DefaultFilter<T> >();
+    observable->template register_observer<T>(fn, filter);
   };
 
   template<typename T>
   void Observer::subscribe(std::shared_ptr<dag::Observable<T> > observable,
                            std::function<void(T)> fn,
-                           std::shared_ptr<Predicate<T> > predicate) {
-    observable->register_observer(fn, predicate);
+                           std::shared_ptr<Filter<T, T> > filter) {
+    observable->template register_observer<T>(fn, filter);
   };
 
+  template<typename T, typename S>
+  void Observer::subscribe(std::shared_ptr<dag::Observable<T> > observable,
+                           std::function<void(S)> fn,
+                           std::shared_ptr<Filter<T, S> > filter) {
+    observable->template register_observer<S>(fn, filter);
+  };
 }
 
 #endif

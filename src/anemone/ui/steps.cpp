@@ -8,10 +8,11 @@ ui::Steps::Steps(std::shared_ptr<State::Root> state, std::shared_ptr<Grid> grid)
 
 
 void ui::Steps::connect() {
-  // what should i connect to?
-  subscribe<State::root>(state, [this] (State::root_t new_state) {
-                                  
-                                })
+  subscribe<State::root, step_state>(state,
+                                     steps,
+                                     [] (State::root state) -> step_state {
+                                       return {};
+                                     })
 }
 
 void ui::Steps::render() {
