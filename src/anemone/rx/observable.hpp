@@ -32,7 +32,7 @@ namespace rx {
   template<typename S>
   void Observable<T>::register_observer(std::function<void(S)> handler,
                                         std::shared_ptr<Filter<T, S> > filter) {
-    get()->template register_observer<T, S>(handler, filter);
+    get()->template register_observer<S>(handler, filter);
   };
   
 }

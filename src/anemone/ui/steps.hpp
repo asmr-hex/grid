@@ -7,7 +7,10 @@
 namespace ui {
 
   struct step_state {
-    
+
+    bool operator==(const step_state& rhs) {
+      return true;
+    };
   };
   
   class Steps : public Component {
