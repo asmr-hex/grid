@@ -47,7 +47,7 @@ namespace ui {
     void subscribe(std::shared_ptr<rx::Observable<T> > o,
                    std::shared_ptr<Diff<D> > d,
                    derive_fn_t<S, D> derive,
-                   rx::Filter<T, S> filter) {
+                   std::shared_ptr<rx::Filter<T, S> > filter) {
       ::rx::Observer::subscribe<T, S>(o, make_handler<S, D>(derive, d), filter);
     };
 
@@ -55,7 +55,7 @@ namespace ui {
     void subscribe(std::shared_ptr<rx::Observable<T> > o,
                    std::shared_ptr<Diff<D> > d,
                    derive_fn_t<T, D> derive,
-                   rx::Filter<T, T> filter) {
+                   std::shared_ptr<rx::Filter<T, T> > filter) {
       ::rx::Observer::subscribe<T>(o, make_handler<T, D>(derive, d), filter);
     };
 

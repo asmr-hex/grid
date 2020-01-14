@@ -41,7 +41,7 @@ namespace State {
     Instruments instruments;
 
     // high frequenncy states
-    StepCursors step_cursors;
+    std::shared_ptr<StepCursors> step_cursors;
     
     Root();
     virtual std::shared_ptr<rx::dag::Observable<root_t> > get() override;

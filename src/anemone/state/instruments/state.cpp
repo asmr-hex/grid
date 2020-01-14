@@ -17,8 +17,9 @@ State::Instruments::Instruments() {
     ::compose<er1_t*>
     ([by_name] (er1_t *_er1) -> instruments_t {
        return {
-               .er1     = _er1,
-               .by_name = by_name,
+               .er1      = _er1,
+               .rendered = InstrumentName::ER1, // TODO create rendered state for changing which instrument is rendered!
+               .by_name  = by_name,
        };
      }, er1.state);
 }

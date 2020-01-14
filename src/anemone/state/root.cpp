@@ -9,8 +9,11 @@ State::Root::Root() {
   // instantiate queue
   queue = std::make_unique<Queue<action_t> >();
 
+  // intialize step cursors
+  step_cursors = std::make_shared<StepCursors>();
+  
   // get high frequency state ptrs
-  std::shared_ptr<State::step_cursors_t> step_cursors_ptr = step_cursors.state->get();
+  std::shared_ptr<State::step_cursors_t> step_cursors_ptr = step_cursors->state->get();
 
   // instantiate root composite state
   state = rx::State<root_t>
@@ -50,9 +53,9 @@ void State::Root::send_action(action_t&& action) {
 }
 
 void State::Root::send_action(const high_freq_action_t& action) {
-  step_cursors.state->reduce(action);
+  step_cursors->state->reduce(action);
 }
 
 void State::Root::send_action(high_freq_action_t&& action) {
-  step_cursors.state->reduce(std::move(action));
+  step_cursors->state->reduce(std::move(action));
 }

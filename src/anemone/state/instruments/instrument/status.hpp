@@ -13,6 +13,8 @@
 
 namespace State {
 
+  // TODO do something about the conversion between part/bank and absolute parts
+
   struct instrument_status_t {
     struct part_t {
       int in_playback = 0;

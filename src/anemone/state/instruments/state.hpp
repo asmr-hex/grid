@@ -19,11 +19,13 @@ namespace State {
 
   struct instruments_t {
     er1_t *er1;
+    InstrumentName rendered = InstrumentName::ER1;
     std::map<InstrumentName, instrument_t*> *by_name;
 
     bool operator==(const instruments_t& rhs) {
       return
-        (*er1) == (*rhs.er1);
+        rendered == rhs.rendered &&
+        (*er1)   == (*rhs.er1);
     };
   };
 

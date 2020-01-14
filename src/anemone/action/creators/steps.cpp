@@ -41,13 +41,18 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   if ( step > (last_step * static_cast<unsigned int>(PPQN::Max)) )
     step = 0;
 
+  auto sequence_relative_step = (step / static_cast<unsigned int>(PPQN::Max));
+  
   // calculate the current page in playback
-  types::page::idx_t page_idx = (step / static_cast<unsigned int>(PPQN::Max)) / page_size;
+  types::step::page_relative_idx_t page_relative_idx = { .step = sequence_relative_step % page_size,
+                                                         .page = sequence_relative_step / page_size,
+                                                        
+  };
 
   return {
           .instrument_name = instrument.name,
           .part            = part_idx,
           .step            = step,
-          .page            = page_idx,
+          .page_relative   = page_relative_idx,
   };
 };

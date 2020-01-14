@@ -3,19 +3,51 @@
 
 #include "anemone/ui/component.hpp"
 
+#include "anemone/state/instruments/names.hpp"
+#include "anemone/types/sequencer.hpp"
+
 
 namespace ui {
 
-  struct step_state {
+  class rendered_step_cursor_filter : public rx::Filter<std::shared_ptr<State::step_cursors_t>, State::step_cursor_t> {
+  public:
+    rendered_step_cursor_filter(std::shared_ptr<State::Root> state_wrapper) : state_wrapper(state_wrapper) {} ;
+    virtual State::step_cursor_t filter(std::shared_ptr<State::step_cursors_t> cs) override {
+      auto state = state_wrapper->state->get();
+      auto instrument = state.instruments.rendered;
+      auto part = state.instruments.by_name->at(instrument)->status.part.under_edit;
 
-    bool operator==(const step_state& rhs) {
-      return true;
+      return cs->at(instrument).at(part);
+    };
+
+    virtual bool predicate(State::step_cursor_t c) override { return true; };
+
+  private:
+    std::shared_ptr<State::Root> state_wrapper;
+  };
+  
+  struct instrument_part_state {
+    State::InstrumentName instrument;
+    int part;
+    types::page::idx_t rendered_page;
+    
+    // TODO rendered steps
+    // TODO track show_last_step;
+    
+    bool operator==(const instrument_part_state& rhs) {
+      return
+        instrument    == rhs.instrument &&
+        part          == rhs.part       &&
+        rendered_page == rhs.rendered_page;
     };
   };
   
   class Steps : public Component {
   public:
-    std::shared_ptr<Diff<step_state> > steps;
+    std::shared_ptr<Diff<instrument_part_state> > steps;
+    std::shared_ptr<Diff<types::step::page_relative_idx_t> > cursor;
+
+    std::shared_ptr<rendered_step_cursor_filter> filter;
     
     Steps(std::shared_ptr<State::Root>, std::shared_ptr<Grid>);
 
