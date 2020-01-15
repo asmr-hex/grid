@@ -19,6 +19,8 @@
 
 #include "anemone/controllers/controllers.hpp"
 
+#include "anemone/ui/ui.hpp"
+
 
 class Anemone {
 public:
@@ -34,6 +36,7 @@ private:
   std::shared_ptr<State::Root> state;
   std::shared_ptr<Dispatcher> dispatcher;
   std::shared_ptr<Controllers> controllers;
+  std::shared_ptr<UI> gui;
 
 };
 

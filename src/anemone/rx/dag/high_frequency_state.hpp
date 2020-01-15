@@ -6,6 +6,8 @@
 
 #include "anemone/rx/reducer.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 // TODO: make this derive from Observable, In order to be efficient, include
 // a function which broadcasts the pointer result! this will ensure that we aren't

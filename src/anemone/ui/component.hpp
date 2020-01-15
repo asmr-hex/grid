@@ -9,6 +9,8 @@
 #include "anemone/state/root.hpp"
 #include "anemone/io/grid/grid.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 namespace ui {
 
@@ -73,10 +75,11 @@ namespace ui {
                // update previous and current states
                d->previous = d->current;
                d->current = derive(t);
-               
+
                // only re-render if there has been a change in derived state
                if ( !(d->previous == d->current) )
                  render();
+                 
              };
     };
   };

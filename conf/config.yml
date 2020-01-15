@@ -1,7 +1,7 @@
 ports:
   midi:
-    in: "AudioBox USB 96"
-    out: "AudioBox USB 96"
+    in: "IAC Driver Internal MIDI" # "AudioBox USB 96"
+    out: "IAC Driver Internal MIDI" #"AudioBox USB 96"
   grid: "/dev/tty.usbserial-m1000843"
 
 layouts:

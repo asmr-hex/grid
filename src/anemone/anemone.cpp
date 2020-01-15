@@ -38,6 +38,8 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
     (Controllers(io, clock, layouts, state, dispatcher));
   
   // setup ui
+  spdlog::info("  initializing \tui");
+  gui = std::make_shared<UI>(state, io->grid);
 
   spdlog::info("");
   spdlog::info("========== state initialization =========");
@@ -46,6 +48,7 @@ Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_devic
   
   clock->connect_to_state();
   controllers->connect_to_state();
+  gui->connect_to_state();
   
   dispatcher->hydrate();
 

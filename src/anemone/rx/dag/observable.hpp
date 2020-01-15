@@ -7,6 +7,8 @@
 
 #include "anemone/rx/filter.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 namespace rx {
   
@@ -43,13 +45,14 @@ namespace rx {
     template<typename S>
     void Observable<T>::register_observer(std::function<void(S)> handler,
                                           std::shared_ptr<Filter<T, S> > filter) {
-      observers.push_back([filter, handler] (T t) -> void {
+      observers.push_back([filter, handler] (T t) -> void {                            
                             // transform data with filter
                             S s = filter->filter(t);
 
                             // only execute handler if predicate is truthy
-                            if ( filter->predicate(s) )
+                            if ( filter->predicate(s) ) {
                               handler(s);
+                            }
                           });
     }
   }
