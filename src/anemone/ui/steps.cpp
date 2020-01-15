@@ -44,4 +44,24 @@ void ui::Steps::connect() {
 void ui::Steps::render() {
   // TODO implement me!
   spdlog::debug("rendering ui steps");
+
+  render_cursor();
+}
+
+void ui::Steps::render_cursor() {
+  // turn off last step
+  if ( steps->previous.rendered_page == cursor->previous.page )
+    grid->turn_off
+      ({ .layout = LayoutName::SequencerAndInstrument,
+         .section = GridSectionName::Steps,
+         .index   = cursor->previous.step,
+      });
+
+  // turn on next step
+  if ( steps->current.rendered_page == cursor->current.page )
+    grid->turn_on
+      ({ .layout = LayoutName::SequencerAndInstrument,
+         .section = GridSectionName::Steps,
+         .index   = cursor->current.step,
+      });
 }

@@ -16,7 +16,7 @@
 namespace State {
 
   struct ppqn_t {
-    PPQN current = PPQN::Eight;
+    PPQN current = PPQN::Four;
     PPQN next;
     bool pending_change = false;
 

@@ -3,6 +3,7 @@
 
 #include "anemone/ui/component.hpp"
 
+#include "anemone/io/grid/layout/names.hpp"
 #include "anemone/state/instruments/names.hpp"
 #include "anemone/types/sequencer.hpp"
 
@@ -20,7 +21,10 @@ namespace ui {
       return cs->at(instrument).at(part);
     };
 
-    virtual bool predicate(State::step_cursor_t c) override { return true; };
+    virtual bool predicate(State::step_cursor_t c) override {
+      // todo make this a little more constrained...
+      return true;
+    };
 
   private:
     std::shared_ptr<State::Root> state_wrapper;
@@ -52,8 +56,10 @@ namespace ui {
     Steps(std::shared_ptr<State::Root>, std::shared_ptr<Grid>);
 
     virtual void connect() override;
-    
     virtual void render() override;
+
+  private:
+    void render_cursor();
   };
   
 }

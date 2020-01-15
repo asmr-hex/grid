@@ -32,8 +32,10 @@ public:
   
   
   // on calls to update grid, translate to grid_coordinates using layout (which will use current layout and delegate to appropriate section to do translation), should return coordinates which are used by this class to send to GridDevice
-  // TODO implement update grid (grid_event_t)
-  
+  void turn_off(const grid_addr_t&);
+  void turn_on(const grid_addr_t&);
+  void set(const grid_addr_t&, unsigned int);
+
   // on calls which use animator (like add animation, the addresses are translated and THEN stored in the animator) (animator has a shared_ptr of the GridDevice)
   // TODO implement animator...
 

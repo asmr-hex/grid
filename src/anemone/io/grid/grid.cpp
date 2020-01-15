@@ -11,6 +11,18 @@ void Grid::connect() {
   device->connect(device_addr);
 }
 
+void Grid::turn_off(const grid_addr_t& addr) {
+  device->turn_off(layout.translate(addr));
+}
+
+void Grid::turn_on(const grid_addr_t& addr) {
+  device->turn_on(layout.translate(addr));
+}
+
+void Grid::set(const grid_addr_t& addr, unsigned int intensity) {
+  device->set(layout.translate(addr), intensity);
+}
+
 void Grid::handle(const grid_device_event_t& device_event) {
   layout.notify(device_event);
 }
