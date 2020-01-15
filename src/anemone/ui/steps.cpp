@@ -4,7 +4,7 @@
 
 
 ui::Steps::Steps(std::shared_ptr<State::Root> state, std::shared_ptr<Grid> grid)
-  : Component(state, grid) {
+  : Component(LayoutName::SequencerAndInstrument, GridSectionName::Steps, state, grid) {
 
   // initialize ui states
   steps = std::make_shared<Diff<instrument_part_state> >(instrument_part_state{});
@@ -49,19 +49,15 @@ void ui::Steps::render() {
 }
 
 void ui::Steps::render_cursor() {
+  // if cursor hasn't changed, do nothing
+  if ( cursor->previous == cursor->current )
+    return;
+  
   // turn off last step
   if ( steps->previous.rendered_page == cursor->previous.page )
-    grid->turn_off
-      ({ .layout = LayoutName::SequencerAndInstrument,
-         .section = GridSectionName::Steps,
-         .index   = cursor->previous.step,
-      });
+    turn_off_led(cursor->previous.step);
 
   // turn on next step
   if ( steps->current.rendered_page == cursor->current.page )
-    grid->turn_on
-      ({ .layout = LayoutName::SequencerAndInstrument,
-         .section = GridSectionName::Steps,
-         .index   = cursor->current.step,
-      });
+    turn_on_led(cursor->current.step);
 }

@@ -8,6 +8,9 @@
 
 #include "anemone/state/root.hpp"
 #include "anemone/io/grid/grid.hpp"
+#include "anemone/io/grid/address.hpp"
+
+#include "anemone/state/instruments/names.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -30,7 +33,11 @@ namespace ui {
   
   class Component : public rx::Observer {
   public:
-    Component(std::shared_ptr<State::Root> state, std::shared_ptr<Grid> grid) : grid(grid), state(state) {};
+    Component(LayoutName layout,
+              GridSectionName section,
+              std::shared_ptr<State::Root> state,
+              std::shared_ptr<Grid> grid)
+      : grid(grid), state(state), layout(layout), section(section) {};
     virtual ~Component() = default;
 
     // all derived components must implement a connect function which is where they
@@ -44,7 +51,34 @@ namespace ui {
   protected:
     std::shared_ptr<Grid> grid;
     std::shared_ptr<State::Root> state;
+    LayoutName layout;
+    GridSectionName section;
 
+    void turn_on_led(grid_section_index index) {
+      grid->turn_on
+        ({ .layout  = layout,
+           .section = section,
+           .index   = index,
+        });
+    };
+
+    void turn_off_led(grid_section_index index) {
+      grid->turn_off
+        ({ .layout  = layout,
+           .section = section,
+           .index   = index,
+        });
+    };
+
+    void set_led(grid_section_index index, unsigned int intensity) {
+      grid->set
+        ({ .layout  = layout,
+           .section = section,
+           .index   = index,
+        }, intensity);
+    };
+    
+    
     template<typename T, typename S, typename D>
     void subscribe(std::shared_ptr<rx::Observable<T> > o,
                    std::shared_ptr<Diff<D> > d,
