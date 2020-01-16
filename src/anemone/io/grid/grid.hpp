@@ -1,3 +1,11 @@
+/**
+ * @file   io/grid/grid.hpp
+ * @brief  IO Grid API Class
+ * @author coco
+ * @date   2020-01-15
+ *************************************************/
+
+
 #ifndef IO_GRID_H
 #define IO_GRID_H
 
@@ -10,41 +18,96 @@
 #include "anemone/io/grid/layout/context.hpp"
 
 
-// what does this class do?
-// has different layouts (which controllers can subscribe to)
-// has a current layout (using the State pattern)...TODO how to implement?
-// handles grid_device_events and delegates translation and broadcast to current layout
-//   - handle must properly map grid_coordinates to grid_addr
-// has an in-mem mapping of grid-coordinates -> grid section
-
+/// @brief High-Level class for interacting with a connected grid device.
+///
+/// @details
+/// This class is a wrapper around a `GridDevice` providing more high level interactions
+/// with the underlying device object. In particular, it stores all possible `GridDevice`
+/// layouts and translates `grid_addr_t` messages from the application to appropriate
+/// low-level `grid_coordinate_t` message using the currently active layout as a translator.
+/// Additionally, this class derives from an `Observer<grid_event_t>` in order to receive
+/// inbound `grid_event_t` messages coming from the `GridDevice` object. A simple API is
+/// exposed for setting the brightness of specific leds on the device grid. Importantly,
+/// the `Grid` object isn't itself an io `Observable<Event>`, but rather the layouts which
+/// it contains are observable. Thus any user code which wishes to receive inbound messages
+/// from the grid device must subscribe to the layout section of interest.
+///
+/// @todo include an animator which will control animations for grid device leds.
+///
 class Grid : public Observer<grid_device_event_t> {
 public:
+  /// @brief Provides access to the current layout and all possible layouts
   LayoutContext layout;
-  
-  Grid(std::shared_ptr<Config>, std::shared_ptr<GridDevice>, layout_initializer_list);
 
-  // we need a connect method which subscribes the Grid to the GridDevice because
-  // we cannot subscribe within the constructor. this is because the subscribe method
-  // uses shared_from_this which assumes that there is a smart pointer managing this
-  // object already, though by the time the constructor is called (even if it is called
-  // wrapped within std::make_shared), the smart pointer has yet to be constructed itself.
+  /// @brief Constructs a high-level `Grid` object.
+  ///
+  /// @param config        pointer to a configuration object
+  /// @param grid_device   pointer to a grid device object
+  /// @param layouts       initializer list of all grid layouts
+  ///
+  Grid(std::shared_ptr<Config> config,
+       std::shared_ptr<GridDevice> grid_device,
+       layout_initializer_list layouts);
+
+  /// @brief Connects and subscribes this object to the wrapped `GridDevice`.
+  ///
+  /// @details
+  /// A `connect` method was introduced to decouple object construction from subscribing
+  /// and connecting to the underlying `GridDevice`. While this provides more control for
+  /// end-users for deciding when a connection should be established, it is also necessary
+  /// given that the `subscribe` method of `Observer<Event>` requires that the Observer is
+  /// a `shared_ptr`. Since the smart ptr to this object is not fully constructed while
+  /// executing its constructor we are unable to use `this` reliably within the body of the
+  /// constructor.
+  ///
   void connect();
   
   
-  // on calls to update grid, translate to grid_coordinates using layout (which will use current layout and delegate to appropriate section to do translation), should return coordinates which are used by this class to send to GridDevice
-  void turn_off(const grid_addr_t&);
-  void turn_on(const grid_addr_t&);
-  void set(const grid_addr_t&, unsigned int);
+  /// @brief Turns off the led on the grid device at the specific grid address.
+  ///
+  /// @param address   the grid address of the led
+  ///
+  /// @details
+  /// Before sending this address to the grid device, it is translated by the current layout
+  /// to the appropriate grid device address.
+  void turn_off(const grid_addr_t& address);
+
+  /// @brief Turns on the led on the grid device at the specific grid address.
+  ///
+  /// @param address   the grid address of the led
+  ///
+  /// @details
+  /// Before sending this address to the grid device, it is translated by the current layout
+  /// to the appropriate grid device address.
+  void turn_on(const grid_addr_t& address);
+
+  /// @brief Sets the brightness of the led on the grid device at the specific grid address.
+  ///
+  /// @param address     the grid address of the led
+  /// @param intensity   the brightness intensity to set the led to
+  ///
+  /// @details
+  /// Before sending this address to the grid device, it is translated by the current layout
+  /// to the appropriate grid device address.
+  void set(const grid_addr_t& address, unsigned int intensity);
 
   // on calls which use animator (like add animation, the addresses are translated and THEN stored in the animator) (animator has a shared_ptr of the GridDevice)
   // TODO implement animator...
 
 protected:
-  // on handle grid_device_event, delegate event to layout (which will use the current layout and delegate to appropriate layout section (which are observables which will then broadcast (to controllers)))
+  /// @brief handles inbound `grid_device_event_t`s from the grid device.
+  ///
+  /// @details
+  /// This implements the `Observer<Event>`'s `handle` method. The received events are
+  /// passed to the layout for further processing and broadcasting.
+  ///
   virtual void handle(const grid_device_event_t&) override;
 
 private:
+  /// @brief the port address of the grid device
   std::string device_addr;
+
+  /// @brief the `GridDevice` object pointer
   std::shared_ptr<GridDevice> device;
 };
 

@@ -12,14 +12,17 @@ void Grid::connect() {
 }
 
 void Grid::turn_off(const grid_addr_t& addr) {
+  // send translated address to device
   device->turn_off(layout.translate(addr));
 }
 
 void Grid::turn_on(const grid_addr_t& addr) {
+  // send translated address to device
   device->turn_on(layout.translate(addr));
 }
 
 void Grid::set(const grid_addr_t& addr, unsigned int intensity) {
+  // send translated address to device
   device->set(layout.translate(addr), intensity);
 }
 

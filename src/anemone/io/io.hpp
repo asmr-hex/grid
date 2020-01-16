@@ -26,10 +26,10 @@ public:
   ///
   /// @pre pointers to configuration and devices must already exist.
   ///
-  /// @param config                    pointer to a configuration object
-  /// @param grid_device               pointer to a grid device object
-  /// @param midi_device               pointer to a midi device object
-  /// @param layout_initializer_list   initializer list of all grid layouts
+  /// @param config        pointer to a configuration object
+  /// @param grid_device   pointer to a grid device object
+  /// @param midi_device   pointer to a midi device object
+  /// @param layouts       initializer list of all grid layouts
   ///
   /// @details
   /// Constructs Grid and Midi objects (which wrap their respective device objects
