@@ -37,3 +37,6 @@ build/
 # test coverage
 coverage.info
 coverage/
+
+# doc html output
+doc/html

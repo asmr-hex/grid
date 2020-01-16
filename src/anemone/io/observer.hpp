@@ -1,13 +1,35 @@
+/**
+ * @file   io/observer.hpp
+ * @brief  Observer template class for IO
+ * @author coco
+ * @date   2020-01-16
+ *************************************************/
+
+
 #ifndef IO_OBSERVER_H
 #define IO_OBSERVER_H
 
 #include <memory>
 
 
+// forward declaration
 template<typename Event>
 class Observable;
 
 
+/// @brief Template class for creating an I/O observer.
+///
+/// @tparam Event   Any type; emitted as an event by an IO object
+///
+///
+/// @details
+/// An `Observer<Event>` exposes two public methods for subscribing/unsibscribing
+/// to a `Observable<Event>` and has a protected pure virtual method for handling
+/// events received upon an `Observable<Event>` broadcast. Thus, the only way to
+/// use this class is through inheritance. Also, since the subscribe/unsubscribe
+/// methods are wrappers over calling the register/unregister methods of the
+/// `Observable<Event>` of interest, the derived class must be wrapped in a `shared_ptr`
+///
 template<typename Event>
 class Observer : public std::enable_shared_from_this< Observer<Event> > {
 public:
