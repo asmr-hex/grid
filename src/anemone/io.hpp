@@ -24,5 +24,7 @@
 #include "anemone/io/grid/device/coordinates.hpp"
 #include "anemone/io/grid/device/monome.hpp"
 
+#include "anemone/io/grid/layout/names.hpp"
+#include "anemone/io/grid/layout/layouts/sequencer.hpp"
 
 #endif
