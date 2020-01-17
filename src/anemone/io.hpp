@@ -20,7 +20,9 @@
 #include "anemone/io/grid/address.hpp"
 
 #include "anemone/io/grid/device/grid.hpp"
+#include "anemone/io/grid/device/events.hpp"
 #include "anemone/io/grid/device/coordinates.hpp"
+#include "anemone/io/grid/device/monome.hpp"
 
 
 #endif

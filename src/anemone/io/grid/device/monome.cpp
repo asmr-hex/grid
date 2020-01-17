@@ -11,7 +11,6 @@
 
 
 void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
-  // TODO (coco|5.11.2019) parameterize monome serial port location.
   // rpi : /dev/ttyUSB0
   // osx : /dev/tty.usbserial-m1000843
   if( !(monome = monome_open(addr.c_str())) ) {
