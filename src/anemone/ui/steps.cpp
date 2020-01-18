@@ -43,7 +43,7 @@ void ui::Steps::connect() {
 
 void ui::Steps::render() {
   // TODO implement me!
-  spdlog::debug("rendering ui steps");
+  // spdlog::debug("rendering ui steps");
 
   render_cursor();
 }

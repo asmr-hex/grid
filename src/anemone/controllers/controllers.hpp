@@ -10,6 +10,7 @@
 #include "anemone/action/dispatcher.hpp"
 
 #include "anemone/controllers/clock/scheduler.hpp"
+#include "anemone/controllers/sequencer/steps.hpp"
 
 
 class Controllers {
@@ -30,6 +31,7 @@ protected:
   std::shared_ptr<Dispatcher> dispatcher;
 
   std::shared_ptr<ctrl::clock::Scheduler> scheduler;
+  std::shared_ptr<ctrl::sequencer::Steps> sequencer_steps;
 };
 
 #endif

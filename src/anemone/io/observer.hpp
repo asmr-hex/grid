@@ -36,7 +36,10 @@ public:
   virtual ~Observer() = default;
   
   void subscribe(Observable<Event>&);
+  void subscribe(std::shared_ptr<Observable<Event> >);
+  
   void unsubscribe(Observable<Event>&);
+  void unsubscribe(std::shared_ptr<Observable<Event> >);
 protected:
   virtual void handle(const Event&) = 0;
 
@@ -63,10 +66,20 @@ void Observer<Event>::subscribe(Observable<Event>& observable) {
   observable.register_observer(this->shared_from_this());
 };
 
+template<typename Event>
+void Observer<Event>::subscribe(std::shared_ptr<Observable<Event> > observable) {
+  observable->register_observer(this->shared_from_this());
+};
+
 
 template<typename Event>
 void Observer<Event>::unsubscribe(Observable<Event>& observable) {
   observable.unregister_observer(this->shared_from_this());
+};
+
+template<typename Event>
+void Observer<Event>::unsubscribe(std::shared_ptr<Observable<Event> > observable) {
+  observable->unregister_observer(this->shared_from_this());
 };
 
 #endif

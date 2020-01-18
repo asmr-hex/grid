@@ -1,6 +1,8 @@
 #ifndef IO_GRID_LAYOUT_LAYOUTS_SEQUENCER_H
 #define IO_GRID_LAYOUT_LAYOUTS_SEQUENCER_H
 
+#include <memory>
+
 #include "anemone/config/config.hpp"
 #include "anemone/io/grid/layout/layout.hpp"
 #include "anemone/io/grid/layout/section.hpp"
@@ -9,36 +11,37 @@
 
 namespace GridLayout {
 
+  // TODO make GridSections shared_ptrs!!!!!
   class Sequencer : public Layout {
   public:
-    GridSection instrument_select;
-    GridSection instrument_panel;
-    GridSection steps;
-    GridSection pages;
-    GridSection parts;
-    GridSection banks;
-    GridSection ppqn;
-    GridSection shift;
-    GridSection play_pause;
-    GridSection stop;
-    GridSection record;
-    GridSection last_step;
-    GridSection metronome;
+    std::shared_ptr<GridSection> instrument_select;
+    std::shared_ptr<GridSection> instrument_panel;
+    std::shared_ptr<GridSection> steps;
+    std::shared_ptr<GridSection> pages;
+    std::shared_ptr<GridSection> parts;
+    std::shared_ptr<GridSection> banks;
+    std::shared_ptr<GridSection> ppqn;
+    std::shared_ptr<GridSection> shift;
+    std::shared_ptr<GridSection> play_pause;
+    std::shared_ptr<GridSection> stop;
+    std::shared_ptr<GridSection> record;
+    std::shared_ptr<GridSection> last_step;
+    std::shared_ptr<GridSection> metronome;
 
     Sequencer(std::shared_ptr<Config> config) : Layout(LayoutName::SequencerAndInstrument) {
-      instrument_select = config->layouts.sequencer.instrument_select;
-      instrument_panel = config->layouts.sequencer.instrument_panel;
-      steps = config->layouts.sequencer.steps;
-      pages = config->layouts.sequencer.pages;
-      parts = config->layouts.sequencer.parts;
-      banks = config->layouts.sequencer.banks;
-      ppqn = config->layouts.sequencer.ppqn;
-      shift = config->layouts.sequencer.shift;
-      play_pause = config->layouts.sequencer.play_pause;
-      stop = config->layouts.sequencer.stop;
-      record = config->layouts.sequencer.record;
-      last_step = config->layouts.sequencer.last_step;
-      metronome = config->layouts.sequencer.metronome;
+      instrument_select = std::make_shared<GridSection>(config->layouts.sequencer.instrument_select);
+      instrument_panel  = std::make_shared<GridSection>(config->layouts.sequencer.instrument_panel);
+      steps             = std::make_shared<GridSection>(config->layouts.sequencer.steps);
+      pages             = std::make_shared<GridSection>(config->layouts.sequencer.pages);
+      parts             = std::make_shared<GridSection>(config->layouts.sequencer.parts);
+      banks             = std::make_shared<GridSection>(config->layouts.sequencer.banks);
+      ppqn              = std::make_shared<GridSection>(config->layouts.sequencer.ppqn);
+      shift             = std::make_shared<GridSection>(config->layouts.sequencer.shift);
+      play_pause        = std::make_shared<GridSection>(config->layouts.sequencer.play_pause);
+      stop              = std::make_shared<GridSection>(config->layouts.sequencer.stop);
+      record            = std::make_shared<GridSection>(config->layouts.sequencer.record);
+      last_step         = std::make_shared<GridSection>(config->layouts.sequencer.last_step);
+      metronome         = std::make_shared<GridSection>(config->layouts.sequencer.metronome);
 
       register_section(instrument_select);
       register_section(instrument_panel);

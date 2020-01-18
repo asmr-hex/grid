@@ -21,6 +21,7 @@ public:
   };
 
   unsigned int width() const;
+  
   unsigned int height() const;
   unsigned int size() const;
   grid_region_t region() const { return region_m; };

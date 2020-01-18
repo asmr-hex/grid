@@ -48,10 +48,10 @@ SCENARIO( "the LayoutContext delegates to its current layout and can switch layo
     auto observer_d = std::make_shared<TestGridEventObserver>();
 
 
-    observer_a->subscribe(sqncr_layout->steps);
-    observer_b->subscribe(p_sqncr_layout->steps);
-    observer_c->subscribe(sqncr_layout->switch_layout);
-    observer_d->subscribe(p_sqncr_layout->switch_layout);
+    observer_a->subscribe(*sqncr_layout->steps);
+    observer_b->subscribe(*p_sqncr_layout->steps);
+    observer_c->subscribe(*sqncr_layout->switch_layout);
+    observer_d->subscribe(*p_sqncr_layout->switch_layout);
 
 
     WHEN( "the LayoutContext is notified of a grid device event" ) {

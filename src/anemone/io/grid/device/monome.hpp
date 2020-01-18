@@ -9,6 +9,7 @@
 #ifndef IO_GRID_MONOME_H
 #define IO_GRID_MONOME_H
 
+#include <thread>
 #include <string>
 
 #include <monome.h>

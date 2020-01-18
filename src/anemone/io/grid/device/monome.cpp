@@ -25,7 +25,11 @@ void Monome::listen() {
   monome_register_handler(monome, MONOME_BUTTON_DOWN, this->callback_wrapper, this);
   monome_register_handler(monome, MONOME_BUTTON_UP, this->callback_wrapper, this);
 
-  monome_event_loop(monome);
+  // start listening for incoming messages in a seperate thread
+  std::thread t([this] {
+                  monome_event_loop(monome);
+                });
+  t.detach();
 }
 
 

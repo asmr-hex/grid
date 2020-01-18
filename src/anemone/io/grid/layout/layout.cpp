@@ -1,12 +1,21 @@
 #include "anemone/io/grid/layout/layout.hpp"
 #include "anemone/io/grid/layout/context.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 void Layout::notify(LayoutContext& ctx, const grid_device_event_t& device_event) const {
-  GridSection& section = section_of(device_event);
+  std::shared_ptr<GridSection> section;
+  try {
+    section = section_of(device_event); 
+  } catch (...) {
+    spdlog::warn("Grid button ({}, {}) belongs to so section!", device_event.x, device_event.y);
+    return;
+  }
+  
   grid_event_t grid_event = translate(section, device_event);
 
-  section.broadcast(grid_event);
+  section->broadcast(grid_event);
 
   // optionally switch layout.
   change_layout_wrapper(ctx, grid_event);
@@ -19,7 +28,7 @@ grid_coordinates_t Layout::translate(const grid_addr_t& addr) const {
   return section->coordinates_of(addr.index);
 }
 
-grid_event_t Layout::translate(const GridSection& section, const grid_device_event_t& device_event) const {
+grid_event_t Layout::translate(std::shared_ptr<GridSection> section, const grid_device_event_t& device_event) const {
   GridEvent type;
 
   switch (device_event.type) {
@@ -35,16 +44,16 @@ grid_event_t Layout::translate(const GridSection& section, const grid_device_eve
   
   return {{
            .layout  = name,
-           .section = section.name,
-           .index   = section.index_of(device_event),
+           .section = section->name,
+           .index   = section->index_of(device_event),
            },
           .type     = type,
   };
 }
 
-void Layout::register_section(GridSection& section) {
-  sections.push_back(&section);
-  section_by_name[section.name] = &section;
+void Layout::register_section(std::shared_ptr<GridSection> section) {
+  sections.push_back(section);
+  section_by_name[section->name] = section;
 }
 
 void Layout::change_layout_wrapper(LayoutContext& ctx, const grid_event_t& event) const {
@@ -55,11 +64,12 @@ void Layout::change_layout_wrapper(LayoutContext& ctx, const grid_event_t& event
 
 std::optional<LayoutName> Layout::change_layout(const grid_event_t& event) const { return std::nullopt; };
 
-GridSection& Layout::section_of(const grid_coordinates_t& coordinates) const {
+std::shared_ptr<GridSection> Layout::section_of(const grid_coordinates_t& coordinates) const {
   for (auto section : sections) {
     if ( section->contains(coordinates) )
-      return *section;
+      return section;
   }
 
+  // TODO (coco|1.18.2020) make this an actual exception type.
   throw "no section found!";
 }

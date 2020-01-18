@@ -37,8 +37,8 @@ SCENARIO( "a grid Layout delegates events to its constituent sections" ) {
     auto observer_a = std::make_shared<TestGridEventObserver>();
     auto observer_b = std::make_shared<TestGridEventObserver>();
     
-    observer_a->subscribe(layout.steps);
-    observer_b->subscribe(layout.play_pause);
+    observer_a->subscribe(*layout.steps);
+    observer_b->subscribe(*layout.play_pause);
     
     WHEN( "the layout calls notify" ) {
       std::vector<grid_device_event_t> device_events =

@@ -21,7 +21,7 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   unsigned int page_size = 0;
   // TODO refactor this to be easier?
   if (io->grid->layout.name() == LayoutName::SequencerAndInstrument ) {
-    page_size = layouts->sequencer->steps.size();
+    page_size = layouts->sequencer->steps->size();
   }
   
   // get current ppqn

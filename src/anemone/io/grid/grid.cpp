@@ -1,5 +1,7 @@
 #include "anemone/io/grid/grid.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 Grid::Grid(std::shared_ptr<Config> config,
            std::shared_ptr<GridDevice> device,
@@ -9,6 +11,7 @@ Grid::Grid(std::shared_ptr<Config> config,
 void Grid::connect() {
   subscribe(*device);
   device->connect(device_addr);
+  device->listen();
 }
 
 void Grid::turn_off(const grid_addr_t& addr) {

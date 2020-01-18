@@ -1,5 +1,7 @@
 #include "anemone/io/grid/layout/context.hpp"
 
+#include <spdlog/spdlog.h>
+
 
 LayoutContext::LayoutContext(layout_initializer_list layouts) {
   if (layouts.size() == 0)

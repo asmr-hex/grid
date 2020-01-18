@@ -14,7 +14,7 @@ ctrl::clock::Scheduler::Scheduler(std::shared_ptr<IO> io,
 
 void ctrl::clock::Scheduler::handle(const tick_t& tick) {
   // advance steps
-  spdlog::debug("clock tick: {}", tick);
+  // spdlog::debug("clock tick: {}", tick);
 
   // for each instrument in playback
   //   get events for current tick
