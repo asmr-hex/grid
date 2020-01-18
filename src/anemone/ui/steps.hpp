@@ -49,7 +49,7 @@ namespace ui {
   class Steps : public Component {
   public:
     std::shared_ptr<Diff<instrument_part_state> > steps;
-    std::shared_ptr<Diff<types::step::page_relative_idx_t> > cursor;
+    std::shared_ptr<Diff<types::step::paged_idx_t> > cursor;
 
     std::shared_ptr<rendered_step_cursor_filter> filter;
     

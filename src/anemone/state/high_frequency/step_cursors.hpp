@@ -19,7 +19,7 @@ namespace State {
 
   struct step_cursor_t {
     types::step::granular_idx_t      current_step = 0;
-    types::step::page_relative_idx_t current_page_relative_step;
+    types::step::paged_idx_t current_page_relative_step;
   };
   
 

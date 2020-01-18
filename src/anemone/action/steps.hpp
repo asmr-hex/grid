@@ -11,7 +11,7 @@ namespace action {
     State::InstrumentName instrument_name;
     int part;
     types::step::idx_t step;
-    types::step::page_relative_idx_t page_relative;
+    types::step::paged_idx_t page_relative;
   };
 
 }

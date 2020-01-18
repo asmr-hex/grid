@@ -17,15 +17,17 @@
 #include "anemone/state/sequencer/state.hpp"
 #include "anemone/state/instruments/state.hpp"
 #include "anemone/state/high_frequency/step_cursors.hpp"
+#include "anemone/state/high_frequency/sequences.hpp"
 
 
 namespace State {
   
   // define composite root type
   struct root_t {
-    sequencer_t sequencer;
-    instruments_t instruments;
+    sequencer_t                     sequencer;
+    instruments_t                   instruments;
     std::shared_ptr<step_cursors_t> step_cursors;
+    std::shared_ptr<sequences_t>    sequences;
     
     bool operator==(const root_t& rhs) {
       return
@@ -42,6 +44,7 @@ namespace State {
 
     // high frequenncy states
     std::shared_ptr<StepCursors> step_cursors;
+    std::shared_ptr<Sequences>   sequences;
     
     Root();
     virtual std::shared_ptr<rx::dag::Observable<root_t> > get() override;

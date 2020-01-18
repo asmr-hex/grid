@@ -44,8 +44,8 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   auto sequence_relative_step = (step / static_cast<unsigned int>(PPQN::Max));
   
   // calculate the current page in playback
-  types::step::page_relative_idx_t page_relative_idx = { .step = sequence_relative_step % page_size,
-                                                         .page = sequence_relative_step / page_size,
+  types::step::paged_idx_t paged_idx = { .step = sequence_relative_step % page_size,
+                                         .page = sequence_relative_step / page_size,
                                                         
   };
 
@@ -53,6 +53,6 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
           .instrument_name = instrument.name,
           .part            = part_idx,
           .step            = step,
-          .page_relative   = page_relative_idx,
+          .page_relative   = paged_idx,
   };
 };

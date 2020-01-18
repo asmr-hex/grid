@@ -8,7 +8,7 @@ ui::Steps::Steps(std::shared_ptr<State::Root> state, std::shared_ptr<Grid> grid)
 
   // initialize ui states
   steps = std::make_shared<Diff<instrument_part_state> >(instrument_part_state{});
-  cursor = std::make_shared<Diff<types::step::page_relative_idx_t> >(types::step::page_relative_idx_t{});
+  cursor = std::make_shared<Diff<types::step::paged_idx_t> >(types::step::paged_idx_t{});
 
   // initialize observable subscription filter
   filter = std::make_shared<rendered_step_cursor_filter>(state);
@@ -32,10 +32,10 @@ void ui::Steps::connect() {
 
   subscribe<std::shared_ptr<State::step_cursors_t>,
             State::step_cursor_t,
-            types::step::page_relative_idx_t>
+            types::step::paged_idx_t>
     (state->step_cursors,
      cursor,
-     [] (State::step_cursor_t state) -> types::step::page_relative_idx_t {
+     [] (State::step_cursor_t state) -> types::step::paged_idx_t {
        return state.current_page_relative_step;
      },
      filter);

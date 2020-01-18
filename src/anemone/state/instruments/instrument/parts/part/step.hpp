@@ -18,8 +18,8 @@
 namespace State {
 
   struct step_t {
-    types::step::page_relative_idx_t last      = { .page = 1, .step = 31 };
-    bool                             show_last = false;
+    types::step::paged_idx_t last      = { .page = 1, .step = 31 };
+    bool                     show_last = false;
 
     std::map<types::page::idx_t, std::set<types::step::idx_t> > *rendered;
 

@@ -9,6 +9,16 @@
 #ifndef STATE_HIGH_FREQUENCY_SEQUENCES_H
 #define STATE_HIGH_FREQUENCY_SEQUENCES_H
 
+#include <map>
+#include <memory>
+
+#include "anemone/rx/state.hpp"
+#include "anemone/rx/types.hpp"
+#include "anemone/rx/observable.hpp"
+#include "anemone/rx/dag/observable.hpp"
+
+#include "anemone/action/types.hpp"
+
 #include "anemone/types.hpp"
 
 

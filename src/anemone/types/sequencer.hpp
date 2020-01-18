@@ -10,6 +10,7 @@
 #define TYPES_SEQUENCER_H
 
 #include <map>
+#include <set>
 #include <vector>
 
 
@@ -38,15 +39,18 @@ namespace types {
   
   /// @brief sequence step types.
   namespace step {
-    /// @brief type alias for sequence step index; a sequential id.
+    /// @brief type alias for sequence relative step index; a sequential id.
     ///
     /// @remark
     /// a step index is used to index a step in a sequence. unlike its granular
     /// counter-part, it represents the index that one actually sees on the sequencer
     /// and can be thought of as the sequential index of an event within the sequence.
+    /// This index type is 'sequence' relative because it is agnostic to which page the
+    /// index lies on.
+    ///
     typedef unsigned int idx_t;
 
-    /// @brief type alias for granular sequence indices.
+    /// @brief type alias for granular sequence relative indices.
     ///
     /// @remark
     /// granular step indices are used to index into sequence steps and are
@@ -56,17 +60,28 @@ namespace types {
     /// a 1/constants::PPQN_MAX step (the shortest step possible) and, given how
     /// sequences are stored/indexed internally, allows for fluid transitions of a
     /// Part's effective ppqn.
+    /// Like its non-granular counterpart, this index type is 'sequence' relative which
+    /// means it is agnostic to which page the index lies on.
+    ///
     typedef unsigned int granular_idx_t;
 
-    /// @brief page relative step index. provides the page index and page-relative step index.
+    /// @brief type alias for page relative step index.
+    ///
+    /// @remark
+    /// This type is used when we are only concerned with the index of a step relative
+    /// to the page it is on.
+    ///
+    typedef unsigned int page_relative_idx_t;
+    
+    /// @brief paged step index. provides the page index and page-relative step index.
     ///
     /// @details
     /// 
-    struct page_relative_idx_t {
-      page::idx_t page;
-      idx_t       step;
+    struct paged_idx_t {
+      page::idx_t               page;
+      page_relative_idx_t       step;
 
-      bool operator==(const page_relative_idx_t& rhs) {
+      bool operator==(const paged_idx_t& rhs) {
         return
           page == rhs.page &&
           step == rhs.step;
@@ -131,6 +146,10 @@ namespace types {
   /// @brief type alias for sequence storing data structure.
   typedef std::map<step::idx_t, sequence::layer_t> sequence_t;
 
+  /// @brief data structure for storing rendered steps
+  ///
+  /// @todo eventually this must be able to handle layering!
+  typedef std::map<page::idx_t, std::set<step::page_relative_idx_t> > rendered_steps_t;
 }
 
 #endif
