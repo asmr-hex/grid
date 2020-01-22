@@ -12,3 +12,8 @@ std::vector<State::instrument_t> get_playing_instruments(State::root_t state) {
 
   return playing_instruments;
 }
+
+
+State::InstrumentName get_rendered_instrument_name(State::root_t state) {
+  return state.instruments.rendered;
+}

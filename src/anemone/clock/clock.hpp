@@ -8,10 +8,11 @@
 #include "anemone/io/observable.hpp"
 #include "anemone/rx/observer.hpp"
 #include "anemone/state/root.hpp"
-#include "anemone/clock/types.hpp"
+
+#include "anemone/types.hpp"
 
 
-class Clock : public Observable<tick_t>, rx::Observer {
+class Clock : public Observable<types::tick_t>, rx::Observer {
 public:
   Clock(std::shared_ptr<State::Root>);
 
@@ -20,7 +21,7 @@ public:
 private:
   std::shared_ptr<State::Root> state;
   std::chrono::microseconds period;
-  tick_t tick_m = 0;
+  types::tick_t tick_m = 0;
 
   void step();
   void tick();

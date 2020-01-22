@@ -1,5 +1,4 @@
 #include "anemone/clock/clock.hpp"
-#include "anemone/clock/constants.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -43,5 +42,5 @@ void Clock::tick() {
 
 void Clock::update_period(float bpm) {
   period = std::chrono::microseconds
-    (static_cast<int>((60 * 1000 * 1000)/(bpm * (float)constants::PPQN_MAX)));
+    (static_cast<int>((60 * 1000 * 1000)/(bpm * (float)types::PPQN::Max)));
 }

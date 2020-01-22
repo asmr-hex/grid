@@ -6,4 +6,6 @@
 
 std::vector<State::instrument_t> get_playing_instruments(State::root_t);
 
+State::InstrumentName get_rendered_instrument_name(State::root_t);
+
 #endif

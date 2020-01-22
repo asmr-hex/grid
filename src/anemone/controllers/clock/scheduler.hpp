@@ -3,21 +3,21 @@
 
 #include <memory>
 
-#include "anemone/io/io.hpp"
-#include "anemone/io/grid/layout/layouts/layouts.hpp"
+#include "anemone/io.hpp"
+#include "anemone/types.hpp"
+#include "anemone/clock.hpp"
+#include "anemone/actions.hpp"
 
 #include "anemone/controllers/base.hpp"
 
 #include "anemone/state/root.hpp"
-#include "anemone/action/dispatcher.hpp"
 
-#include "anemone/clock/clock.hpp"
 
 
 namespace ctrl {
   namespace clock {
 
-    class Scheduler : public Controller<tick_t> {
+    class Scheduler : public Controller<types::tick_t> {
     public:
       Scheduler(std::shared_ptr<IO>,
                 std::shared_ptr<GridLayouts>,
@@ -26,7 +26,7 @@ namespace ctrl {
                 std::shared_ptr<Clock>);
 
     private:
-      virtual void handle(const tick_t&) override;
+      virtual void handle(const types::tick_t&) override;
     };
 
   }

@@ -3,10 +3,11 @@
 
 #include <memory>
 
-#include "anemone/io/io.hpp"
+#include "anemone/io.hpp"
+#include "anemone/actions.hpp"
+
 #include "anemone/state/root.hpp"
 #include "anemone/action/types.hpp"
-#include "anemone/io/grid/layout/layouts/layouts.hpp"
 
 
 namespace action {
@@ -26,7 +27,7 @@ namespace action {
     Creators(std::shared_ptr<IO>, std::shared_ptr<GridLayouts>);
 
     step_updated advance_step(State::instrument_t);
-    
+    step_activated activate_step(const types::step::page_relative_idx_t&);
   };
 
 }

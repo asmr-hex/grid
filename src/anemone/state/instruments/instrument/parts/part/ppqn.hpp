@@ -10,14 +10,14 @@
 
 #include "anemone/action/types.hpp"
 
-#include "anemone/types/sequencer.hpp"
+#include "anemone/types.hpp"
 
 
 namespace State {
 
   struct ppqn_t {
-    PPQN current = PPQN::Four;
-    PPQN next;
+    types::PPQN current = types::PPQN::Four;
+    types::PPQN next;
     bool pending_change = false;
 
     bool operator==(const ppqn_t& rhs) {

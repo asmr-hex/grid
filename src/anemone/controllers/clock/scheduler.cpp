@@ -12,7 +12,7 @@ ctrl::clock::Scheduler::Scheduler(std::shared_ptr<IO> io,
   : Controller(io, layouts, state, dispatcher, clock) {}
 
 
-void ctrl::clock::Scheduler::handle(const tick_t& tick) {
+void ctrl::clock::Scheduler::handle(const types::tick_t& tick) {
   // advance steps
   // spdlog::debug("clock tick: {}", tick);
 

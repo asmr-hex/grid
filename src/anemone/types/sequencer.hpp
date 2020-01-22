@@ -14,21 +14,7 @@
 #include <vector>
 
 
-/// @brief Pulse Per Quarter Note (ppqn).
-enum class PPQN {
-                 One       = 1,
-                 Two       = 2,
-                 Four      = 4,
-                 Eight     = 8,
-                 Sixteen   = 16,
-                 ThirtyTwo = 32,
-                 SixtyFour = 64,
-                 Max       = 64,
-};
-
-
 namespace types {
-
   
   /// @brief sequence page types.
   namespace page {
@@ -150,6 +136,11 @@ namespace types {
   ///
   /// @todo eventually this must be able to handle layering!
   typedef std::map<page::idx_t, std::set<step::page_relative_idx_t> > rendered_steps_t;
+
+  namespace part {
+    /// @brief sequence part index.
+    typedef int idx_t;
+  }
 }
 
 #endif

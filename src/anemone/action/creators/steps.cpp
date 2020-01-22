@@ -7,6 +7,9 @@
 #include "anemone/io/grid/layout/layouts/sequencer.hpp"
 
 #include "anemone/state/selectors/step_cursor.hpp"
+#include "anemone/state/selectors/instruments.hpp"
+#include "anemone/state/selectors/parts.hpp"
+#include "anemone/state/selectors/pages.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -38,10 +41,10 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   step += ppqn;
 
   // cycle step if we are at the end of the sequence
-  if ( step > (last_step * static_cast<unsigned int>(PPQN::Max)) )
+  if ( step > (last_step * static_cast<unsigned int>(types::PPQN::Max)) )
     step = 0;
 
-  auto sequence_relative_step = (step / static_cast<unsigned int>(PPQN::Max));
+  auto sequence_relative_step = (step / static_cast<unsigned int>(types::PPQN::Max));
   
   // calculate the current page in playback
   types::step::paged_idx_t paged_idx = { .step = sequence_relative_step % page_size,
@@ -56,3 +59,18 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
           .page_relative   = paged_idx,
   };
 };
+
+action::step_activated action::Creators::activate_step(const types::step::page_relative_idx_t& index) {
+  State::InstrumentName name    = get_rendered_instrument_name(state);
+  types::part::idx_t part       = get_rendered_part_id(state);
+  types::step::paged_idx_t step = {
+                                   .page = get_page_under_edit(state),
+                                   .step = index,
+  };
+
+  return {
+          .instrument_name = name,
+          .part            = part,
+          .step            = step,
+  };
+}

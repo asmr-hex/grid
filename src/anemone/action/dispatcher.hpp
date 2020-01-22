@@ -7,7 +7,7 @@
 #include "anemone/action/types.hpp"
 #include "anemone/rx/root.hpp"
 
-
+// TODO move this into rx!
 class Dispatcher {
 public:
   Dispatcher(std::shared_ptr<rx::Root<action_t, high_freq_action_t> >);

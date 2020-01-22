@@ -11,6 +11,8 @@
 
 
 #include "anemone/types/sequencer.hpp"
+#include "anemone/types/ppqn.hpp"
+#include "anemone/types/clock.hpp"
 
 
 #endif

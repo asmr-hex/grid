@@ -14,6 +14,11 @@ namespace action {
     types::step::paged_idx_t page_relative;
   };
 
+  struct step_activated {
+    State::InstrumentName instrument_name;
+    int part;
+    types::step::paged_idx_t step;
+  };
 }
 
 #endif

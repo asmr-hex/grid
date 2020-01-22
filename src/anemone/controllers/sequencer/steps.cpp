@@ -12,5 +12,14 @@ ctrl::sequencer::Steps::Steps(std::shared_ptr<IO> io,
 
 
 void ctrl::sequencer::Steps::handle(const grid_event_t& event) {
-  spdlog::debug("Steps Section Grid Event Occurred!");
+  // TODO include last step setter (if shift is held)
+
+  // add a new step to the sequence using the most recent midi note
+  switch (event.type) {
+  case GridEvent::Pressed:
+    dispatch(make_action.activate_step(event.index));
+    break;
+  case GridEvent::Unpressed:
+    break;
+  }
 }
