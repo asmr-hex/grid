@@ -62,5 +62,5 @@ void State::Root::send_action(const high_freq_action_t& action) {
 
 void State::Root::send_action(high_freq_action_t&& action) {
   step_cursors->state->reduce(std::move(action));
-  sequences->state->reduce(action);
+  sequences->state->reduce(std::move(action));
 }

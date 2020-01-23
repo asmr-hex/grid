@@ -13,6 +13,7 @@
 #include "anemone/types/sequencer.hpp"
 #include "anemone/types/ppqn.hpp"
 #include "anemone/types/clock.hpp"
+#include "anemone/types/midi.hpp"
 
 
 #endif

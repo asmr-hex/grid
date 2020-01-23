@@ -17,9 +17,11 @@ void Clock::start() {
 
 void Clock::connect_to_state() {
   spdlog::info("  initializing state -> clock");
-  subscribe<State::root_t>(state, [this] (State::root_t s) {
-                                    update_period(s.sequencer.bpm);
-                                  });
+  subscribe<State::root_t>(state,
+                           [this] (State::root_t s) {
+                             // TODO only subscribe to sequencer.bpm changes!
+                             update_period(s.sequencer.bpm);
+                           });
 }
 
 void Clock::step() {

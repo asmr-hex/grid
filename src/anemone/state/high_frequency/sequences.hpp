@@ -26,10 +26,11 @@ namespace State {
 
   /// @brief state sequence type containing various types of midi sequences.
   struct sequence_t {
-    types::sequence_t midi_on;
-    types::sequence_t midi_off;
-    types::sequence_t midi_cc;
-    types::sequence_t midi_nrpn;
+    types::sequence_t       midi_on;
+    types::sequence_t       midi_off;
+    types::sequence_t       midi_cc;
+    types::sequence_t       midi_nrpn;
+    types::rendered_steps_t rendered_steps;
   };
 
   /// @brief mapping of instrument to part to sequences.

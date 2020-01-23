@@ -15,6 +15,11 @@
 
 
 namespace types {
+
+  // forward declaration. see anemone/types/midi.hpp
+  namespace midi {
+    typedef std::vector<unsigned char> data_t;
+  }
   
   /// @brief sequence page types.
   namespace page {
@@ -98,17 +103,20 @@ namespace types {
       ///   `data 1 byte` is a 0-127 value (such as pitch)
       ///
       typedef unsigned short id_t;
-      
-      /// @brief Step event data type.
-      typedef std::vector<unsigned char> data_t;
+
+      /// @brief create an id for a step event given a protocol and midi data.
+      id_t make_id(protocol_t protocol, types::midi::data_t data);
     }
 
     /// @brief Step event type.
     struct event_t {
-      event::protocol_t protocol;
-      event::id_t       id;
-      event::data_t     data;
+      event::protocol_t   protocol;
+      event::id_t         id;
+      types::midi::data_t data;
     };
+
+    /// @brief create a midi note on step event.
+    event_t midi_note_on(std::string note, unsigned int channel, unsigned int velocity);
   }
 
 

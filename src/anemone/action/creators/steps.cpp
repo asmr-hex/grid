@@ -61,16 +61,32 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
 };
 
 action::step_activated action::Creators::activate_step(const types::step::page_relative_idx_t& index) {
-  State::InstrumentName name    = get_rendered_instrument_name(state);
-  types::part::idx_t part       = get_rendered_part_id(state);
-  types::step::paged_idx_t step = {
-                                   .page = get_page_under_edit(state),
-                                   .step = index,
-  };
 
+  // get page size
+  unsigned int page_size = 0;
+  // TODO refactor this to be easier?
+  if (io->grid->layout.name() == LayoutName::SequencerAndInstrument ) {
+    page_size = layouts->sequencer->steps->size();
+  }
+
+  State::InstrumentName    name       = get_rendered_instrument_name(state);
+  types::part::idx_t       part       = get_rendered_part_id(state);
+  types::step::paged_idx_t paged_step = {
+                                         .page = get_page_under_edit(state),
+                                         .step = index,
+  };
+  types::step::idx_t       step       = paged_step.to_absolute_idx(page_size);
+
+  // TODO eventually create step events here instead of just midi data.
+  // the data type for `action::step_activated` should be a `step::event_t` rather
+  // than just `midi::data_t`
+  auto event = types::step::midi_note_on("c4", 1, 127);
+  
   return {
           .instrument_name = name,
           .part            = part,
           .step            = step,
+          .paged_step      = paged_step,
+          .event           = event,
   };
 }
