@@ -106,14 +106,23 @@ namespace ui {
     template<typename T, typename D>
     std::function<void(T)> make_handler(derive_fn_t<T, D> derive, std::shared_ptr<Diff<D> > d) {
       return [this, derive, d] (T t) -> void {
-               // update previous and current states
-               d->previous = d->current;
+               // update current value
                d->current = derive(t);
 
+               // at this point, the previous and current values will be
+               // different if there has actually been a change
+               
                // only re-render if there has been a change in derived state
                if ( !(d->previous == d->current) )
                  render();
-                 
+
+               // set previous value to current value
+               d->previous = d->current;
+
+               // at this point, the previous and current values will be the same.
+               // this is important so that we can further guard against unnecessary
+               // renders within our `render` implementation, particularly when we have
+               // subscribed to multiple states.
              };
     };
   };

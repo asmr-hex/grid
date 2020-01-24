@@ -41,6 +41,8 @@ namespace ui {
       auto instrument = state.instruments.rendered;
       auto part = state.instruments.by_name->at(instrument)->status.part.under_edit;
 
+      spdlog::debug("CREATING A COPY OF A RENDERED_STEPS_T MAP");
+      
       return sqns->at(instrument).at(part).rendered_steps;
     };
 
@@ -55,8 +57,8 @@ namespace ui {
   
   struct instrument_part_state {
     State::InstrumentName instrument;
-    int part;
-    types::page::idx_t rendered_page;
+    types::part::idx_t    part;
+    types::page::idx_t    rendered_page;
     
     // TODO rendered steps
     // TODO track show_last_step;

@@ -1,5 +1,7 @@
 #include "anemone/ui/steps.hpp"
 
+#include <algorithm>
+
 #include <spdlog/spdlog.h>
 
 
@@ -42,6 +44,7 @@ void ui::Steps::connect() {
      },
      step_cursor_filter);
 
+  
   subscribe<std::shared_ptr<State::sequences_t>,
             types::rendered_steps_t,
             types::rendered_steps_t>
@@ -63,8 +66,30 @@ void ui::Steps::render() {
 }
 
 void ui::Steps::render_active_steps() {
-  // TODO eventually be smarter about this-- get set diff
-  for (auto step : rendered_steps->current[steps->current.rendered_page]) {
+  if ( rendered_steps->previous == rendered_steps->current )
+    return;
+
+  spdlog::debug("RE-REDNERING RENDERED STEPS");
+
+  // previous and current rendered pages
+  auto previous = rendered_steps->previous[steps->previous.rendered_page];
+  auto current = rendered_steps->current[steps->current.rendered_page];
+  
+  // get steps to turn off
+  std::set<types::step::page_relative_idx_t> off_steps;
+  std::set_difference(previous.begin(), previous.end(),
+                      current.begin(), current.end(),
+                      std::inserter(off_steps, off_steps.begin()));
+  for (auto step : off_steps) {
+    turn_off_led(step);
+  }
+  
+  // get steps to turn on
+  std::set<types::step::page_relative_idx_t> on_steps;
+  std::set_difference(current.begin(), current.end(),
+                      previous.begin(), previous.end(),
+                      std::inserter(on_steps, on_steps.begin()));
+  for (auto step : on_steps) {
     turn_on_led(step);
   }
 }
@@ -73,9 +98,15 @@ void ui::Steps::render_cursor() {
   // if cursor hasn't changed, do nothing
   if ( cursor->previous == cursor->current )
     return;
+
+  // TODO DONT TURN OFF STEPS IF THEY ARE ACTIVATED
+  auto previous_rendered_steps = rendered_steps->previous[steps->previous.rendered_page];
+  // auto current_rendered_steps = rendered_steps->current[steps->current.rendered_page];
+  // TODO make helper function!
   
   // turn off last step
-  if ( steps->previous.rendered_page == cursor->previous.page )
+  if ( steps->previous.rendered_page == cursor->previous.page &&
+       previous_rendered_steps.find(cursor->previous.step) == previous_rendered_steps.end())
     turn_off_led(cursor->previous.step);
 
   // turn on next step

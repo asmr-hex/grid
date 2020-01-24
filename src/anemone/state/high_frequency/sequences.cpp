@@ -27,6 +27,8 @@ State::Sequences::Sequences() {
 
                  // add rendered steps
                  sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].insert(a.paged_step.step);
+
+                 // spdlog::debug("rendered steps: {}", sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].size());
                },
                [] (const auto& a) {
                });
@@ -34,8 +36,13 @@ State::Sequences::Sequences() {
      [] (high_freq_action_t action) -> bool {
        return
          match(action,
-               [] (const auto& a) {
+               [] (const action::step_activated& a) {
+                 // important! otherwise it will broadcast EVERY time another high frequency
+                 // action occurs! AKA a clock tick!
                  return true;
+               },
+               [] (const auto& a) {
+                 return false;
                });
      });
 }
