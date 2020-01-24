@@ -19,16 +19,24 @@ State::Sequences::Sequences() {
      [] (std::shared_ptr<sequences_t> sequences, high_freq_action_t action) {
        return
          match(action,
-               [sequences] (const action::step_activated& a) {
-                 // insert into midi on events
-                 sequences->at(a.instrument_name)[a.part].midi_on[a.step][a.event.id] = a.event;
+               [sequences] (const action::step_updated& a) {
+                 if (a.activated) {
+                   // remove from midi on events
+                   sequences->at(a.instrument_name)[a.part].midi_on[a.step].erase(a.event.id);
 
-                 // TODO figure out how to insert midi off event
+                   // add rendered steps
+                   sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].erase(a.paged_step.step);
+                 } else {
+                   // insert into midi on events
+                   sequences->at(a.instrument_name)[a.part].midi_on[a.step][a.event.id] = a.event;
 
-                 // add rendered steps
-                 sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].insert(a.paged_step.step);
+                   // TODO figure out how to insert midi off event
 
-                 // spdlog::debug("rendered steps: {}", sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].size());
+                   // add rendered steps
+                   sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].insert(a.paged_step.step);
+
+                   // spdlog::debug("rendered steps: {}", sequences->at(a.instrument_name)[a.part].rendered_steps[a.paged_step.page].size()); 
+                 }
                },
                [] (const auto& a) {
                });
@@ -36,7 +44,7 @@ State::Sequences::Sequences() {
      [] (high_freq_action_t action) -> bool {
        return
          match(action,
-               [] (const action::step_activated& a) {
+               [] (const action::step_updated& a) {
                  // important! otherwise it will broadcast EVERY time another high frequency
                  // action occurs! AKA a clock tick!
                  return true;

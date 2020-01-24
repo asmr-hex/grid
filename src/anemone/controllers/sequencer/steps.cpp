@@ -17,7 +17,7 @@ void ctrl::sequencer::Steps::handle(const grid_event_t& event) {
   // add a new step to the sequence using the most recent midi note
   switch (event.type) {
   case GridEvent::Pressed:
-    dispatch(make_action.activate_step(event.index));
+    dispatch(make_action.update_step(event.index));
     break;
   case GridEvent::Unpressed:
     break;

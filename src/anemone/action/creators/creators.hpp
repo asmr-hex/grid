@@ -26,8 +26,8 @@ namespace action {
 
     Creators(std::shared_ptr<IO>, std::shared_ptr<GridLayouts>);
 
-    step_updated advance_step(State::instrument_t);
-    step_activated activate_step(const types::step::page_relative_idx_t&);
+    step_cursor_updated advance_step(State::instrument_t);
+    step_updated update_step(const types::step::page_relative_idx_t&);
   };
 
 }

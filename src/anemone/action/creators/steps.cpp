@@ -10,11 +10,12 @@
 #include "anemone/state/selectors/instruments.hpp"
 #include "anemone/state/selectors/parts.hpp"
 #include "anemone/state/selectors/pages.hpp"
+#include "anemone/state/selectors/steps.hpp"
 
 #include <spdlog/spdlog.h>
 
 
-action::step_updated action::Creators::advance_step(State::instrument_t instrument) {  
+action::step_cursor_updated action::Creators::advance_step(State::instrument_t instrument) {  
   // get currently playing part
   auto part_idx = instrument.status.part.in_playback;
   
@@ -60,7 +61,7 @@ action::step_updated action::Creators::advance_step(State::instrument_t instrume
   };
 };
 
-action::step_activated action::Creators::activate_step(const types::step::page_relative_idx_t& index) {
+action::step_updated action::Creators::update_step(const types::step::page_relative_idx_t& index) {
 
   // get page size
   unsigned int page_size = 0;
@@ -76,13 +77,13 @@ action::step_activated action::Creators::activate_step(const types::step::page_r
                                          .step = index,
   };
   types::step::idx_t       step       = paged_step.to_absolute_idx(page_size);
-
-  // TODO eventually create step events here instead of just midi data.
-  // the data type for `action::step_activated` should be a `step::event_t` rather
-  // than just `midi::data_t`
+  bool                     activated  = is_step_activated(state, name, part, paged_step.page, index);
+  
+  // TODO eventually populate with a more codified default midi note....
   auto event = types::step::midi_note_on("c4", 1, 127);
   
   return {
+          .activated       = activated,
           .instrument_name = name,
           .part            = part,
           .step            = step,

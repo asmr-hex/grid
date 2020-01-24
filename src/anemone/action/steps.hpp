@@ -7,14 +7,15 @@
 
 namespace action {
 
-  struct step_updated {
+  struct step_cursor_updated {
     State::InstrumentName    instrument_name;
     types::part::idx_t       part;
     types::step::idx_t       step;
     types::step::paged_idx_t page_relative;
   };
 
-  struct step_activated {
+  struct step_updated {
+    bool                     activated;
     State::InstrumentName    instrument_name;
     types::part::idx_t       part;
     types::step::idx_t       step;
