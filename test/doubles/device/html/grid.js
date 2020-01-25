@@ -121,20 +121,23 @@ const handle_button_click = (x, y) => {
   socket.send(JSON.stringify(msg)) 
 }
 
-const getButtonClass = (x, y) => {
+const getButtonClass = (x, y, switchState=true) => {
+  // switch button state
+  if (switchState) {
+    pressed_down[y][x] = !pressed_down[y][x] 
+  }
+  
   classes = 'grid-button'
 
   // get the level of the led
   classes += ` grid-button-level-${led_level[y][x]}`
 
-  // set the grid to pressed down if it previously wasn't
-  if (!pressed_down[y][x]) {
+
+  // set the grid to pressed if it is pressed
+  if (pressed_down[y][x]) {
     classes += ' grid-button-down'
   }
 
-  // switch button state
-  pressed_down[y][x] = !pressed_down[y][x]
-  
   return classes
 }
 
@@ -148,6 +151,30 @@ const handle_press_event = (msg) => {
   button.className = getButtonClass(x, y)
 }
 
+const set_led_level = (x, y, intensity) => {
+  led_level[y][x] = intensity
+}
+
 const handle_led_event = (msg) => {
+  x = msg.x
+  y = msg.y
+  let classes = ""
   
+  switch (msg.action) {
+  case "on":
+    set_led_level(x, y, 15)
+    classes = getButtonClass(x, y, false)
+    break
+  case "off":
+    set_led_level(x, y, 0)
+    classes = getButtonClass(x, y, false)
+    break
+  case "set":
+    set_led_level(x, y, msg.intensity)
+    classes = getButtonClass(x, y, false)
+    break
+  }
+
+  let button = document.getElementById(`grid-button-${x}-${y}`)
+  button.className = classes
 }

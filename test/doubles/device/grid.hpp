@@ -28,13 +28,16 @@ public:
       if (!ret) {
         spdlog::error("the html base dir doesn't exist!");
       }
+
+      // turn off console logging for websocket server
+      ws_server.clear_access_channels(websocketpp::log::alevel::frame_header | websocketpp::log::alevel::frame_payload);
+      ws_server.clear_access_channels(websocketpp::log::alevel::all);
     }
   };
 
   virtual void connect(std::string addr) override {
     if (interactive) {
       std::thread t([this, addr] {
-                      spdlog::info(addr);
                       svr.listen("localhost", std::stoi(addr));
                     });
       t.detach();
@@ -44,12 +47,15 @@ public:
                                             websocketpp::server<websocketpp::config::asio>::message_ptr msg) {
                                       handle_ws_msg(hndl, msg);
                                     });
-      
-      // start websocket listener
-      ws_server.init_asio();
-      ws_server.listen(2718);
-      ws_server.start_accept();
-      ws_server.run();
+
+      std::thread tt([this] {
+                       // start websocket listener
+                       ws_server.init_asio();
+                       ws_server.listen(2718);
+                       ws_server.start_accept();
+                       ws_server.run();                       
+                     });
+      tt.detach();
     } else {
       ready->push(true);
     }
@@ -60,6 +66,14 @@ public:
   virtual void turn_on(grid_coordinates_t c) override {};
   virtual void set(grid_coordinates_t c, unsigned int intensity) override {};
 
+  void toggle(grid_coordinates_t c) {
+    // toggle a button (press or unpress)
+  };
+
+  void describe(std::string description) {
+    // send description to browser
+  }
+  
 private:
   bool interactive;
   httplib::Server svr;
@@ -90,7 +104,6 @@ private:
       ready->push(true);
     }
     
-    // spdlog::error(json_msg["pressed"].get<bool>());
   }
 };
 

@@ -56,20 +56,20 @@ int main( int argc, char* argv[] ) {
     spdlog::warn("http://localhost:{}", test_anemone->config->ports.grid);
   }
 
-  
   // wait for browser grid to be ready
   browser_grid_ready->pop();
 
-  spdlog::info("OKOKOKOK");
-  
   // wait for anemone to be ready
   anemone_ready->pop();
-  
+
   // only pass catch relevant (the first 5 arguments -- see makefile)
   int new_argc = 5;
   int result = Catch::Session().run( new_argc, argv );
 
   // global clean-up...
+  if (interactive) {
+    // TODO report success/failure in browser
+  }
 
   return result;
 }
