@@ -112,7 +112,7 @@ const handle_button_click = (x, y) => {
 
   // send message to c++
   const msg = {
-    type: 'event',
+    type: 'press_event',
     pressed: pressed_down[y][x],
     x,
     y,

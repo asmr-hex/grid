@@ -33,6 +33,16 @@ public:
       ws_server.clear_access_channels(websocketpp::log::alevel::frame_header | websocketpp::log::alevel::frame_payload);
       ws_server.clear_access_channels(websocketpp::log::alevel::all);
     }
+
+    // initialize internal grid state
+    int width = 16;
+    int height = 8;
+    for (unsigned int y = 0; y < height; y++) {
+      for (unsigned int x = 0; x < width; x++) {
+        is_pressed[y][x] = false;
+        led_level[y][x] = 0;
+      }
+    }
   };
 
   virtual void connect(std::string addr) override {
@@ -77,6 +87,9 @@ public:
     j["x"] = c.x;
     j["y"] = c.y;
     send(j);
+
+    // update internal state
+    led_level[c.y][c.x] = 0;
   };
   virtual void turn_on(grid_coordinates_t c) override {
     using json = nlohmann::json;
@@ -86,6 +99,9 @@ public:
     j["x"] = c.x;
     j["y"] = c.y;
     send(j);
+
+    // update internal state
+    led_level[c.y][c.x] = 15;
   };
   virtual void set(grid_coordinates_t c, unsigned int intensity) override {
     using json = nlohmann::json;
@@ -96,10 +112,38 @@ public:
     j["y"] = c.y;
     j["intensity"] = intensity;
     send(j);
+    
+    // update internal state
+    led_level[c.y][c.x] = intensity;
   };
 
   void toggle(grid_coordinates_t c) {
+    using json = nlohmann::json;
+    json j;
+    
     // toggle a button (press or unpress)
+    bool pressed = is_pressed[c.y][c.x];
+
+    if (interactive) {
+      // broadcast to browser
+      j["type"] = "press_event";
+      j["x"] = c.x;
+      j["y"] = c.y;
+      send(j);
+    }
+
+    // broadcast to all observers
+    GridDeviceEvent event_type;
+    if (pressed) {
+      event_type = GridDeviceEvent::ButtonDown;
+    } else {
+      event_type = GridDeviceEvent::ButtonUp;
+    }
+
+    broadcast({{ .x = c.x,
+                 .y = c.y },
+                .type = event_type
+      });
   };
 
   void describe(std::string description) {
@@ -112,7 +156,9 @@ private:
   websocketpp::server<websocketpp::config::asio> ws_server;
   std::shared_ptr< Queue<bool> > ready;
   std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > connections;
-
+  std::map<int, std::map<int, bool> > is_pressed; // y, x, is_pressed
+  std::map<int, std::map<int, unsigned int> > led_level; // y, x, led_level
+  
   void send(nlohmann::json j) {
     for (auto it : connections) {
       ws_server.send(it, j.dump(), websocketpp::frame::opcode::value::text);
@@ -143,6 +189,8 @@ private:
       }else {
         j["mode"] = "visual";
       }
+      j["is_pressed"] = is_pressed;
+      j["led_level"] = led_level;
       ws_server.send(hndl, j.dump(), msg->get_opcode());
     }
 
@@ -150,7 +198,27 @@ private:
       spdlog::info("starting tests...");
       ready->push(true);
     }
-    
+
+    if (json_msg["type"].get<std::string>() == "press_event") {
+      // update the internal is_pressed info
+      unsigned int x = json_msg["x"].get<unsigned int>();
+      unsigned int y = json_msg["y"].get<unsigned int>();
+      bool pressed = json_msg["pressed"].get<bool>();
+      is_pressed[y][x] = pressed;
+
+      // broadcast to all observers
+      GridDeviceEvent event_type;
+      if (pressed) {
+        event_type = GridDeviceEvent::ButtonDown;
+      } else {
+        event_type = GridDeviceEvent::ButtonUp;
+      }
+
+      broadcast({{ .x = x,
+                   .y = y },
+                  .type = event_type
+        });
+    }
   }
 };
 
