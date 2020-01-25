@@ -3,21 +3,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
   setupGridElements()
 })
 
+let ws_ready = false
+let mode = "visual"
+
 // establish websocket connection with Browser Grid Device
 let socket = new WebSocket("ws://127.0.0.1:2718")
 
 // setup ws msg handler
 socket.onmessage = (event) => {
-  console.log(event.data)
+  msg = JSON.parse(event.data);
+
+  switch (msg.type) {
+  case "configuration":
+    mode = msg.mode
+    break
+  case "press_event":
+    handle_press_event(msg)
+    break
+  case "led_event":
+    handle_led_event(msg)
+    break
+  default:
+  }
 }
 
 // once the socket is open, we may begin.
 socket.onopen = (event) => {
+  ws_ready = true
+
+  // tell server we are connected
   const msg = {
-    'hello': 666,
+    type: 'connected',
   }
 
-  socket.send(JSON.stringify(msg)) 
+  socket.send(JSON.stringify(msg))
+
+  // display start button
+  document.getElementById("details-container")
 }
 
 // global map of which buttons are pressed down
@@ -51,13 +73,17 @@ const setupGridElements = (width=16, height=8) => {
       // set the state of this button in nglobal pressed map
       pressed_down[y][x] = false
       led_level[y][x] = 0
-      
-      button.addEventListener("click", () => handle_button_click(x, y))
+
+      if (mode == "interactive") {
+        button.addEventListener("click", () => handle_button_click(x, y)) 
+      }
     }    
   }
 }
 
 const handle_button_click = (x, y) => {
+  if (!ws_ready) return
+  
   let button = document.getElementById(`grid-button-${x}-${y}`)
 
   // set button class
@@ -65,6 +91,7 @@ const handle_button_click = (x, y) => {
 
   // send message to c++
   const msg = {
+    type: 'event',
     pressed: pressed_down[y][x],
     x,
     y,
@@ -88,4 +115,18 @@ const getButtonClass = (x, y) => {
   pressed_down[y][x] = !pressed_down[y][x]
   
   return classes
+}
+
+const handle_press_event = (msg) => {
+  x = msg.x
+  y = msg.y
+  
+  let button = document.getElementById(`grid-button-${x}-${y}`)
+
+  // set button class
+  button.className = getButtonClass(x, y)
+}
+
+const handle_led_event = (msg) => {
+  
 }

@@ -10,6 +10,7 @@
 #include <httplib.h>
 #include <websocketpp/server.hpp>
 #include <websocketpp/config/asio_no_tls.hpp>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
 #include "anemone/io.hpp"
@@ -37,11 +38,11 @@ public:
                       svr.listen("localhost", std::stoi(addr));
                     });
       t.detach();
-
+      
       // set websocket callback handler
-      ws_server.set_message_handler([this] (websocketpp::connection_hdl,
+      ws_server.set_message_handler([this] (websocketpp::connection_hdl hndl,
                                             websocketpp::server<websocketpp::config::asio>::message_ptr msg) {
-                                      handle_ws_msg(msg->get_payload());
+                                      handle_ws_msg(hndl, msg);
                                     });
       
       // start websocket listener
@@ -65,9 +66,30 @@ private:
   websocketpp::server<websocketpp::config::asio> ws_server;
   std::shared_ptr< Queue<bool> > ready;
 
-  void handle_ws_msg(std::string const& msg) {
+  void handle_ws_msg(websocketpp::connection_hdl hndl,
+                     websocketpp::server<websocketpp::config::asio>::message_ptr msg)
+  {
+    using json = nlohmann::json;
+
+    auto json_msg = json::parse(msg->get_payload());
+
+    if (json_msg["type"].get<std::string>() == "connected") {
+      // send some configuration info
+      json j;
+      j["type"] = "configuration";
+      if (interactive) {
+        j["mode"] = "interactive"; 
+      }else {
+        j["mode"] = "visual";
+      }
+      ws_server.send(hndl, j.dump(), msg->get_opcode());
+    }
+
+    if (json_msg["type"].get<std::string>() == "ready") {
+      ready->push(true);
+    }
     
-    spdlog::error(msg);
+    // spdlog::error(json_msg["pressed"].get<bool>());
   }
 };
 

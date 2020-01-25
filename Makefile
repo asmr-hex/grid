@@ -53,7 +53,7 @@ UNIT_TEST_DIR        := $(TEST_DIR)/unit
 INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 
 INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(TEST_DIR)
-INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketpp
+INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketpp -I$(INCLUDE_DIR)/json
 
 UNIT_TEST_TARGET     := run_unit_tests
 UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')

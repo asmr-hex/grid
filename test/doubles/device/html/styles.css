@@ -1,15 +1,32 @@
 .grid-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 #grid-chassis {
-    margin: 90px;
+    margin-top: 90px;
+    margin-bottom: 50px;
     padding: 15px;
     border: solid #DDE3E5 2px;
     box-shadow: 6px 6px #686868;
     border-radius: 10px;
     background-color: #E2EAEC;
+}
+
+#start-button {
+    padding: 20px 70px 20px 70px;
+    border-radius: 30px;
+    background-color: #FFA9FC;
+    font-family: "Courier New", Courier, monospace;
+    font-size: xx-large;
+    color: white;
+    font-weight: bold;
+    border: solid 4px transparent;
+}
+
+#start-button:hover {
+    border: solid 4px #F2F19A;
 }
 
 .grid-button-container {
