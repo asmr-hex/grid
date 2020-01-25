@@ -1,0 +1,26 @@
+ports:
+  midi:
+    in: "IAC Driver Internal MIDI" # "AudioBox USB 96"
+    out: "IAC Driver Internal MIDI" #"AudioBox USB 96"
+  grid: "3145"
+
+layouts:
+  sequencer:
+    layout_file: "sequencer/layout.yml"
+  pattern:
+    layout_file: "pattern/layout.yml"
+
+instruments:
+  sp404:
+    layout_file: "sp404_layout.yml"
+  ms20:
+    layout_file: "ms20_layout.yml"
+  gr1:
+    chan: 10
+    layout_file: "gr1_layout.yml"
+  er1:
+    layout_file: "er1_layout.yml"
+
+controllers:
+  - nanokey
+  - glove

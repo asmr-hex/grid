@@ -3,7 +3,12 @@
 #include <spdlog/spdlog.h>
 
 
-Anemone::Anemone(std::string config_path, std::shared_ptr<GridDevice> grid_device, std::shared_ptr<MidiDevice> midi_device) {
+Anemone::Anemone(std::string config_path,
+                 std::shared_ptr<GridDevice> grid_device,
+                 std::shared_ptr<MidiDevice> midi_device,
+                 std::shared_ptr< Queue<bool> > ready)
+  : ready(ready)
+{
   spdlog::set_level(spdlog::level::debug);
 
   spdlog::info("============= initialization ============");
@@ -59,6 +64,8 @@ void Anemone::run() {
   spdlog::info("============= connecting ================");
   io->connect();
 
+  ready->push(true);
+  
   // clock is blocking (non-detatched thread)
   clock->start();
 }

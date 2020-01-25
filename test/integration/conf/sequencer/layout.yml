@@ -1,0 +1,67 @@
+instrument_select:
+  x:
+    min: 7
+    max: 7
+  y:
+    min: 2
+    max: 7
+instrument_panel:
+  x:
+    min: 8
+    max: 15
+  y:
+    min: 2
+    max: 7
+steps:
+  x:
+    min: 0
+    max: 15
+  y:
+    min: 0
+    max: 1
+pages:
+  x:
+    min: 1
+    max: 6
+  y:
+    min: 2
+    max: 2
+parts:
+  x:
+    min: 0
+    max: 6
+  y:
+    min: 3
+    max: 3
+banks:
+  x:
+    min: 0
+    max: 6
+  y:
+    min: 4
+    max: 4
+ppqn:
+  x:
+    min: 0
+    max: 6
+  y:
+    min: 5
+    max: 5
+shift:
+  x: 0
+  y: 7
+play_pause:
+  x: 1
+  y: 7
+stop:
+  x: 2
+  y: 7
+record:
+  x: 2
+  y: 7
+last_step:
+  x: 0
+  y: 2
+metronome:
+  x: 6
+  y: 7

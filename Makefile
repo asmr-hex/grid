@@ -52,17 +52,25 @@ UNIT_TEST_DIR        := $(TEST_DIR)/unit
 INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 
 INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(TEST_DIR)
+INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketapp
 
 UNIT_TEST_TARGET     := run_unit_tests
 UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
 UNIT_TEST_OBJECTS    := $(UNIT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
 
+INT_TEST_TARGET      := run_integration_tests
+INT_TEST_SRC         := $(ANEMONE_SRC) $(shell find $(INTEGRATION_TEST_DIR) -type f -name '*.cpp')
+INT_TEST_OBJECTS     := $(INT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
+INT_TEST_CONF        := ./test/integration/conf/config.yml
+interactive          := false
+
+tags                 := ""
 
 # -----------------------------  c o m m a n d s  -------------------------
 
 
 # list all phony targets, i.e. non-file target commands
-.PHONY: all build clean debug default  packages test coverage release
+.PHONY: all build clean debug default  packages test unit integration coverage release
 
 
 default: build
@@ -122,10 +130,15 @@ $(BIN_DIR)/$(BIN_TARGET): $(BIN_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(BIN_TARGET) $(BIN_OBJECTS)
 
 
-# test target
+# unittest target
 $(BIN_DIR)/$(UNIT_TEST_TARGET): $(UNIT_TEST_OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(UNIT_TEST_TARGET) $(UNIT_TEST_OBJECTS)
+
+# integration test target
+$(BIN_DIR)/$(INT_TEST_TARGET): $(INT_TEST_OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(LDFLAGS) $(LIBS) -o $(BIN_DIR)/$(INT_TEST_TARGET) $(INT_TEST_OBJECTS)
 
 
 # binary target (alias)
@@ -137,10 +150,20 @@ debug: build
 	@sudo gdb --args $(BIN_DIR)/$(BIN_TARGET) $(CONF)
 
 
-# run tests (for now just unit tests)
-test: INCLUDE += $(INCLUDE_TEST)
-test: $(BIN_DIR)/$(UNIT_TEST_TARGET)
+# run unit tests
+unit: INCLUDE += $(INCLUDE_TEST)
+unit: $(BIN_DIR)/$(UNIT_TEST_TARGET)
 	@$(BIN_DIR)/$(UNIT_TEST_TARGET) -r compact -s
+
+
+# run integration tests
+integration: INCLUDE += $(INCLUDE_INT_TEST)
+integration: $(BIN_DIR)/$(INT_TEST_TARGET)
+	@$(BIN_DIR)/$(INT_TEST_TARGET) -r compact -s $(tags) $(INT_TEST_CONF) $(interactive)
+
+
+# run all tests
+test: unit integration
 
 
 coverage: CXXFLAGS += -O0 -g --coverage

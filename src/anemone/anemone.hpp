@@ -6,6 +6,8 @@
 
 #include "anemone/config/config.hpp"
 
+#include "anemone/util/concurrent_queue.hpp"
+
 #include "anemone/io/io.hpp"
 #include "anemone/io/grid/grid.hpp"
 #include "anemone/io/grid/layout/layouts/layouts.hpp"
@@ -24,11 +26,13 @@
 
 class Anemone {
 public:
-  Anemone(std::string config_path, std::shared_ptr<GridDevice>, std::shared_ptr<MidiDevice>);
+  Anemone(std::string config_path,
+          std::shared_ptr<GridDevice>,
+          std::shared_ptr<MidiDevice>,
+          std::shared_ptr< Queue<bool> > ready);
   
   void run();
 
-private:
   std::shared_ptr<Config> config;
   std::shared_ptr<IO> io;
   std::shared_ptr<Clock> clock;
@@ -37,7 +41,8 @@ private:
   std::shared_ptr<Dispatcher> dispatcher;
   std::shared_ptr<Controllers> controllers;
   std::shared_ptr<UI> gui;
-
+  
+  std::shared_ptr< Queue<bool> > ready;
 };
 
 // #include <map>
