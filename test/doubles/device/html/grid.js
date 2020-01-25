@@ -1,7 +1,16 @@
 // wait for DOM to load
 document.addEventListener('DOMContentLoaded', (event) => {
-  setupGridElements()
+  init_grid()
 })
+
+const init_grid = () => {
+  // only initialize everythong once the ws connection has been established.
+  if (!ws_ready) {
+    window.setTimeout(init_grid, 100)
+  } else {
+    setupGridElements()  
+  }
+}
 
 let ws_ready = false
 let mode = "visual"
@@ -15,6 +24,7 @@ socket.onmessage = (event) => {
 
   switch (msg.type) {
   case "configuration":
+    console.log(msg)
     mode = msg.mode
     break
   case "press_event":
@@ -39,7 +49,18 @@ socket.onopen = (event) => {
   socket.send(JSON.stringify(msg))
 
   // display start button
-  document.getElementById("details-container")
+  let details = document.getElementById("details-container")
+  let startButton = document.createElement("DIV")
+  startButton.id = "start-button"
+  startButton.innerText = "start test"
+  details.appendChild(startButton)
+  startButton.addEventListener("click", () => {
+    // send the ready message to the server
+    socket.send(JSON.stringify({type: "ready"}))    
+
+    // remove this element
+    details.removeChild(startButton)
+  })
 }
 
 // global map of which buttons are pressed down

@@ -86,6 +86,7 @@ private:
     }
 
     if (json_msg["type"].get<std::string>() == "ready") {
+      spdlog::info("starting tests...");
       ready->push(true);
     }
     
