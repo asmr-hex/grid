@@ -41,6 +41,7 @@ int main( int argc, char* argv[] ) {
                                                    anemone_ready)
                                            );
 
+ 
   
   // start test anemone in its own thread
   std::thread t([] { test_anemone->run(); });

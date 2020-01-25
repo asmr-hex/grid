@@ -18,7 +18,8 @@ endif
 ifeq ($(OS),Darwin)
 	LIB_BOOST   := -lboost_thread-mt
 endif
-LIBS                := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp
+LIBS                := -lmonome -lrtmidi -lyaml-cpp
+# LIBS                := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp  I don't think we need boost anymore...!
 #LDFLAGS            := -L/usr/local/include -L/usr/local/lib
 
 
@@ -52,7 +53,7 @@ UNIT_TEST_DIR        := $(TEST_DIR)/unit
 INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 
 INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(TEST_DIR)
-INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketapp
+INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketpp
 
 UNIT_TEST_TARGET     := run_unit_tests
 UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
@@ -80,7 +81,7 @@ all: packages clean test clean release
 
 
 # install all packages needed
-# TODO: install catch2 & tromploiel for testing on raspbian!
+# TODO: install catch2 & tromploiel for testing on raspbian! AND asio for integration testing!
 packages:
 ifeq ($(OS),Linux)
 	@echo "installing packages for Linux..."

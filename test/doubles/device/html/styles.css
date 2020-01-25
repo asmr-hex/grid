@@ -1,0 +1,38 @@
+.grid-container {
+    display: flex;
+    justify-content: center;
+}
+
+#grid-chassis {
+    margin: 90px;
+    padding: 15px;
+    border: solid #DDE3E5 2px;
+    box-shadow: 6px 6px #686868;
+    border-radius: 10px;
+    background-color: #E2EAEC;
+}
+
+.grid-button-container {
+    /* border: solid red 1px; */
+    padding: 5px;
+}
+
+.grid-button {
+    border: solid 2px transparent;
+    border-radius: 4px;
+    margin: 4px;
+    padding: 12px;
+}
+
+.grid-button-down {
+    border: solid #FC7AE5 2px;
+}
+
+.grid-button-level-0 {
+    background-color: #B5BEC0;
+}
+
+.grid-button-level-1 {
+    background-color: #B5BEC0;
+    box-shadow: 0px 0px 10px blue;
+}
