@@ -56,6 +56,7 @@ int main( int argc, char* argv[] ) {
     spdlog::warn("http://localhost:{}", test_anemone->config->ports.grid);
   }
 
+  
   // wait for browser grid to be ready
   browser_grid_ready->pop();
 

@@ -47,6 +47,13 @@ public:
                                             websocketpp::server<websocketpp::config::asio>::message_ptr msg) {
                                       handle_ws_msg(hndl, msg);
                                     });
+      // set on_open and on_close handlers
+      ws_server.set_open_handler([this] (websocketpp::connection_hdl hndl) {
+                                   on_open(hndl);
+                                 });
+      ws_server.set_close_handler([this] (websocketpp::connection_hdl hndl) {
+                                   on_close(hndl);
+                                 });
 
       std::thread tt([this] {
                        // start websocket listener
@@ -62,9 +69,34 @@ public:
   };
   virtual void listen() override {};
 
-  virtual void turn_off(grid_coordinates_t c) override {};
-  virtual void turn_on(grid_coordinates_t c) override {};
-  virtual void set(grid_coordinates_t c, unsigned int intensity) override {};
+  virtual void turn_off(grid_coordinates_t c) override {
+    using json = nlohmann::json;
+    json j;
+    j["type"] = "led_event";
+    j["action"] = "off";
+    j["x"] = c.x;
+    j["y"] = c.y;
+    send(j);
+  };
+  virtual void turn_on(grid_coordinates_t c) override {
+    using json = nlohmann::json;
+    json j;
+    j["type"] = "led_event";
+    j["action"] = "on";
+    j["x"] = c.x;
+    j["y"] = c.y;
+    send(j);
+  };
+  virtual void set(grid_coordinates_t c, unsigned int intensity) override {
+    using json = nlohmann::json;
+    json j;
+    j["type"] = "led_event";
+    j["action"] = "set";
+    j["x"] = c.x;
+    j["y"] = c.y;
+    j["intensity"] = intensity;
+    send(j);
+  };
 
   void toggle(grid_coordinates_t c) {
     // toggle a button (press or unpress)
@@ -79,7 +111,22 @@ private:
   httplib::Server svr;
   websocketpp::server<websocketpp::config::asio> ws_server;
   std::shared_ptr< Queue<bool> > ready;
+  std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > connections;
 
+  void send(nlohmann::json j) {
+    for (auto it : connections) {
+      ws_server.send(it, j.dump(), websocketpp::frame::opcode::value::text);
+    }
+  }
+  
+  void on_open(websocketpp::connection_hdl hdl) {
+    connections.insert(hdl);
+  }
+
+  void on_close(websocketpp::connection_hdl hdl) {
+    connections.erase(hdl);
+  }
+  
   void handle_ws_msg(websocketpp::connection_hdl hndl,
                      websocketpp::server<websocketpp::config::asio>::message_ptr msg)
   {
