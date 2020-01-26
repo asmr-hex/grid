@@ -63,7 +63,8 @@ INT_TEST_TARGET      := run_integration_tests
 INT_TEST_SRC         := $(ANEMONE_SRC) $(shell find $(INTEGRATION_TEST_DIR) -type f -name '*.cpp')
 INT_TEST_OBJECTS     := $(INT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
 INT_TEST_CONF        := ./test/integration/conf/config.yml
-interactive          := false
+mode                 := headless
+wait                 := 500
 
 tags                 := ""
 
@@ -160,7 +161,7 @@ unit: $(BIN_DIR)/$(UNIT_TEST_TARGET)
 # run integration tests
 integration: INCLUDE += $(INCLUDE_INT_TEST)
 integration: $(BIN_DIR)/$(INT_TEST_TARGET)
-	@$(BIN_DIR)/$(INT_TEST_TARGET) -r compact -s $(tags) $(INT_TEST_CONF) $(interactive)
+	@$(BIN_DIR)/$(INT_TEST_TARGET) -r compact -s $(tags) $(INT_TEST_CONF) $(mode) $(wait)
 
 
 # run all tests

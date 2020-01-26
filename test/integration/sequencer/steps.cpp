@@ -1,6 +1,20 @@
 #include <catch.hpp>
 
+#include "fixtures/integration/globals.hpp"
+#include "anemone/io.hpp"
 
-SCENARIO( "testing one two three" ) {
-  REQUIRE( 1 == 1);
+
+SCENARIO( "Activating and Deactivating Steps" ) {
+  GIVEN("an empty step sequence") {
+    WHEN("a step is pressed") {
+      grid_addr_t step = { .layout = LayoutName::SequencerAndInstrument,
+                           .section = GridSectionName::Steps,
+                           .index = 3,
+      };
+      test_grid_device->toggle(step);
+      THEN("its corresponding led turns on") {
+        REQUIRE( test_grid_device->check_led_level(step) == 15 );
+      }
+    }
+  }
 }

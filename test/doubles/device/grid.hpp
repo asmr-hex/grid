@@ -15,14 +15,32 @@
 
 #include "anemone/io.hpp"
 #include "anemone/util/concurrent_queue.hpp"
+#include "anemone/util/wait.hpp"
 
 
 class BrowserGridDevice : public GridDevice {
 public:
-  BrowserGridDevice(bool interactive, std::shared_ptr< Queue<bool> > ready)
-    : interactive(interactive), ready(ready)
+  enum class Mode { Headless, Visual, Interactive};
+  BrowserGridDevice(Mode test_mode, unsigned int toggle_wait_ms, std::shared_ptr< Queue<bool> > ready)
+    : toggle_wait_ms(toggle_wait_ms), ready(ready)
   {
-    if (interactive) {
+    // set testing mode
+    switch (test_mode) {
+    case Mode::Headless:
+      mode = { .headless = true, .visual = false, .interactive = false };
+      break;
+    case Mode::Visual:
+      mode = { .headless = false, .visual = true, .interactive = false };
+      break;
+    case Mode::Interactive:
+      mode = { .headless = false, .visual = true, .interactive = true };
+      break;
+    }
+
+    // if we are in visual mode (and potentially interactive mode), set up the static
+    // http server (for loading the html/css/js in the browser) and the websockets server
+    // for updating the frontend in realtime.
+    if (mode.visual) {
       // set html dir to serve over http
       auto ret = svr.set_base_dir("test/doubles/device/html");
       if (!ret) {
@@ -45,8 +63,17 @@ public:
     }
   };
 
+  // this is important to do such that we can translate any press events (via toggle method)
+  // from grid_addr_t to grid_coordinates_t
+  void set_layout_context(LayoutContext *l) {
+    layout = l;
+  };
+  
   virtual void connect(std::string addr) override {
-    if (interactive) {
+    // if we are in visual mode (and potentially interactive mode), set up the static
+    // http server (for loading the html/css/js in the browser) and the websockets server
+    // for updating the frontend in realtime.
+    if (mode.visual) {
       std::thread t([this, addr] {
                       svr.listen("localhost", std::stoi(addr));
                     });
@@ -80,52 +107,70 @@ public:
   virtual void listen() override {};
 
   virtual void turn_off(grid_coordinates_t c) override {
-    using json = nlohmann::json;
-    json j;
-    j["type"] = "led_event";
-    j["action"] = "off";
-    j["x"] = c.x;
-    j["y"] = c.y;
-    send(j);
+    //if we are in visual mode (or potentially innteractive mode) send these updates
+    // to the frontend
+    if (mode.visual) {
+      using json = nlohmann::json;
+      json j;
+      j["type"] = "led_event";
+      j["action"] = "off";
+      j["x"] = c.x;
+      j["y"] = c.y;
+      send(j);      
+    }
 
     // update internal state
     led_level[c.y][c.x] = 0;
   };
   virtual void turn_on(grid_coordinates_t c) override {
-    using json = nlohmann::json;
-    json j;
-    j["type"] = "led_event";
-    j["action"] = "on";
-    j["x"] = c.x;
-    j["y"] = c.y;
-    send(j);
+    //if we are in visual mode (or potentially innteractive mode) send these updates
+    // to the frontend
+    if (mode.visual) {
+      using json = nlohmann::json;
+      json j;
+      j["type"] = "led_event";
+      j["action"] = "on";
+      j["x"] = c.x;
+      j["y"] = c.y;
+      send(j);
+    }
 
     // update internal state
     led_level[c.y][c.x] = 15;
   };
   virtual void set(grid_coordinates_t c, unsigned int intensity) override {
-    using json = nlohmann::json;
-    json j;
-    j["type"] = "led_event";
-    j["action"] = "set";
-    j["x"] = c.x;
-    j["y"] = c.y;
-    j["intensity"] = intensity;
-    send(j);
+    //if we are in visual mode (or potentially innteractive mode) send these updates
+    // to the frontend
+    if (mode.visual) {
+      using json = nlohmann::json;
+      json j;
+      j["type"] = "led_event";
+      j["action"] = "set";
+      j["x"] = c.x;
+      j["y"] = c.y;
+      j["intensity"] = intensity;
+      send(j);
+    }
     
     // update internal state
     led_level[c.y][c.x] = intensity;
   };
 
-  void toggle(grid_coordinates_t c) {
-    using json = nlohmann::json;
-    json j;
-    
+  void toggle(grid_addr_t addr) {
+    toggle(layout->translate(addr));
+  };
+  
+  void toggle(grid_coordinates_t c) {    
     // toggle a button (press or unpress)
     bool pressed = is_pressed[c.y][c.x];
 
-    if (interactive) {
+    //if we are in visual mode (or potentially innteractive mode) send these updates
+    // to the frontend
+    if (mode.visual) {
       // broadcast to browser
+      using json = nlohmann::json;
+      json j;
+
       j["type"] = "press_event";
       j["x"] = c.x;
       j["y"] = c.y;
@@ -144,14 +189,36 @@ public:
                  .y = c.y },
                 .type = event_type
       });
+
+    // wait for the configured amount of time after a toggle
+    wait(toggle_wait_ms);
   };
 
+  unsigned int check_led_level(grid_addr_t addr) {
+    return check_led_level(layout->translate(addr));
+  }
+
+  unsigned int check_led_level(grid_coordinates_t c) {
+    return led_level[c.y][c.x];
+  }
+  
   void describe(std::string description) {
-    // send description to browser
+    if (mode.visual) {
+      // send description to browser
+    }
   }
   
 private:
-  bool interactive;
+  struct {
+    bool headless;
+    bool visual;
+    bool interactive;
+  } mode;
+
+  unsigned int toggle_wait_ms;
+
+  LayoutContext *layout;
+  
   httplib::Server svr;
   websocketpp::server<websocketpp::config::asio> ws_server;
   std::shared_ptr< Queue<bool> > ready;
@@ -184,11 +251,12 @@ private:
       // send some configuration info
       json j;
       j["type"] = "configuration";
-      if (interactive) {
+      if (mode.interactive) {
         j["mode"] = "interactive"; 
-      }else {
+      }else if (mode.visual) {
         j["mode"] = "visual";
       }
+      // send current state of pressed/led levels to frontend (in case a tab was closed and re-opened)
       j["is_pressed"] = is_pressed;
       j["led_level"] = led_level;
       ws_server.send(hndl, j.dump(), msg->get_opcode());
