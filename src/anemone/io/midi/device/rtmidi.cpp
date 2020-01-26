@@ -40,6 +40,8 @@ void RTMidi::connect_in(std::string port_name) {
 
   in->openPort(port);
 
+  listen();
+  
   spdlog::info("  connected -> midi in");
 }
 

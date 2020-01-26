@@ -5,7 +5,7 @@
 
 Anemone::Anemone(std::string config_path,
                  std::shared_ptr<GridDevice> grid_device,
-                 std::shared_ptr<MidiDevice> midi_device,
+                 std::shared_ptr<MidiDeviceFactory> midi_device_factory,
                  std::shared_ptr< Queue<bool> > ready)
   : ready(ready)
 {
@@ -23,7 +23,7 @@ Anemone::Anemone(std::string config_path,
   
   // initialize io
   spdlog::info("  initializing \tio");
-  io = std::make_shared<IO>(IO(config, grid_device, midi_device, {layouts->sequencer}));
+  io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, {layouts->sequencer}));
 
   // initialize state
   spdlog::info("  initializing \tstate");

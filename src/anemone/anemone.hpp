@@ -8,11 +8,7 @@
 
 #include "anemone/util/concurrent_queue.hpp"
 
-#include "anemone/io/io.hpp"
-#include "anemone/io/grid/grid.hpp"
-#include "anemone/io/grid/layout/layouts/layouts.hpp"
-#include "anemone/io/grid/device/grid.hpp"
-#include "anemone/io/midi/device/midi.hpp"
+#include "anemone/io.hpp"
 
 #include "anemone/clock/clock.hpp"
 
@@ -28,7 +24,7 @@ class Anemone {
 public:
   Anemone(std::string config_path,
           std::shared_ptr<GridDevice>,
-          std::shared_ptr<MidiDevice>,
+          std::shared_ptr<MidiDeviceFactory>,
           std::shared_ptr< Queue<bool> > ready);
   
   void run();

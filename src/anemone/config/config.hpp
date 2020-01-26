@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <string>
+#include <vector>
 
 #include "anemone/config/base.hpp"
 #include "anemone/config/layouts/layouts.hpp"
@@ -14,8 +15,8 @@ public:
   struct {
     
     struct {
-      std::string in;
-      std::string out;
+      std::vector<std::string> in;
+      std::vector<std::string> out;
     } midi;
     
     std::string grid = "/dev/tty.usbserial-m1000843";

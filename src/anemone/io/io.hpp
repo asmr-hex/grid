@@ -15,7 +15,7 @@
 #include "anemone/io/grid/grid.hpp"
 #include "anemone/io/midi/midi.hpp"
 #include "anemone/io/grid/device/grid.hpp"
-#include "anemone/io/midi/device/midi.hpp"
+#include "anemone/io/midi/device/factory.hpp"
 #include "anemone/io/grid/layout/context.hpp"
 
 
@@ -37,7 +37,7 @@ public:
   ///
   IO(std::shared_ptr<Config> config,
      std::shared_ptr<GridDevice> grid_device,
-     std::shared_ptr<MidiDevice> midi_device,
+     std::shared_ptr<MidiDeviceFactory> midi_device_factory,
      layout_initializer_list layouts);
 
   /// @brief Connects Grid & Midi objects to their ports.

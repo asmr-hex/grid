@@ -1,9 +1,8 @@
 #include <memory>
 #include <iostream>
 
+#include "anemone/io.hpp"
 #include "anemone/anemone.hpp"
-#include "anemone/io/grid/device/monome.hpp"
-#include "anemone/io/midi/device/rtmidi.hpp"
 #include "anemone/util/concurrent_queue.hpp"
 
 #include <execinfo.h>
@@ -33,7 +32,7 @@ int main(int argc, char *argv[]) {
 
   Anemone anemone(argv[1],
                   std::make_shared<Monome>(),
-                  std::make_shared<RTMidi>(),
+                  std::make_shared< MidiDeviceFactoryFor<RTMidi> >(),
                   std::make_shared< Queue<bool> >);
 
   anemone.run();

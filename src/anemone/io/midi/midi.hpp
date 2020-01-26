@@ -1,5 +1,13 @@
-#ifndef IO_MIDI_H
-#define IO_MIDI_H
+/**
+ * @file   io/midi/midi.hpp
+ * @brief  Midi Router Class
+ * @author coco
+ * @date   2020-01-25
+ *************************************************/
+
+
+#ifndef ANEMONE_IO_MIDI_H
+#define ANEMONE_IO_MIDI_H
 
 #include <string>
 #include <memory>
@@ -8,6 +16,7 @@
 #include "anemone/io/observable.hpp"
 #include "anemone/io/observer.hpp"
 #include "anemone/io/midi/device/midi.hpp"
+#include "anemone/io/midi/device/factory.hpp"
 
 
 // TODO (coco|12.29.2019) currently, this is abstraction layer doesn't do anything. eventually
@@ -16,20 +25,16 @@
 // and translates outbound midi messages. is this a good idea?
 class Midi : public Observer<midi_event_t>, public Observable<midi_event_t> {
 public:
-  Midi(std::shared_ptr<Config>, std::shared_ptr<MidiDevice>);
+  Midi(std::shared_ptr<Config>, std::shared_ptr<MidiDeviceFactory>);
 
   void connect();
-
   void emit(midi_event_t);
 
 private:
-  std::shared_ptr<MidiDevice> device;
+  std::shared_ptr<MidiDeviceFactory> device_factory;
+  std::map<std::string, std::shared_ptr<MidiDevice> > input_devices;
+  std::map<std::string, std::shared_ptr<MidiDevice> > output_devices;
   
-  struct {
-    std::string in;
-    std::string out;
-  } ports;
-
   virtual void handle(const midi_event_t&) override;
 };
 

@@ -58,7 +58,7 @@ int main( int argc, char* argv[] ) {
   // create global anemone object
   test_anemone = std::make_shared<Anemone>(Anemone(argv[5],
                                                    test_grid_device,
-                                                   std::make_shared<RTMidi>(),
+                                                   std::make_shared<MidiDeviceFactoryFor<RTMidi> >(),
                                                    anemone_ready)
                                            );
 

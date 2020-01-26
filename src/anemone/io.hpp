@@ -29,4 +29,10 @@
 #include "anemone/io/grid/layout/layouts/layouts.hpp"
 #include "anemone/io/grid/layout/layouts/sequencer.hpp"
 
+#include "anemone/io/midi/midi.hpp"
+#include "anemone/io/midi/event.hpp"
+#include "anemone/io/midi/device/midi.hpp"
+#include "anemone/io/midi/device/factory.hpp"
+#include "anemone/io/midi/device/rtmidi.hpp"
+
 #endif
