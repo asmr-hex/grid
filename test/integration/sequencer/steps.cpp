@@ -4,7 +4,7 @@
 #include "anemone/io.hpp"
 
 
-SCENARIO( "Activating and Deactivating Steps" ) {
+SCENARIO("Activating and Deactivating Steps") {
   
   GIVEN("an empty step sequence") {
     grid_addr_t step = { .layout = LayoutName::SequencerAndInstrument,
@@ -28,6 +28,7 @@ SCENARIO( "Activating and Deactivating Steps" ) {
     }
 
     WHEN("an activated step is pressed") {
+      test_grid_device->wait();
       test_grid_device->describe("pressing the step again deactivates it");
       test_grid_device->toggle(step);
       THEN("it has no effect") {

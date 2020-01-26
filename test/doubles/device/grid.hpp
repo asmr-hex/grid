@@ -44,6 +44,7 @@ public:
   unsigned int check_led_level(grid_coordinates_t c);
   
   void describe(std::string description);
+  void wait();
   
 private:
   struct {

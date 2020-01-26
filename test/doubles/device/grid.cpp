@@ -197,7 +197,13 @@ void BrowserGridDevice::describe(std::string description) {
     j["body"] = description;
     send(j);
 
-    wait_for(toggle_wait_ms * 3);
+    wait_for(toggle_wait_ms * 2);
+  }
+}
+
+void BrowserGridDevice::wait() {
+  if (mode.visual) {
+    wait_for(toggle_wait_ms * 4);
   }
 }
 
