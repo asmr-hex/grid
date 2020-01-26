@@ -174,8 +174,6 @@ void BrowserGridDevice::toggle(grid_coordinates_t c) {
                .y = c.y },
              .type = event_type
     });
-
-  std::cout << "THIS: " << this << std::endl;
     
   // wait for the configured amount of time after a toggle
   wait_for(toggle_wait_ms);
@@ -192,6 +190,14 @@ unsigned int BrowserGridDevice::check_led_level(grid_coordinates_t c) {
 void BrowserGridDevice::describe(std::string description) {
   if (mode.visual) {
     // send description to browser
+    using json = nlohmann::json;
+    json j;
+
+    j["type"] = "description";
+    j["body"] = description;
+    send(j);
+
+    wait_for(toggle_wait_ms * 3);
   }
 }
 

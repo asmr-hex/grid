@@ -25,6 +25,14 @@
     border: solid 4px transparent;
 }
 
+#details-body {
+    opacity: 1;
+    transition: 500ms opacity;
+    font-size: xx-large;
+    font-family: "Courier New", Courier, monospace;
+    color: #59575A;
+}
+
 #start-button:hover {
     border: solid 4px #F2F19A;
 }
@@ -35,14 +43,14 @@
 }
 
 .grid-button {
-    border: solid 2px transparent;
+    border: solid 3px transparent;
     border-radius: 4px;
     margin: 4px;
     padding: 12px;
 }
 
 .grid-button-down {
-    border: solid #FC7AE5 2px;
+    border: solid #FC7AE5 3px;
 }
 
 .grid-button-level-0 {

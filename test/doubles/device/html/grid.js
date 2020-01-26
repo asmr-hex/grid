@@ -33,6 +33,9 @@ socket.onmessage = (event) => {
   case "led_event":
     handle_led_event(msg)
     break
+  case "description":
+    handle_description(msg)
+    break
   default:
   }
 }
@@ -60,6 +63,12 @@ socket.onopen = (event) => {
 
     // remove this element
     details.removeChild(startButton)
+
+    // add details div
+    let detailsBody = document.createElement("DIV")
+    detailsBody.id = "details-body"
+    detailsBody.innerText = ""
+    details.appendChild(detailsBody)
   })
 }
 
@@ -177,4 +186,18 @@ const handle_led_event = (msg) => {
 
   let button = document.getElementById(`grid-button-${x}-${y}`)
   button.className = classes
+}
+
+const handle_description = msg => {
+  // get details body element
+  let details = document.getElementById("details-body")
+
+  // first fade out text
+  details.style.opacity = '0'
+
+  window.setTimeout(() => {
+    details.innerText = msg.body
+    // fade in new text
+    details.style.opacity = '1'
+  }, 500)
 }

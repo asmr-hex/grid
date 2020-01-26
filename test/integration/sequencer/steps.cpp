@@ -1,23 +1,44 @@
 #include <catch.hpp>
 
-#include <iostream>
-
 #include "fixtures/integration/globals.hpp"
 #include "anemone/io.hpp"
 
 
 SCENARIO( "Activating and Deactivating Steps" ) {
-  std::cout << test_grid_device <<std::endl;
+  
   GIVEN("an empty step sequence") {
-    WHEN("a step is pressed") {
-      grid_addr_t step = { .layout = LayoutName::SequencerAndInstrument,
-                           .section = GridSectionName::Steps,
-                           .index = 3,
-      };
+    grid_addr_t step = { .layout = LayoutName::SequencerAndInstrument,
+                         .section = GridSectionName::Steps,
+                         .index = 3,
+    };
 
+    WHEN("an unactivated step is pressed") {
+      test_grid_device->describe("pressing a step down activates it");
       test_grid_device->toggle(step);
       THEN("its corresponding led turns on") {
-        REQUIRE( test_grid_device->check_led_level(step) == 15 );
+        REQUIRE( test_grid_device->check_led_level(step) == 15 );          
+      }
+    }
+
+    WHEN("the same step is unpressed") {
+      test_grid_device->toggle(step);
+      THEN("it has no effect") {
+        REQUIRE( test_grid_device->check_led_level(step) == 15 );          
+      }
+    }
+
+    WHEN("an activated step is pressed") {
+      test_grid_device->describe("pressing the step again deactivates it");
+      test_grid_device->toggle(step);
+      THEN("it has no effect") {
+        REQUIRE( test_grid_device->check_led_level(step) == 0 );          
+      }
+    }
+
+    WHEN("the same step is unpressed") {
+      test_grid_device->toggle(step);
+      THEN("it has no effect") {
+        REQUIRE( test_grid_device->check_led_level(step) == 0 );          
       }
     }
   }

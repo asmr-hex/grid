@@ -1,7 +1,5 @@
 #define CATCH_CONFIG_RUNNER
 
-#include <iostream>
-
 #include <memory>
 #include <thread>
 
@@ -91,9 +89,6 @@ int main( int argc, char* argv[] ) {
   // wait for anemone to be ready
   anemone_ready->pop();
 
-  // print address of global
-  std::cout << test_grid_device <<std::endl;
-  
   // only pass catch relevant (the first 5 arguments -- see makefile)
   int new_argc = 5;
   int result = Catch::Session().run( new_argc, argv );
