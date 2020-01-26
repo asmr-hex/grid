@@ -52,15 +52,24 @@ TEST_DIR             := test
 UNIT_TEST_DIR        := $(TEST_DIR)/unit
 INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 
+TEST_FIXTURES_DIR    := $(TEST_DIR)/fixtures
+TEST_DOUBLES_DIR     := $(TEST_DIR)/doubles
+TEST_MOCKS_DIR       := $(TEST_DIR)/mocks
+
+TEST_FIXTURES_SRC    := $(shell find $(TEST_FIXTURES_DIR) -type f -name '*.cpp')
+TEST_DOUBLES_SRC     := $(shell find $(TEST_DOUBLES_DIR) -type f -name '*.cpp')
+TEST_MOCKS_SRC       := $(shell find $(TEST_MOCKS_DIR) -type f -name '*.cpp')
+TEST_SUPPORT_SRC     := $(TEST_FIXTURES_SRC) $(TEST_DOUBLES_SRC) $(TEST_MOCKS_SRC)
+
 INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(TEST_DIR)
 INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketpp -I$(INCLUDE_DIR)/json
 
 UNIT_TEST_TARGET     := run_unit_tests
-UNIT_TEST_SRC        := $(ANEMONE_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
+UNIT_TEST_SRC        := $(ANEMONE_SRC) $(TEST_SUPPORT_SRC) $(shell find $(UNIT_TEST_DIR) -type f -name '*.cpp')
 UNIT_TEST_OBJECTS    := $(UNIT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 INT_TEST_TARGET      := run_integration_tests
-INT_TEST_SRC         := $(ANEMONE_SRC) $(shell find $(INTEGRATION_TEST_DIR) -type f -name '*.cpp')
+INT_TEST_SRC         := $(ANEMONE_SRC) $(TEST_SUPPORT_SRC) $(shell find $(INTEGRATION_TEST_DIR) -type f -name '*.cpp')
 INT_TEST_OBJECTS     := $(INT_TEST_SRC:%.cpp=$(OBJ_DIR)/%.o)
 INT_TEST_CONF        := ./test/integration/conf/config.yml
 mode                 := headless
@@ -124,7 +133,6 @@ endif
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
-
 
 # binary target
 $(BIN_DIR)/$(BIN_TARGET): $(BIN_OBJECTS)

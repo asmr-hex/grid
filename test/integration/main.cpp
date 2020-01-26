@@ -1,5 +1,7 @@
 #define CATCH_CONFIG_RUNNER
 
+#include <iostream>
+
 #include <memory>
 #include <thread>
 
@@ -54,6 +56,7 @@ int main( int argc, char* argv[] ) {
   // create test grid device
   test_grid_device = std::make_shared<BrowserGridDevice>(test_mode, wait_duration, browser_grid_ready);
 
+  
   // create global anemone object
   test_anemone = std::make_shared<Anemone>(Anemone(argv[5],
                                                    test_grid_device,
@@ -68,8 +71,9 @@ int main( int argc, char* argv[] ) {
   std::thread t([] { test_anemone->run(); });
   t.detach();
 
+  
   // wait for anemone thread to have already started
-  wait(2000);
+  wait_for(2000);
 
   if (test_mode != BrowserGridDevice::Mode::Headless) {
     if (test_mode == BrowserGridDevice::Mode::Visual)
@@ -87,6 +91,9 @@ int main( int argc, char* argv[] ) {
   // wait for anemone to be ready
   anemone_ready->pop();
 
+  // print address of global
+  std::cout << test_grid_device <<std::endl;
+  
   // only pass catch relevant (the first 5 arguments -- see makefile)
   int new_argc = 5;
   int result = Catch::Session().run( new_argc, argv );
