@@ -21,19 +21,32 @@ void TestOutputRecorder::listen() {
 void TestOutputRecorder::record_step_output(std::vector<types::step::idx_t> steps) {
   is_recording = true;
 
+  // get current instrument/part
+  // TODO eventually make these function parameters
+  State::instrument_t instrument;
+  types::part::idx_t part;
+  
   // create a pointer to this set of steps
   auto unobserved_steps = std::make_shared<std::set<types::step::idx_t> >();
   for (auto step : steps) {
-    unobserved_steps->insert();
+    unobserved_steps->insert(step);
   }
   
   // set recording handler.
   recording_handler =
-    [this] (const types::tick_t& tick) {
+    [this, unobserved_steps, instrument, part] (const types::tick_t& tick) {
+      // get the current cursor location of selected instrument/part
+      State::step_cursor_t cursor = get_step_cursor_for(instrument, part, anemone->state->get());
+      types::step::paged_idx_t paged_cursor_idx = cursor.current_page_relative_step;
+      types::step::idx_t cursor_idx = paged_cursor_idx.to_absolute_idx(8); // TODO GET PAGE SIZE!!!!
+
       // if we have recorded this tick already, continue
+      if (unobserved_steps->find(cursor_idx) == unobserved_steps->end())
+        return;
+
+      // okay, we haven't observed this one yet and we want to.
       
 
-      // check tick conditions
     };
 
   // wait until we have recieved a done recording message.
