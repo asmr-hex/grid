@@ -19,7 +19,6 @@
 class TestOutputRecorder {
 public:
   TestOutputRecorder(std::shared_ptr<BrowserGridDevice>,
-                     std::shared_ptr<BrowserMidiDevice>,
                      std::shared_ptr<Anemone>);
 
   /// @brief Records the midi and grid led outputs on the provided sequence steps.
@@ -36,6 +35,12 @@ public:
   /// modifications are being made to the state of the controller (i.e. no
   /// new activated steps or emitted midi events).
   void record_step_output(std::vector<types::step::idx_t> steps);
+
+private:
+  std::shared_ptr<BrowserGridDevice> grid_device;
+  std::shared_ptr<Anemone> anemone;
+  std::map<std::string, std::shared_ptr<BrowserMidiDevice> > midi_output_devices;
+  std::map<std::string, std::shared_ptr<BrowserMidiDevice> > midi_input_devices;
 };
 
 #endif

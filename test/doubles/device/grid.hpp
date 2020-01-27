@@ -45,7 +45,9 @@ public:
   
   void describe(std::string description);
   void wait();
-  
+
+  websocketpp::server<websocketpp::config::asio> ws_server;
+  std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > connections;
 private:
   struct {
     bool headless;
@@ -58,9 +60,8 @@ private:
   LayoutContext *layout;
   
   httplib::Server svr;
-  websocketpp::server<websocketpp::config::asio> ws_server;
+  
   std::shared_ptr< Queue<bool> > ready;
-  std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > connections;
   std::map<int, std::map<int, bool> > is_pressed; // y, x, is_pressed
   std::map<int, std::map<int, unsigned int> > led_level; // y, x, led_level
   

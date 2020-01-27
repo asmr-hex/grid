@@ -17,6 +17,8 @@
 
 // define global integration test variables
 std::shared_ptr<BrowserGridDevice> test_grid_device;
+std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > test_midi_in_devices;
+std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > test_midi_out_devices;
 // TODO (coco|1.24.2020) eventually introduce test midi devices
 std::shared_ptr<Anemone> test_anemone;
 
@@ -58,12 +60,35 @@ int main( int argc, char* argv[] ) {
   // create global anemone object
   test_anemone = std::make_shared<Anemone>(Anemone(argv[5],
                                                    test_grid_device,
-                                                   std::make_shared<MidiDeviceFactoryFor<RTMidi> >(),
+                                                   std::make_shared<MidiDeviceFactoryFor<BrowserMidiDevice> >(),
                                                    anemone_ready)
                                            );
 
   // embed grid layout into test grid device s.t. our tests can be layout agnostic!
   test_grid_device->set_layout_context(&test_anemone->io->grid->layout);
+
+  // initialize global map of midi ins/outs
+  test_midi_in_devices = std::make_shared<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > >();
+  test_midi_out_devices = std::make_shared<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > >();
+  
+  // extract BrowserMidiDevices from anemone, embed the browser websocket server/connections into them
+  // all, and add them to the global midi in/out maps
+  for (auto itr : test_anemone->io->midi->input_devices) {
+    // cast midi device as browser midi device
+    std::shared_ptr<BrowserMidiDevice> device = itr.second;
+    // embed ws server materials
+    device->connect_to_browser(&test_grid_device->ws_server, &test_grid_device->connections);
+    // add to global map
+    (*test_midi_in_devices)[itr.first] = device;
+  }
+  for (auto itr : test_anemone->io->midi->output_devices) {
+    // cast midi device as browser midi device
+    std::shared_ptr<BrowserMidiDevice> device = itr.second;
+    // embed ws server materials
+    device->connect_to_browser(&test_grid_device->ws_server, &test_grid_device->connections);
+    // add to global map
+    (*test_midi_out_devices)[itr.first] = device;    
+  }
   
   // start test anemone in its own thread
   std::thread t([] { test_anemone->run(); });

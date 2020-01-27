@@ -30,10 +30,10 @@ public:
   void connect();
   void emit(midi_event_t);
 
-private:
-  std::shared_ptr<MidiDeviceFactory> device_factory;
   std::map<std::string, std::shared_ptr<MidiDevice> > input_devices;
   std::map<std::string, std::shared_ptr<MidiDevice> > output_devices;
+private:
+  std::shared_ptr<MidiDeviceFactory> device_factory;
 
   std::vector<std::string> input_device_names;
   std::vector<std::string> output_device_names;
