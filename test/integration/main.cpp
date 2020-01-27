@@ -19,8 +19,8 @@
 std::shared_ptr<BrowserGridDevice> test_grid_device;
 std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > test_midi_in_devices;
 std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > test_midi_out_devices;
-// TODO (coco|1.24.2020) eventually introduce test midi devices
 std::shared_ptr<Anemone> test_anemone;
+std::shared_ptr<TestOutputRecorder> test_utility;
 
 
 int main( int argc, char* argv[] ) {
@@ -75,7 +75,7 @@ int main( int argc, char* argv[] ) {
   // all, and add them to the global midi in/out maps
   for (auto itr : test_anemone->io->midi->input_devices) {
     // cast midi device as browser midi device
-    std::shared_ptr<BrowserMidiDevice> device = itr.second;
+    std::shared_ptr<BrowserMidiDevice> device = std::dynamic_pointer_cast<BrowserMidiDevice>(itr.second);
     // embed ws server materials
     device->connect_to_browser(&test_grid_device->ws_server, &test_grid_device->connections);
     // add to global map
@@ -83,7 +83,7 @@ int main( int argc, char* argv[] ) {
   }
   for (auto itr : test_anemone->io->midi->output_devices) {
     // cast midi device as browser midi device
-    std::shared_ptr<BrowserMidiDevice> device = itr.second;
+    std::shared_ptr<BrowserMidiDevice> device = std::dynamic_pointer_cast<BrowserMidiDevice>(itr.second);
     // embed ws server materials
     device->connect_to_browser(&test_grid_device->ws_server, &test_grid_device->connections);
     // add to global map

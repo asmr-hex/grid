@@ -30,5 +30,7 @@ extern std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> 
 /// @brief a global test anemone for integration tests
 extern std::shared_ptr<Anemone> test_anemone;
 
+/// @brief a global test utility for integration tests
+extern std::shared_ptr<TestOutputRecorder> test_utility;
 
 #endif

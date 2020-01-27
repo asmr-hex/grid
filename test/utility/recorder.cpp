@@ -1,4 +1,4 @@
-#include "utilities/recorder.hpp"
+#include "utility/recorder.hpp"
 
 
 TestOutputRecorder::TestOutputRecorder(std::shared_ptr<BrowserGridDevice> grid_device,
@@ -7,3 +7,8 @@ TestOutputRecorder::TestOutputRecorder(std::shared_ptr<BrowserGridDevice> grid_d
   // extract midi devices from anemone..? or wait...this must have already happened if we are going to inject stuff into these babies!
   
 }
+
+void TestOutputRecorder::record_step_output(std::vector<types::step::idx_t> steps) {
+  
+};
+

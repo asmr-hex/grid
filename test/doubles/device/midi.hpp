@@ -32,8 +32,8 @@ public:
                           std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections);
 
 private:
-  websocketpp::server<websocketpp::config::asio>  *ws_server
-  std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections
-}
+  websocketpp::server<websocketpp::config::asio>  *ws_server;
+  std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections;
+};
 
 #endif
