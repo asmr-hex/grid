@@ -9,20 +9,36 @@
 #ifndef TEST_UTILITY_RECORDER_H
 #define TEST_UTILITY_RECORDER_H
 
+#include <functional>
+
 #include "doubles/device/grid.hpp"
 #include "doubles/device/midi.hpp"
 #include "anemone/anemone.hpp"
 #include "anemone/types.hpp"
+#include "anemone/util/concurrent_queue.hpp"
 
 
 /// @brief Records and reports various types of anemone outputs.
-class TestOutputRecorder {
+///
+/// @details
+/// Since the test recorder is responsible for recording timed events, it is
+/// an observer of clock ticks and uses the `Observer<types::tick_t>` handler
+/// to decide what it is going to record/do.
+///
+class TestOutputRecorder : Observable<types::tick_t> {
 public:
   TestOutputRecorder(std::shared_ptr<BrowserGridDevice>,
                      std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_input_devices,
                      std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_output_devices,
                      std::shared_ptr<Anemone>);
 
+  /// @brief subscribes and listens to clock ticks.
+  ///
+  /// @remark
+  /// This *must* be called after the anemone has been initialized, since it must be the
+  /// last subscriber in the clock's array of subscribers to be called on broadcast!
+  void listen();
+  
   /// @brief Records the midi and grid led outputs on the provided sequence steps.
   ///
   /// @param steps   a vector of steps to record when the cursor is there.
@@ -43,6 +59,14 @@ private:
   std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_input_devices;
   std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_output_devices;
   std::shared_ptr<Anemone> anemone;
+
+  bool is_recording;
+  std::function<void(const types::tick_t&)> recording_handler;
+  std::shared_ptr< Queue<bool> > done_recording;
+  
+  /// @brief override `Observer<types::tick_t>` handle method for handling timed measurements.
+  ///
+  virtual void handle(const types::tick_t&) override;
 };
 
 #endif

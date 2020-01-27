@@ -8,9 +8,47 @@ TestOutputRecorder::TestOutputRecorder(std::shared_ptr<BrowserGridDevice> grid_d
   : grid_device(grid_device),
     midi_input_devices(midi_input_devices),
     midi_output_devices(midi_output_devices),
-    anemone(anemone) {}
+    anemone(anemone) {
+  // initialize done_recording queue
+  done_recording = std::make_shared< Queue<bool> >();
+}
+
+void TestOutputRecorder::listen() {
+  // subscribe to clock ticks
+  subscribe(*anemone->clock);
+}
 
 void TestOutputRecorder::record_step_output(std::vector<types::step::idx_t> steps) {
-  // TODO ....how are we going to do this...?
-};
+  is_recording = true;
 
+  // create a pointer to this set of steps
+  auto unobserved_steps = std::make_shared<std::set<types::step::idx_t> >();
+  for (auto step : steps) {
+    unobserved_steps->insert();
+  }
+  
+  // set recording handler.
+  recording_handler =
+    [this] (const types::tick_t& tick) {
+      // if we have recorded this tick already, continue
+      
+
+      // check tick conditions
+    };
+
+  // wait until we have recieved a done recording message.
+  while (!done_recording->pop()) {}
+
+  // TODO return results
+}
+
+void handle(const types::tick_t& tick) {
+  // immediately return if we are not recording.
+  if (!is_recording)
+    return;
+
+  // okay, we must be recording.
+
+  // call current recording handler
+  recording_handler(tick);
+}

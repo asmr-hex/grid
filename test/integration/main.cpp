@@ -96,6 +96,9 @@ int main( int argc, char* argv[] ) {
                         test_midi_in_devices,
                         test_midi_out_devices,
                         test_anemone));
+
+  // allow test utility to listen to the clock
+  test_utility->listen();
   
   // start test anemone in its own thread
   std::thread t([] { test_anemone->run(); });
