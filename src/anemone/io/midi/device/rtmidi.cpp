@@ -32,13 +32,11 @@ void RTMidi::connect_in(std::string port_name) {
       port_names_str += "'" + port.first + "' ";
     }
 
-    // spdlog::error("midi in port '{}' unavailable!", port_name);
-    // spdlog::error("available midi in ports are: {}", port_names_str);
-    
-    // exit( EXIT_FAILURE );
     throw UnavailableMidiDevice(port_name, port_names_str);
   }
-
+  
+  device_name = port_name;
+  
   in->openPort(port);
 
   listen();
@@ -135,11 +133,11 @@ void RTMidi::emit(midi_event_t event) {
 void RTMidi::callback_wrapper(double deltatime, std::vector<unsigned char> *msg, void *user_data) {
   RTMidi *this_rtmidi = (RTMidi *)user_data;
 
-  midi_event_t event = this_rtmidi->transform(deltatime, msg);
+  midi_event_t event = this_rtmidi->transform(this_rtmidi->device_name, deltatime, msg);
 
   this_rtmidi->broadcast(event);
 }
 
-midi_event_t RTMidi::transform(double timestamp, std::vector<unsigned char> *msg) {
-  return midi_event_t(timestamp, msg);
+midi_event_t RTMidi::transform(std::string source, double timestamp, std::vector<unsigned char> *msg) {
+  return midi_event_t(source, timestamp, msg);
 }

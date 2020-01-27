@@ -29,11 +29,21 @@ private:
 
   midi_ports_t ports;
 
+  /// @brief the name of this midi device.
+  ///
+  /// @remark
+  /// since we are only concerned the with name of the device for
+  /// input devices when we include the source of a midi message in
+  /// the broadcasted `midi_event_t`, this member is only initialized
+  /// when `connect_in` successfully runs.
+  ///
+  std::string device_name;
+
   std::map<std::string, unsigned int> get_output_port_names();
   std::map<std::string, unsigned int> get_input_port_names();
 
   static void callback_wrapper(double deltatime, std::vector<unsigned char> *msg, void *user_data);
-  static midi_event_t transform(double deltatime, std::vector<unsigned char> *msg);
+  static midi_event_t transform(std::string source, double deltatime, std::vector<unsigned char> *msg);
 };
 
 #endif

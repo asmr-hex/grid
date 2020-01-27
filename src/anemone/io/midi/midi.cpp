@@ -31,10 +31,11 @@ void Midi::connect() {
 void Midi::connect_with_retry(std::string device_name, bool is_input_conn) {
   bool first_attempt = true;
   bool connected = false;
+  std::shared_ptr<MidiDevice> device;
   
   while (!connected) {
     // create device with factory
-    auto device = device_factory->make();
+    device = device_factory->make();
     
     // try to connect
     try {
@@ -67,6 +68,13 @@ void Midi::connect_with_retry(std::string device_name, bool is_input_conn) {
       }
       wait_for(1000);
     }
+  }
+}
+
+void Midi::emit(midi_event_t event) {
+  for (auto itr : output_devices) {
+    auto device = itr.second;
+    device->emit(event);
   }
 }
 
