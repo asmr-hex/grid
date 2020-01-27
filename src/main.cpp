@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   Anemone anemone(argv[1],
                   std::make_shared<Monome>(),
                   std::make_shared< MidiDeviceFactoryFor<RTMidi> >(),
-                  std::make_shared< Queue<bool> >);
+                  std::make_shared< Queue<bool> >());
 
   anemone.run();
   

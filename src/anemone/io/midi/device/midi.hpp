@@ -13,6 +13,22 @@ struct midi_ports_t {
   std::map<std::string, unsigned int> out;
 };
 
+struct UnavailableMidiDevice {
+  std::string unavailable_device;
+  std::string available_devices;
+  
+  UnavailableMidiDevice(std::string unavailable_device, std::string available_devices)
+    : unavailable_device(unavailable_device),
+      available_devices(available_devices) {};
+  
+  std::string what () const noexcept {
+    return "midi device '" + unavailable_device + "' unavailable!";
+  };
+
+  std::string suggest() const noexcept {
+    return "available midi devices are: " + available_devices;
+  };
+};
 
 class MidiDevice : public Observable<midi_event_t> {
 public:

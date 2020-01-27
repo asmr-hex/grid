@@ -32,17 +32,18 @@ void RTMidi::connect_in(std::string port_name) {
       port_names_str += "'" + port.first + "' ";
     }
 
-    spdlog::error("midi in port '{}' unavailable!", port_name);
-    spdlog::error("available midi in ports are: {}", port_names_str);
+    // spdlog::error("midi in port '{}' unavailable!", port_name);
+    // spdlog::error("available midi in ports are: {}", port_names_str);
     
-    exit( EXIT_FAILURE );
+    // exit( EXIT_FAILURE );
+    throw UnavailableMidiDevice(port_name, port_names_str);
   }
 
   in->openPort(port);
 
   listen();
   
-  spdlog::info("  connected -> midi in");
+  spdlog::info("  connected -> midi in -> {}", port_name);
 }
 
 void RTMidi::connect_out(std::string port_name) {
@@ -58,15 +59,16 @@ void RTMidi::connect_out(std::string port_name) {
       port_names_str += "'" + port.first + "' ";
     }
     
-    spdlog::error("midi in port '{}' unavailable!", port_name);
-    spdlog::error("available midi out ports are: {}", port_names_str);
+    // spdlog::error("midi in port '{}' unavailable!", port_name);
+    // spdlog::error("available midi out ports are: {}", port_names_str);
     
-    exit( EXIT_FAILURE );
+    // exit( EXIT_FAILURE );
+    throw UnavailableMidiDevice(port_name, port_names_str);
   }
 
   out->openPort(port);
 
-  spdlog::info("  connected -> midi out");
+  spdlog::info("  connected -> midi out -> {}", port_name);
 }
 
 midi_ports_t RTMidi::get_port_names() {
