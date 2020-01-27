@@ -23,8 +23,8 @@ void TestOutputRecorder::record_step_output(std::vector<types::step::idx_t> step
 
   // get current instrument/part
   // TODO eventually make these function parameters
-  State::instrument_t instrument;
-  types::part::idx_t part;
+  State::instrument_t instrument; // TODO FILL THIS IN BY CALLING THE APPROAPRIATE SELECTOR
+  types::part::idx_t part; // TODO FILL THIS IN BY CALLING THE APPROAPRIATE SELECTOR
   
   // create a pointer to this set of steps
   auto unobserved_steps = std::make_shared<std::set<types::step::idx_t> >();
