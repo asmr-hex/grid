@@ -89,6 +89,13 @@ int main( int argc, char* argv[] ) {
     // add to global map
     (*test_midi_out_devices)[itr.first] = device;    
   }
+
+  // initialize test utility
+  test_utility = std::make_shared<TestOutputRecorder>
+    (TestOutputRecorder(test_grid_device,
+                        test_midi_in_devices,
+                        test_midi_out_devices,
+                        test_anemone));
   
   // start test anemone in its own thread
   std::thread t([] { test_anemone->run(); });

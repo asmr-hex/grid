@@ -16,6 +16,7 @@
 #include "doubles/device/grid.hpp"
 #include "doubles/device/midi.hpp"
 #include "anemone/anemone.hpp"
+#include "utility/recorder.hpp"
 
 
 /// @brief a global test grid device for integration tests

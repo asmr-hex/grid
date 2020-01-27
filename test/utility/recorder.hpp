@@ -19,6 +19,8 @@
 class TestOutputRecorder {
 public:
   TestOutputRecorder(std::shared_ptr<BrowserGridDevice>,
+                     std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_input_devices,
+                     std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_output_devices,
                      std::shared_ptr<Anemone>);
 
   /// @brief Records the midi and grid led outputs on the provided sequence steps.
@@ -38,9 +40,9 @@ public:
 
 private:
   std::shared_ptr<BrowserGridDevice> grid_device;
+  std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_input_devices;
+  std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_output_devices;
   std::shared_ptr<Anemone> anemone;
-  std::map<std::string, std::shared_ptr<BrowserMidiDevice> > midi_output_devices;
-  std::map<std::string, std::shared_ptr<BrowserMidiDevice> > midi_input_devices;
 };
 
 #endif
