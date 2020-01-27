@@ -55,11 +55,13 @@ INTEGRATION_TEST_DIR := $(TEST_DIR)/integration
 TEST_FIXTURES_DIR    := $(TEST_DIR)/fixtures
 TEST_DOUBLES_DIR     := $(TEST_DIR)/doubles
 TEST_MOCKS_DIR       := $(TEST_DIR)/mocks
+TEST_UTILITY_DIR       := $(TEST_DIR)/utility
 
 TEST_FIXTURES_SRC    := $(shell find $(TEST_FIXTURES_DIR) -type f -name '*.cpp')
 TEST_DOUBLES_SRC     := $(shell find $(TEST_DOUBLES_DIR) -type f -name '*.cpp')
 TEST_MOCKS_SRC       := $(shell find $(TEST_MOCKS_DIR) -type f -name '*.cpp')
-TEST_SUPPORT_SRC     := $(TEST_FIXTURES_SRC) $(TEST_DOUBLES_SRC) $(TEST_MOCKS_SRC)
+TEST_UTILITY_SRC       := $(shell find $(TEST_UTILITY_DIR) -type f -name '*.cpp')
+TEST_SUPPORT_SRC     := $(TEST_FIXTURES_SRC) $(TEST_DOUBLES_SRC) $(TEST_MOCKS_SRC) $(TEST_UTILITY_SRC)
 
 INCLUDE_TEST         := -I$(INCLUDE_DIR)/catch2 -I$(INCLUDE_DIR)/trompeloeil -I$(TEST_DIR)
 INCLUDE_INT_TEST     := $(INCLUDE_TEST) -I$(INCLUDE_DIR)/cpp-httplib -I$(INCLUDE_DIR)/websocketpp -I$(INCLUDE_DIR)/json
