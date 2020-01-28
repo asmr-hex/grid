@@ -103,6 +103,10 @@ void BrowserGridDevice::turn_off(grid_coordinates_t c) {
 
   // update internal state
   led_level[c.y][c.x] = 0;
+
+  // if we are recording, add this measurement
+  if (is_recording)
+    recording_result.push_back({c, 0});
 }
 
 void BrowserGridDevice::turn_on(grid_coordinates_t c) {
@@ -120,6 +124,10 @@ void BrowserGridDevice::turn_on(grid_coordinates_t c) {
 
   // update internal state
   led_level[c.y][c.x] = 15;
+
+  // if we are recording, add this measurement
+  if (is_recording)
+    recording_result.push_back({c, 15});
 }
 
 void BrowserGridDevice::set(grid_coordinates_t c, unsigned int intensity) {
@@ -138,6 +146,10 @@ void BrowserGridDevice::set(grid_coordinates_t c, unsigned int intensity) {
     
   // update internal state
   led_level[c.y][c.x] = intensity;
+
+  // if we are recording, add this measurement
+  if (is_recording)
+    recording_result.push_back({c, intensity});
 }
 
 void BrowserGridDevice::toggle(grid_addr_t addr) {
@@ -205,6 +217,22 @@ void BrowserGridDevice::wait() {
   if (mode.visual) {
     wait_for(toggle_wait_ms * 4);
   }
+}
+
+void BrowserGridDevice::start_recording() {
+  is_recording = true;
+  
+  // make sure results are empty when beginnning
+  recording_result.clear();
+}
+
+std::vector<std::pair<grid_coordinates_t, unsigned int> > BrowserGridDevice::stop_recording() {
+  is_recording = false;
+  return recording_result;
+}
+
+unsigned int BrowserGridDevice::snapshot_led_at(grid_addr_t addr) {
+  return check_led_level(addr);
 }
 
 void BrowserGridDevice::send(nlohmann::json j) {

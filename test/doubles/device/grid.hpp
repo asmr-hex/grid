@@ -46,6 +46,15 @@ public:
   void describe(std::string description);
   void wait();
 
+  /// @brief starts recording incoming led commands
+  void start_recording();
+
+  /// @brief stops recording incoming led commands and returns the results
+  std::vector<std::pair<grid_coordinates_t, unsigned int> > stop_recording();
+
+  /// @brief take a snapshot of the led values at a location
+  unsigned int snapshot_led_at(grid_addr_t addr);
+
   websocketpp::server<websocketpp::config::asio> ws_server;
   std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > connections;
 private:
@@ -55,6 +64,9 @@ private:
     bool interactive;
   } mode;
 
+  bool is_recording;
+  std::vector<std::pair<grid_coordinates_t, unsigned int> > recording_result;
+  
   unsigned int toggle_wait_ms;
 
   LayoutContext *layout;

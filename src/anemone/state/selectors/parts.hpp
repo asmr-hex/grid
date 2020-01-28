@@ -19,4 +19,12 @@ State::part_t get_rendered_part(State::root_t state);
 /// @brief Select the id of the part under edit (rendered).
 types::part::idx_t get_rendered_part_id(State::root_t state);
 
+/// @brief Select the id of the part in playback for the provided instrument.
+///
+/// @remark
+/// If the instrument is not currently in playback itself, then the selected
+/// part will not be playing (stopped or paused), though it is still the part
+/// which is in playback mode for this isntrument.
+types::part::idx_t get_playing_part_id(State::instrument_t instrument);
+  
 #endif

@@ -8,3 +8,11 @@ types::page::idx_t get_page_under_edit(State::root_t state) {
 
   return rendered_part.page.under_edit;
 }
+
+unsigned int get_steps_page_size(std::shared_ptr<IO> io, std::shared_ptr<Layouts> layouts) {
+  switch (io->grid->layout.name()) {
+  case LayoutName::SequencerAndInstrument:
+    return layouts->sequencer->steps->size();
+    break;
+  }
+}

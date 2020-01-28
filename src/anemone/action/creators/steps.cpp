@@ -22,12 +22,8 @@ action::step_cursor_updated action::Creators::advance_step(State::instrument_t i
   auto playing_part = instrument.parts->at(part_idx);
 
   // get page size
-  unsigned int page_size = 0;
-  // TODO refactor this to be easier?
-  if (io->grid->layout.name() == LayoutName::SequencerAndInstrument ) {
-    page_size = layouts->sequencer->steps->size();
-  }
-  
+  unsigned int page_size = get_steps_page_size(io, layouts);
+
   // get current ppqn
   auto ppqn = static_cast<unsigned int>(playing_part.ppqn.current);
 
