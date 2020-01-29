@@ -25,6 +25,7 @@ types::part::idx_t get_rendered_part_id(State::root_t state);
 /// If the instrument is not currently in playback itself, then the selected
 /// part will not be playing (stopped or paused), though it is still the part
 /// which is in playback mode for this isntrument.
+/// TODO we might have to take into account the BANK!
 types::part::idx_t get_playing_part_id(State::instrument_t instrument);
   
 #endif

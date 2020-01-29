@@ -12,6 +12,7 @@
 #include <set>
 #include <memory>
 
+#include <nlohmann/json.hpp>
 #include <websocketpp/server.hpp>
 #include <websocketpp/config/asio_no_tls.hpp>
 
@@ -33,6 +34,9 @@ public:
   virtual void listen() override;
   virtual void emit(midi_event_t) override;
 
+  
+  void send(nlohmann::json j);
+  
   void start_recording();
   std::set<midi_event_t> stop_recording();
 

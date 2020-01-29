@@ -13,21 +13,23 @@ ctrl::clock::Scheduler::Scheduler(std::shared_ptr<IO> io,
 
 
 void ctrl::clock::Scheduler::handle(const types::tick_t& tick) {
-  // advance steps
-  // spdlog::debug("clock tick: {}", tick);
 
   // for each instrument in playback
   //   get events for current tick
   //   dispatch all midi events
   //   increment current tick
 
+  std::vector<types::step::event_t> midi_events;
   for ( auto instrument : get_playing_instruments(state)) {
     // TODO get all midi events for current tick
     // TODO dispatch all midi events to appropriate midi output ports
+    get_midi_events_for(instrument, state, &results);
 
     // advance to next step
-    dispatch(make_action.advance_step(instrument));
-    
+    dispatch(make_action.advance_step(instrument));    
   }
+
+  // emit midi events
+  io->midi->emit(midi_events);
 }
 

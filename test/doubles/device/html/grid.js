@@ -33,6 +33,9 @@ socket.onmessage = (event) => {
   case "led_event":
     handle_led_event(msg)
     break
+  case "midi_event":
+    handle_midi_event(msg)
+    break
   case "description":
     handle_description(msg)
     break
@@ -200,4 +203,8 @@ const handle_description = msg => {
     // fade in new text
     details.style.opacity = '1'
   }, 500)
+}
+
+const handle_midi_event = msg => {
+  console.log(msg)
 }
