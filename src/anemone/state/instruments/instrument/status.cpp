@@ -7,6 +7,7 @@
 
 State::InstrumentStatus::InstrumentStatus() {
   spdlog::debug("    - constructing instrument status");
+
   
   is_playing = rx::State<bool>::with_reducer<action_t>
     (true,

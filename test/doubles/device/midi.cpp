@@ -34,13 +34,12 @@ midi_ports_t BrowserMidiDevice::get_port_names() {
 }
   
 void BrowserMidiDevice::listen() {}
-void BrowserMidiDevice::emit(midi_event_t event) {
+void BrowserMidiDevice::emit(types::step::event_t event) {
   if (mode.visual) {
     using json = nlohmann::json;
     json j;
     j["type"] = "midi_event";
-    j["source"] = event.source;
-    j["timestamp"] = event.timestamp;
+    j["event"] = event.data;
     send(j);
   }
 
@@ -60,7 +59,7 @@ void BrowserMidiDevice::start_recording() {
   recording_results.clear();
 }
 
-std::set<midi_event_t> BrowserMidiDevice::stop_recording() {
+std::set<types::step::event_t> BrowserMidiDevice::stop_recording() {
   is_recording = false;
   return recording_results;
 }

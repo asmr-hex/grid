@@ -35,6 +35,7 @@ public:
   void dispatch(std::vector<action_t>);
 protected:
   State::root_t state;
+  std::shared_ptr<Midi> midi;
   std::shared_ptr<State::Root> state_wrapper;
   std::shared_ptr<Dispatcher> dispatcher;
   std::shared_ptr<Observable<T> > observable;
@@ -49,7 +50,7 @@ Controller<T>::Controller(std::shared_ptr<IO> io,
                           std::shared_ptr<State::Root> state_wrapper,
                           std::shared_ptr<Dispatcher> dispatcher,
                           std::shared_ptr<Observable<T> > observable)
-  : make_action(io, layouts), state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
+  : make_action(io, layouts), midi(io->midi), state_wrapper(state_wrapper), dispatcher(dispatcher), observable(observable) {};
 
 
 template<typename T>

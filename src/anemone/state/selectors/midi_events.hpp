@@ -6,7 +6,7 @@
  *************************************************/
 
 
-#ifnedef STATE_SELECTORS_MIDI_EVENTS_H
+#ifndef STATE_SELECTORS_MIDI_EVENTS_H
 #define STATE_SELECTORS_MIDI_EVENTS_H
 
 #include "anemone/types.hpp"

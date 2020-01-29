@@ -113,6 +113,11 @@ namespace types {
       event::protocol_t   protocol;
       event::id_t         id;
       types::midi::data_t data;
+
+      bool operator <(const event_t &rhs) const {
+        return id < rhs.id;
+      };
+  
     };
 
     /// @brief create a midi note on step event.

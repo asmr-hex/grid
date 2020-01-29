@@ -10,7 +10,10 @@
 #define ANEMONE_IO_MIDI_H
 
 #include <string>
+#include <vector>
 #include <memory>
+
+#include "anemone/types.hpp"
 
 #include "anemone/config/config.hpp"
 #include "anemone/io/observable.hpp"
@@ -28,7 +31,8 @@ public:
   Midi(std::shared_ptr<Config>, std::shared_ptr<MidiDeviceFactory>);
 
   void connect();
-  void emit(midi_event_t);
+  void emit(types::step::event_t);
+  void emit(std::vector<types::step::event_t>&);
 
   std::map<std::string, std::shared_ptr<MidiDevice> > input_devices;
   std::map<std::string, std::shared_ptr<MidiDevice> > output_devices;

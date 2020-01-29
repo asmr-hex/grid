@@ -1,5 +1,6 @@
 #include "anemone/controllers/clock/scheduler.hpp"
 #include "anemone/state/selectors/instruments.hpp"
+#include "anemone/state/selectors/midi_events.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -21,15 +22,14 @@ void ctrl::clock::Scheduler::handle(const types::tick_t& tick) {
 
   std::vector<types::step::event_t> midi_events;
   for ( auto instrument : get_playing_instruments(state)) {
-    // TODO get all midi events for current tick
-    // TODO dispatch all midi events to appropriate midi output ports
-    get_midi_events_for(instrument, state, &results);
+    // get all midi events for current tick
+    get_midi_events_for(instrument, state, &midi_events);
 
     // advance to next step
     dispatch(make_action.advance_step(instrument));    
   }
-
+  
   // emit midi events
-  io->midi->emit(midi_events);
+  midi->emit(midi_events);
 }
 

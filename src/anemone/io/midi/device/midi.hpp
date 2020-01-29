@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "anemone/types.hpp"
 #include "anemone/io/observable.hpp"
 #include "anemone/io/midi/event.hpp"
 
@@ -40,7 +41,7 @@ public:
   virtual midi_ports_t get_port_names() = 0;
   
   virtual void listen() = 0;
-  virtual void emit(midi_event_t) = 0;
+  virtual void emit(types::step::event_t) = 0;
 };
 
 

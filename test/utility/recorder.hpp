@@ -55,7 +55,7 @@ public:
   /// This method assumes that while it is recording the steps, no further
   /// modifications are being made to the state of the controller (i.e. no
   /// new activated steps or emitted midi events).
-  std::vector<std::map<std::string, std::set<midi_event_t> > > record_midi_output(types::step::idx_t last_step);
+  std::vector<std::map<std::string, std::set<types::step::event_t> > > record_midi_output(types::step::idx_t last_step);
 
 private:
   std::shared_ptr<BrowserGridDevice> grid_device;
@@ -80,7 +80,7 @@ private:
                                   const std::vector<types::part::idx_t>& parts,
                                   std::vector<types::step::paged_idx_t>& previous_paged_cursor_idxs,
                                   bool& is_initial_call,
-                                  std::vector<std::map<std::string, std::set<midi_event_t> > >& results);
+                                  std::vector<std::map<std::string, std::set<types::step::event_t> > >& results);
 };
 
 #endif

@@ -71,10 +71,19 @@ void Midi::connect_with_retry(std::string device_name, bool is_input_conn) {
   }
 }
 
-void Midi::emit(midi_event_t event) {
+void Midi::emit(types::step::event_t event) {
   for (auto itr : output_devices) {
     auto device = itr.second;
     device->emit(event);
+  }
+}
+
+void Midi::emit(std::vector<types::step::event_t>& events) {
+  for (auto itr : output_devices) {
+    auto device = itr.second;
+    for (auto event : events) {
+      device->emit(event); 
+    }
   }
 }
 

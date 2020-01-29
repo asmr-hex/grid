@@ -51,7 +51,7 @@ void TestOutputRecorder::listen() {
 //
 // TODO MAYBE ONLY RECORD MIDI OUTPUT HERE....should think of a creative way to measure grid led snapshots
 //
-std::vector<std::map<std::string, std::set<midi_event_t> > > TestOutputRecorder::record_midi_output(types::step::idx_t last_step) {
+std::vector<std::map<std::string, std::set<types::step::event_t> > > TestOutputRecorder::record_midi_output(types::step::idx_t last_step) {
   is_recording = true;
 
   // get playing instruments and their corresponding playing parts
@@ -72,7 +72,7 @@ std::vector<std::map<std::string, std::set<midi_event_t> > > TestOutputRecorder:
 
   bool is_initial_call = true;
 
-  std::vector<std::map<std::string, std::set<midi_event_t> > > results;
+  std::vector<std::map<std::string, std::set<types::step::event_t> > > results;
   
   // set recording handler.
   recording_handler =
@@ -101,7 +101,7 @@ void TestOutputRecorder::midi_output_record_handler(const types::tick_t& tick,
                                                     const std::vector<types::part::idx_t>& parts,
                                                     std::vector<types::step::paged_idx_t>& previous_paged_cursor_idxs,
                                                     bool& is_initial_call,
-                                                    std::vector<std::map<std::string, std::set<midi_event_t> > >& results)
+                                                    std::vector<std::map<std::string, std::set<types::step::event_t> > >& results)
 {
   // get current paged_cursors for all playing instruments
   std::vector<types::step::paged_idx_t> current_paged_cursor_idxs;
@@ -144,7 +144,7 @@ void TestOutputRecorder::midi_output_record_handler(const types::tick_t& tick,
   // okay we need to cycle the recording.
 
   // first, lets stop the current recording
-  std::map<std::string, std::set<midi_event_t> > step_result;
+  std::map<std::string, std::set<types::step::event_t> > step_result;
   for (auto output_device : midi_manager->get_output_devices()) {
     step_result[output_device.first] = output_device.second->stop_recording();
   }

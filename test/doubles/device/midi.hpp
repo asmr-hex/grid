@@ -19,6 +19,7 @@
 #include "doubles/device/mode.hpp"
 
 #include "anemone/io.hpp"
+#include "anemone/types.hpp"
 
 
 class BrowserMidiDevice : public MidiDevice {
@@ -32,13 +33,13 @@ public:
   virtual midi_ports_t get_port_names() override;
   
   virtual void listen() override;
-  virtual void emit(midi_event_t) override;
+  virtual void emit(types::step::event_t) override;
 
   
   void send(nlohmann::json j);
   
   void start_recording();
-  std::set<midi_event_t> stop_recording();
+  std::set<types::step::event_t> stop_recording();
 
   std::string name;
   bool is_output_device = false;
@@ -51,7 +52,7 @@ private:
   } mode;
   
   bool is_recording;
-  std::set<midi_event_t> recording_results;
+  std::set<types::step::event_t> recording_results;
 
   websocketpp::server<websocketpp::config::asio>  *ws_server;
   std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections;

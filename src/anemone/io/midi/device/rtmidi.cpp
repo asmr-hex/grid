@@ -126,8 +126,8 @@ void RTMidi::listen() {
   in->setCallback(this->callback_wrapper, this);
 }
 
-void RTMidi::emit(midi_event_t event) {
-  out->sendMessage(event.data);
+void RTMidi::emit(types::step::event_t event) {
+  out->sendMessage(&event.data);
 }
 
 void RTMidi::callback_wrapper(double deltatime, std::vector<unsigned char> *msg, void *user_data) {

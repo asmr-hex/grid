@@ -7,6 +7,7 @@
 
 #include <RtMidi.h>
 
+#include "anemone/types.hpp"
 #include "anemone/io/midi/event.hpp"
 #include "anemone/io/midi/device/midi.hpp"
 
@@ -21,7 +22,7 @@ public:
   virtual midi_ports_t get_port_names() override;
 
   virtual void listen() override;
-  virtual void emit(midi_event_t) override;
+  virtual void emit(types::step::event_t) override;
 
 private:
   std::unique_ptr<RtMidiOut> out;
