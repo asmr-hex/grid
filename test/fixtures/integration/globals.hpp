@@ -22,11 +22,8 @@
 /// @brief a global test grid device for integration tests
 extern std::shared_ptr<BrowserGridDevice> test_grid_device;
 
-/// @brief a global map of test midi input devices for integration tests
-extern std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > test_midi_in_devices;
-
-/// @brief a global map of test midi output devices for integration tests
-extern std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > test_midi_out_devices;
+/// @brief a global test midi manager for integration tests
+extern std::shared_ptr<BrowserMidiDeviceFactory> test_midi_manager;
 
 /// @brief a global test anemone for integration tests
 extern std::shared_ptr<Anemone> test_anemone;

@@ -15,16 +15,17 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
+#include "doubles/device/mode.hpp"
+
 #include "anemone/io.hpp"
 #include "anemone/util/concurrent_queue.hpp"
 #include "anemone/util/wait.hpp"
 
 
+
 class BrowserGridDevice : public GridDevice {
-public:
-  enum class Mode { Headless, Visual, Interactive};
-  
-  BrowserGridDevice(Mode test_mode, unsigned int toggle_wait_ms, std::shared_ptr< Queue<bool> > ready);
+public:  
+  BrowserGridDevice(test_device::Mode test_mode, unsigned int toggle_wait_ms, std::shared_ptr< Queue<bool> > ready);
 
   // this is important to do such that we can translate any press events (via toggle method)
   // from grid_addr_t to grid_coordinates_t

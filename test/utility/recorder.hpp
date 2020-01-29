@@ -9,11 +9,15 @@
 #ifndef TEST_UTILITY_RECORDER_H
 #define TEST_UTILITY_RECORDER_H
 
+#include <set>
+#include <map>
+#include <vector>
 #include <functional>
 
 #include "doubles/device/grid.hpp"
 #include "doubles/device/midi.hpp"
 #include "anemone/anemone.hpp"
+#include "anemone/io.hpp"
 #include "anemone/types.hpp"
 #include "anemone/util/concurrent_queue.hpp"
 
@@ -25,11 +29,10 @@
 /// an observer of clock ticks and uses the `Observer<types::tick_t>` handler
 /// to decide what it is going to record/do.
 ///
-class TestOutputRecorder : Observable<types::tick_t> {
+class TestOutputRecorder : public Observer<types::tick_t> {
 public:
   TestOutputRecorder(std::shared_ptr<BrowserGridDevice>,
-                     std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_input_devices,
-                     std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_output_devices,
+                     std::shared_ptr<BrowserMidiDeviceFactory>,
                      std::shared_ptr<Anemone>);
 
   /// @brief subscribes and listens to clock ticks.
@@ -52,12 +55,11 @@ public:
   /// This method assumes that while it is recording the steps, no further
   /// modifications are being made to the state of the controller (i.e. no
   /// new activated steps or emitted midi events).
-  void record_step_output(std::vector<types::step::idx_t> steps);
+  std::vector<std::map<std::string, std::set<midi_event_t> > > record_midi_output(types::step::idx_t last_step);
 
 private:
   std::shared_ptr<BrowserGridDevice> grid_device;
-  std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_input_devices;
-  std::shared_ptr<std::map<std::string, std::shared_ptr<BrowserMidiDevice> > > midi_output_devices;
+  std::shared_ptr<BrowserMidiDeviceFactory> midi_manager;
   std::shared_ptr<Anemone> anemone;
 
   bool is_recording;
@@ -67,6 +69,18 @@ private:
   /// @brief override `Observer<types::tick_t>` handle method for handling timed measurements.
   ///
   virtual void handle(const types::tick_t&) override;
+
+  /// @brief helper function for performing midi output recording.
+  ///
+  /// todo document params
+  void midi_output_record_handler(const types::tick_t& tick,
+                                  types::step::idx_t& current_step,
+                                  const types::step::idx_t& last_step,
+                                  const std::vector<State::instrument_t>& instruments,
+                                  const std::vector<types::part::idx_t>& parts,
+                                  std::vector<types::step::paged_idx_t>& previous_paged_cursor_idxs,
+                                  bool& is_initial_call,
+                                  std::vector<std::map<std::string, std::set<midi_event_t> > >& results);
 };
 
 #endif

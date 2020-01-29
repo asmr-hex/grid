@@ -31,7 +31,7 @@ SCENARIO("Activating and Deactivating Steps") {
       test_grid_device->wait();
       test_grid_device->describe("when the cursor moves onto an activated step, a midi note plays!");
       // TODO include some wait logic here....?
-      test_utility->record_step_output({3});
+      // auto results = test_utility->record_midi_output(3);
       THEN("a midi note is played") {
         
       }

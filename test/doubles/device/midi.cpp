@@ -1,18 +1,84 @@
 #include "doubles/device/midi.hpp"
 
 
-void BrowserMidiDevice::connect_in(std::string port_name) {};
-void BrowserMidiDevice::connect_out(std::string port_name) {};
+BrowserMidiDeviceFactory::BrowserMidiDeviceFactory(test_device::Mode mode,
+                                                   websocketpp::server<websocketpp::config::asio>  *ws_server,
+                                                   std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections)
+  : mode(mode), ws_server(ws_server), connections(connections) {}
+
+std::map<std::string, std::shared_ptr<BrowserMidiDevice> > BrowserMidiDeviceFactory::get_input_devices() {
+  if (input_devices.empty()) {
+    for (auto device : devices) {
+      if (device->is_input_device)
+        input_devices[device->name] = device;
+    }
+  }
+
+  return input_devices;
+}
+std::map<std::string, std::shared_ptr<BrowserMidiDevice> > BrowserMidiDeviceFactory::get_output_devices() {
+  if (output_devices.empty()) {
+    for (auto device : devices) {
+      if (device->is_output_device)
+        output_devices[device->name] = device;
+    }
+  }
+
+  return output_devices;
+}
+
+std::shared_ptr<MidiDevice> BrowserMidiDeviceFactory::make() {
+  auto device = std::make_shared<BrowserMidiDevice>(BrowserMidiDevice(mode, ws_server, connections));
+  devices.push_back(device);
+  return device;
+}
+
+
+
+BrowserMidiDevice::BrowserMidiDevice(test_device::Mode test_mode,
+                                     websocketpp::server<websocketpp::config::asio>  *ws_server,
+                                     std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections)
+  : ws_server(ws_server), connections(connections)
+{
+  // set testing mode
+  switch (test_mode) {
+  case test_device::Mode::Headless:
+    mode = { .headless = true, .visual = false, .interactive = false };
+    break;
+  case test_device::Mode::Visual:
+    mode = { .headless = false, .visual = true, .interactive = false };
+    break;
+  case test_device::Mode::Interactive:
+    mode = { .headless = false, .visual = true, .interactive = true };
+    break;
+  }
+}
+
+void BrowserMidiDevice::connect_in(std::string port_name) {
+  name = port_name;
+  is_input_device = true;
+}
+void BrowserMidiDevice::connect_out(std::string port_name) {
+  name = port_name;
+  is_output_device = true;
+}
 
 midi_ports_t BrowserMidiDevice::get_port_names() {
   return {};
-};
+}
   
-void BrowserMidiDevice::listen() {};
-void BrowserMidiDevice::emit(midi_event_t) {};
+void BrowserMidiDevice::listen() {}
+void BrowserMidiDevice::emit(midi_event_t event) {
+  if (is_recording)
+    recording_results.insert(event);
+}
 
-void BrowserMidiDevice::connect_to_browser(websocketpp::server<websocketpp::config::asio>  *ws_server_,
-                                           std::set<websocketpp::connection_hdl,std::owner_less<websocketpp::connection_hdl> > *connections_) {
-  ws_server = ws_server_;
-  connections = connections_;
-};
+void BrowserMidiDevice::start_recording() {
+  is_recording = true;
+  recording_results.clear();
+}
+
+std::set<midi_event_t> BrowserMidiDevice::stop_recording() {
+  is_recording = false;
+  return recording_results;
+}

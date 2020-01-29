@@ -21,6 +21,10 @@ public:
   std::string source;
   double timestamp;
   const std::vector<unsigned char> *data;
+
+  bool operator <(const midi_event_t &rhs) const {
+    return id < rhs.id;
+  };
   
   midi_event_t(std::string source, double timestamp, const std::vector<unsigned char> *data);
 

@@ -9,7 +9,7 @@ Anemone::Anemone(std::string config_path,
                  std::shared_ptr< Queue<bool> > ready)
   : ready(ready)
 {
-  spdlog::set_level(spdlog::level::debug);
+  spdlog::set_level(spdlog::level::info);
 
   spdlog::info("============= initialization ============");
   

@@ -1,20 +1,20 @@
 #include "doubles/device/grid.hpp"
 
 
-BrowserGridDevice::BrowserGridDevice(BrowserGridDevice::Mode test_mode,
+BrowserGridDevice::BrowserGridDevice(test_device::Mode test_mode,
                                      unsigned int toggle_wait_ms,
                                      std::shared_ptr< Queue<bool> > ready)
     : toggle_wait_ms(toggle_wait_ms), ready(ready)
 {
   // set testing mode
   switch (test_mode) {
-  case Mode::Headless:
+  case test_device::Mode::Headless:
     mode = { .headless = true, .visual = false, .interactive = false };
     break;
-  case Mode::Visual:
+  case test_device::Mode::Visual:
     mode = { .headless = false, .visual = true, .interactive = false };
     break;
-  case Mode::Interactive:
+  case test_device::Mode::Interactive:
     mode = { .headless = false, .visual = true, .interactive = true };
     break;
   }

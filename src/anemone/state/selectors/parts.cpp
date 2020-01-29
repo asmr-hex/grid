@@ -13,5 +13,5 @@ types::part::idx_t get_rendered_part_id(State::root_t state) {
 }
 
 types::part::idx_t get_playing_part_id(State::instrument_t instrument) {
-  return instrument->status.part.under_edit;
+  return instrument.status.part.under_edit;
 }
