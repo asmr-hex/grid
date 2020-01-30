@@ -205,6 +205,20 @@ const handle_description = msg => {
   }, 500)
 }
 
+
 const handle_midi_event = msg => {
   console.log(msg)
+
+  // create new row at the bottom of the midi output-container
+  let outputContainer = document.getElementById("midi-output-container")
+  let midiRow = document.createElement("DIV")
+  midiRow.className = "midi-output-row"
+
+  let midiEvent = document.createElement("DIV")
+  midiEvent.className = "midi-event"
+  midiEvent.text = msg.event[1]
+
+  midiRow.appendChild(midiEvent)
+  outputContainer.appendChild(midiRow)
+  
 }

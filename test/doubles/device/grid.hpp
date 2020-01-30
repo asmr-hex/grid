@@ -26,6 +26,7 @@
 class BrowserGridDevice : public GridDevice {
 public:  
   BrowserGridDevice(test_device::Mode test_mode, unsigned int toggle_wait_ms, std::shared_ptr< Queue<bool> > ready);
+  ~BrowserGridDevice();
 
   // this is important to do such that we can translate any press events (via toggle method)
   // from grid_addr_t to grid_coordinates_t

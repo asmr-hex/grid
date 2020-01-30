@@ -45,6 +45,12 @@ BrowserGridDevice::BrowserGridDevice(test_device::Mode test_mode,
   }
 }
 
+BrowserGridDevice::~BrowserGridDevice() {
+  ws_server.stop_listening();
+  // for (auto conn : connections) {
+  //   conn->close();
+  // }
+}
 
 void BrowserGridDevice::set_layout_context(LayoutContext *l) {
   layout = l;

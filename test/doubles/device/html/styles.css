@@ -4,8 +4,32 @@
     align-items: center;
 }
 
+#midi-output-container {
+    background-color: green;
+    margin-top: 10px;
+    height: 120px;
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.midi-output-row {
+    background-color: blue;
+    height: 20px;
+    width: 100%;
+    display: flex;
+}
+
+.midi-event {
+    background-color: white;
+    width: 20px;
+    height: 20px;
+}
+
+
 #grid-chassis {
-    margin-top: 90px;
+    margin-top: 10px;
     margin-bottom: 50px;
     padding: 15px;
     border: solid #DDE3E5 2px;
