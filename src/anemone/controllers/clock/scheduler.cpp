@@ -1,5 +1,6 @@
 #include "anemone/controllers/clock/scheduler.hpp"
 #include "anemone/state/selectors/instruments.hpp"
+#include "anemone/state/selectors/step_cursor.hpp"
 #include "anemone/state/selectors/midi_events.hpp"
 
 #include <spdlog/spdlog.h>
@@ -15,20 +16,16 @@ ctrl::clock::Scheduler::Scheduler(std::shared_ptr<IO> io,
 
 void ctrl::clock::Scheduler::handle(const types::tick_t& tick) {
 
-  // for each instrument in playback
-  //   get events for current tick
-  //   dispatch all midi events
-  //   increment current tick
-
   std::vector<types::step::event_t> midi_events;
   for ( auto instrument : get_playing_instruments(state)) {
-    // get all midi events for current tick
-    get_midi_events_for(instrument, state, &midi_events);
+    // get all midi events for current tick if the cursor has changed
+    if (step_cursor_has_changed_for(instrument, state))
+      get_midi_events_for(instrument, state, &midi_events);
 
     // advance to next step
     dispatch(make_action.advance_step(instrument));    
   }
-  
+
   // emit midi events
   midi->emit(midi_events);
 }

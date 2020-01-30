@@ -7,4 +7,6 @@
 
 State::step_cursor_t get_step_cursor_for(State::instrument_t, types::part::idx_t, State::root_t);
 
+bool step_cursor_has_changed_for(State::instrument_t, State::root_t);
+
 #endif

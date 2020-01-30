@@ -19,6 +19,11 @@ State::StepCursors::StepCursors() {
      [] (std::shared_ptr<step_cursors_t> steps, high_freq_action_t action) {
        return match(action,
                     [steps] (const action::step_cursor_updated& a) {
+                      // update previous step to be current step
+                      (*steps)[a.instrument_name][a.part].previous_step               = steps->at(a.instrument_name)[a.part].current_step;
+                      (*steps)[a.instrument_name][a.part].previous_page_relative_step = steps->at(a.instrument_name)[a.part].current_page_relative_step;
+
+                      // update current step
                       (*steps)[a.instrument_name][a.part].current_step               = a.step;
                       (*steps)[a.instrument_name][a.part].current_page_relative_step = a.page_relative;
                     },

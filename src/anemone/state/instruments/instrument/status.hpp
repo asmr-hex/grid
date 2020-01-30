@@ -38,7 +38,7 @@ namespace State {
       };
     };
     
-    bool is_playing = true;
+    bool is_playing;
     bool stop_on_next_measure;
     part_t part;
     bank_t bank;
