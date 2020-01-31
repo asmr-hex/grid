@@ -211,14 +211,173 @@ const handle_midi_event = msg => {
 
   // create new row at the bottom of the midi output-container
   let outputContainer = document.getElementById("midi-output-container")
-  let midiRow = document.createElement("DIV")
-  midiRow.className = "midi-output-row"
+  let eventRow = makeMidiOutputRow([{data: msg.event}])
+  outputContainer.prepend(eventRow)
 
-  let midiEvent = document.createElement("DIV")
-  midiEvent.className = "midi-event"
-  midiEvent.text = msg.event[1]
+  if (outputContainer.childNodes.length > 10) {
+    outputContainer.removeChild(outputContainer.childNodes[0])
+  }
+}
 
-  midiRow.appendChild(midiEvent)
-  outputContainer.appendChild(midiRow)
+// ideas:
+// midi notes:
+// * be structured within a table (128x1), each note populates a specific index in the row
+// * on notes will be filled in rectangles
+// * off notes will be border only
+// * velocity of an on note will be opacity
+// * channels will be color coded to the rectangles
+// * mouse hovering on a nnote will show its details in a little detail info window
+//
+// cc msgs etc.
+// * will be like sparklines next to the midi notes section
+// * color coded by channel as well
+// * value will correspond to opacity?
+// * hovering will make other lines a little transparent and make the current one bold and show deets in info box
+// * will be canvas based?
+//
+// nrpn
+// *????
+const makeMidiOutputRow = midi_events => {
+  // create a table row element
+  let midiEventRow = document.createElement("TR")
+  midiEventRow.className = "midi-output-row"
+
+  // construct an empty row with 128 table row items (each for a midi note)
+  for (let i = 0; i < 128; i++) {
+    let emptyEventIndex = document.createElement("TD")
+    emptyEventIndex.className = 'midi-event-empty'
+    midiEventRow.appendChild(emptyEventIndex)
+  }
   
+  // parse midi events (notes, cc, nrpn)
+  midi_events.forEach( event => {
+    const parsedEvent = parseMidiEvent(event)
+    let midiEvent
+    switch (parsedEvent.type) {
+    case "NoteOn":
+      // index into the correct child node
+      midiEvent = midiEventRow.childNodes[parsedEvent.note.num]
+      midiEvent.className = "midi-on-event midi-event"
+      midiEvent.dataset.notename = parsedEvent.note.name
+      midiEvent.dataset.notenum = parsedEvent.note.num
+      midiEvent.dataset.channel = parsedEvent.channel
+      midiEvent.dataset.velocity = parsedEvent.velocity
+      midiEvent.style.backgroundColor = midiChannelToColor[parsedEvent.channel]
+      break
+    case "NoteOff":
+      // index into the correct child node
+      midiEvent = midiEventRow.childNodes[parsedEvent.note.num]
+      midiEvent.className = "midi-off-event midi-event"
+      midiEvent.dataset.notename = parsedEvent.note.name
+      midiEvent.dataset.notenum = parsedEvent.note.num
+      midiEvent.dataset.channel = parsedEvent.channel
+      midiEvent.style.backgroundColor = midiChannelToColor[parsedEvent.channel]
+      break
+    case "CC":
+      // const {channel, cc, value} = parsedEvent
+      break
+    case "NRPN":
+      // const {channel} = parsedEvent
+      break
+    }
+  })
+
+  return midiEventRow
+}
+
+const parseMidiEvent = event => {
+  const controlByte = event.data[0]
+
+  // midi ON events
+  if (controlByte >= 145 || controlByte <= 160) {
+    const type = 'NoteOn'
+    const noteByte = event.data[1]
+
+    const channel = controlByte - 144
+    
+    // get octave-less note
+    const octavelessNote = noteByte % 12
+
+    // get octave
+    const octave = Math.floor(noteByte / 12)
+
+    return {
+      type,
+      channel,
+      note: { name: toMidiNoteStr(octavelessNote) + octave, num: event.data[1]},
+      velocity: event.data[2],
+    }
+  }
+
+  // midi OFF events
+  if (controlByte >= 129 || controlByte <= 144) {
+    const type = 'NoteOff'
+    const noteByte = event.data[1]
+
+    const channel = controlByte - 128
+    
+    // get octave-less note
+    const octavelessNote = noteByte % 12
+
+    // get octave
+    const octave = Math.floor(noteByte / 12)
+
+    return {
+      type,
+      channel,
+      note: { name: toMidiNoteStr(octavelessNote) + octave, num: event.data[1]},
+    }    
+  }
+
+
+  // TODO cc and nrpn.....
+}
+
+// note numbers must be at the zeroth octave
+const toMidiNoteStr = noteNum => {
+  switch (noteNum) {
+  case 0:
+    return 'C'
+  case 1:
+    return 'C#'
+  case 2:
+    return 'D'
+  case 3:
+    return 'D#'
+  case 4:
+    return 'E'
+  case 5:
+    return 'F'
+  case 6:
+    return 'F#'
+  case 7:
+    return 'G'
+  case 8:
+    return 'G#'
+  case 9:
+    return 'A'
+  case 10:
+    return 'A#'
+  case 11:
+    return 'B'
+  }
+}
+
+const midiChannelToColor = {
+  1: '#FF6666',
+  2: '#FFB266',
+  3: '#FFFF66',
+  4: '#B2FF66',
+  5: '#66FF66',
+  6: '#66FFB2',
+  7: '#66FFFF',
+  8: '#66B2FF',
+  9: '#6666FF',
+  10: '#B266FF',
+  11: '#FF66FF',
+  12: '#FF66B2',
+  13: '#FFCCFF',
+  14: '#CCFFCC',
+  15: '#FF00FF',
+  16: '#FFFF00',
 }

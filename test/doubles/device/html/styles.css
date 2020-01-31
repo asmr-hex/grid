@@ -5,7 +5,6 @@
 }
 
 #midi-output-container {
-    background-color: green;
     margin-top: 10px;
     height: 120px;
     width: 55%;
@@ -15,16 +14,20 @@
 }
 
 .midi-output-row {
-    background-color: blue;
-    height: 20px;
     width: 100%;
     display: flex;
 }
 
 .midi-event {
-    background-color: white;
-    width: 20px;
-    height: 20px;
+    height: 5px;
+    width: 10px;
+    margin: 2px;
+}
+
+.midi-event-empty {
+}
+
+.midi-on-event {
 }
 
 
@@ -41,11 +44,10 @@
 #start-button {
     padding: 20px 70px 20px 70px;
     border-radius: 30px;
-    background-color: #FFA9FC;
+    background-color: #fccff9;
     font-family: "Courier New", Courier, monospace;
     font-size: xx-large;
-    color: white;
-    font-weight: bold;
+    color: #59575A;
     border: solid 4px transparent;
 }
 
