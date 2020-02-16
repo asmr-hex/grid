@@ -3,10 +3,10 @@
 
 #include "anemone/io.hpp"
 #include "anemone/anemone.hpp"
-#include "anemone/util/concurrent_queue.hpp"
 
 #include <execinfo.h>
 #include <signal.h>
+#include <unistd.h>
 
 
 void seg_fault_handler(int sig) {
@@ -30,11 +30,14 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  Anemone anemone(argv[1],
-                  std::make_shared<Monome>(),
-                  std::make_shared< MidiDeviceFactoryFor<RTMidi> >(),
-                  std::make_shared< Queue<bool> >());
+  // Anemone anemone(argv[1],
+  //                 std::make_shared<Monome>(),
+  //                 std::make_shared< MidiDeviceFactoryFor<RTMidi> >(),
+  //                 std::make_shared< Queue<bool> >());
 
+  Anemone anemone(argv[1],
+                  std::make_shared<Monome>());
+  
   anemone.run();
   
   return 0;

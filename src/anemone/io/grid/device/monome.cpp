@@ -29,7 +29,7 @@ void Monome::listen() {
   std::thread t([this] {
                   monome_event_loop(monome);
                 });
-  t.detach();
+  t.join();
 }
 
 
@@ -53,8 +53,11 @@ void Monome::callback_wrapper(const monome_event_t *m_event, void *user_data) {
 
   grid_device_event_t event = this_monome->transform(m_event);
 
-  this_monome->broadcast(event);
+  // this_monome->broadcast(event);
+  
 
+  auto subscriber = this_monome->get_subscriber();
+  subscriber.on_next(event);
 }
 
 

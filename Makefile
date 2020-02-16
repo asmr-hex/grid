@@ -34,7 +34,7 @@ BIN_DIR             := $(BUILD_DIR)/bin
 SRC_DIR      := src
 ANEMONE_DIR  := $(SRC_DIR)/anemone
 
-INCLUDE      += -I$(SRC_DIR)
+INCLUDE      += -I$(SRC_DIR) -I$(INCLUDE_DIR)/RxCpp/Rx/v2/src
 
 BIN_TARGET   := anemone
 ANEMONE_SRC  := $(shell find $(ANEMONE_DIR) -type f -name '*.cpp')

@@ -11,7 +11,8 @@
 
 #include <string>
 
-#include "anemone/io/observable.hpp"
+#include <rxcpp/rx.hpp>
+
 #include "anemone/io/grid/device/events.hpp"
 #include "anemone/io/grid/device/coordinates.hpp"
 
@@ -28,7 +29,8 @@
 /// Additionally, this interface is a `grid_device_event_t` observable, so observers
 /// can subscribe to it to receive raw messages from the grid device.
 ///
-class GridDevice : public Observable<grid_device_event_t> {
+// class GridDevice : public Observable<grid_device_event_t> {
+class GridDevice : public rxcpp::subjects::subject<grid_device_event_t> {
 public:
   virtual ~GridDevice() = default;
 
