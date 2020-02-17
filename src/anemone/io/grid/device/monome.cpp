@@ -1,4 +1,5 @@
 #include <string>
+#include <memory>
 #include <iostream>
 
 #include <spdlog/spdlog.h>
@@ -20,16 +21,35 @@ void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
   spdlog::info("  connected -> monome");
 }
 
+rxcpp::observable<grid_device_event_t> Monome::listen() {
+  monome_register_handler(monome,
+                          MONOME_BUTTON_DOWN,
+                          [] (const monome_event_t *m_event, void *user_data) {                            
+                            Monome *this_monome = static_cast<Monome *>(user_data);
+                            auto subscriber = this_monome->get_subscriber();
+                            subscriber.on_next(grid_device_event_t{{ .x = m_event->grid.x,
+                                                                     .y = m_event->grid.y },
+                                                                   .type = GridDeviceEvent::ButtonDown,
+                              });
+                          }, this);
+  monome_register_handler(monome,
+                          MONOME_BUTTON_UP,
+                          [] (const monome_event_t *m_event, void *user_data) {                            
+                            Monome *this_monome = static_cast<Monome *>(user_data);
+                            auto subscriber = this_monome->get_subscriber();
+                            subscriber.on_next(grid_device_event_t{{ .x = m_event->grid.x,
+                                                                     .y = m_event->grid.y },
+                                                                   .type = GridDeviceEvent::ButtonUp,
+                              });
+                          }, this);
 
-void Monome::listen() {
-  monome_register_handler(monome, MONOME_BUTTON_DOWN, this->callback_wrapper, this);
-  monome_register_handler(monome, MONOME_BUTTON_UP, this->callback_wrapper, this);
 
-  // start listening for incoming messages in a seperate thread
   std::thread t([this] {
                   monome_event_loop(monome);
                 });
-  t.join();
+  t.detach();
+
+  return get_observable();
 }
 
 
@@ -45,39 +65,4 @@ void Monome::turn_on(grid_coordinates_t c) {
 
 void Monome::set(grid_coordinates_t c, unsigned int intensity) {
   monome_led_level_set(monome, c.x, c.y, intensity);
-}
-
-
-void Monome::callback_wrapper(const monome_event_t *m_event, void *user_data) {
-  Monome *this_monome = (Monome *)user_data;
-
-  grid_device_event_t event = this_monome->transform(m_event);
-
-  // this_monome->broadcast(event);
-  
-
-  auto subscriber = this_monome->get_subscriber();
-  subscriber.on_next(event);
-}
-
-
-grid_device_event_t Monome::transform(const monome_event_t *m_event) {
-  GridDeviceEvent event_type;
-
-  switch (m_event->event_type) {
-  case MONOME_BUTTON_DOWN:
-    event_type = GridDeviceEvent::ButtonDown;
-    break;
-  case MONOME_BUTTON_UP:
-    event_type = GridDeviceEvent::ButtonUp;
-    break;
-  default:
-    event_type = GridDeviceEvent::ButtonUp;
-    break;
-  };
-
-  return {{ .x  = m_event->grid.x,
-            .y  = m_event->grid.y },
-          .type = event_type
-  };
 }

@@ -46,7 +46,7 @@ public:
   /// This is where any classes implementing this interface would broadcast new
   /// messages coming from the grid device.
   ///
-  virtual void listen() = 0;
+  virtual rxcpp::observable<grid_device_event_t> listen() = 0;
 
   /// @brief turns off the led at the provided device coordinate.
   ///

@@ -22,11 +22,14 @@ void Anemone::run() {
   spdlog::info("============= connecting ================");
   grid_device->connect("/dev/tty.usbserial-m1000843");
 
-  auto obs = grid_device->get_observable()
+  auto obs = grid_device->listen()
     | rxcpp::operators::filter([] (grid_device_event_t e) {
-               return e.type == GridDeviceEvent::ButtonDown;
-             });
-  obs.subscribe([] (grid_device_event_t event) { spdlog::info("{} : ({}, {})", event.type, event.x, event.y); });
+                                 return e.type == GridDeviceEvent::ButtonDown;
+                               });
+  obs.subscribe([] (grid_device_event_t event) { spdlog::info("ok {} : ({}, {})", event.type, event.x, event.y); });
   
-  grid_device->listen();
+
+  // wait for 20 seconds
+  // rxcpp::observable<>::timer(std::chrono::milliseconds(20000)).
+  //   subscribe( [&] (long) {});
 }
