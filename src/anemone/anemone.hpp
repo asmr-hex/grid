@@ -6,6 +6,8 @@
 
 
 #include "anemone/io.hpp"
+#include "anemone/config.hpp"
+#include "anemone/state.hpp"
 
 
 class Anemone {
@@ -15,7 +17,8 @@ public:
   
   void run();
 
-  std::shared_ptr<GridDevice> grid_device;
+  std::shared_ptr<IO> io;
+  std::shared_ptr<State> state;
 };
 
 #endif

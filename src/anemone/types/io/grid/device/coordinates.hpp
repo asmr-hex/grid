@@ -1,13 +1,13 @@
 /**
- * @file   io/grid/device/coordinates.hpp
+ * @file   types/io/grid/device/coordinates.hpp
  * @brief  IO Grid Device Coordinate Types
  * @author coco
  * @date   2020-01-15
  *************************************************/
 
 
-#ifndef IO_GRID_DEVICE_COORDINATES_H
-#define IO_GRID_DEVICE_COORDINATES_H
+#ifndef TYPES_IO_GRID_DEVICE_COORDINATES_H
+#define TYPES_IO_GRID_DEVICE_COORDINATES_H
 
 #include <functional>
 

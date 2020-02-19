@@ -20,7 +20,7 @@
 #include "anemone/io/grid/device/coordinates.hpp"
 
 
-/// @brief Monnome grid device.
+/// @brief Monome grid device.
 class Monome : public GridDevice {
 public:
   virtual void connect(std::string addr) override;
@@ -32,9 +32,6 @@ public:
 
 private:
   monome_t *monome;
-
-  // static void callback_wrapper(const monome_event_t *m_event, void *user_data);
-  // static grid_device_event_t transform(const monome_event_t *m_event);
 };
 
 #endif

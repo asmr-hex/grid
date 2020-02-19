@@ -1,15 +1,15 @@
 /**
- * @file   io/grid/device/events.hpp
+ * @file   types/io/grid/device/event.hpp
  * @brief  IO Grid Device Event Types
  * @author coco
  * @date   2020-01-15
  *************************************************/
 
 
-#ifndef IO_GRID_DEVICE_EVENTS_H
-#define IO_GRID_DEVICE_EVENTS_H
+#ifndef TYPES_IO_GRID_DEVICE_EVENTS_H
+#define TYPES_IO_GRID_DEVICE_EVENTS_H
 
-#include "anemone/io/grid/device/coordinates.hpp"
+#include "anemone/types/io/grid/device/coordinates.hpp"
 
 
 /// @brief Event types for grid devices.

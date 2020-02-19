@@ -1,14 +1,4 @@
-#include <string>
-#include <memory>
-#include <iostream>
-
 #include <spdlog/spdlog.h>
-
-#include <monome.h>
-
-#include "anemone/io/grid/device/monome.hpp"
-#include "anemone/io/grid/device/events.hpp"
-#include "anemone/io/grid/device/coordinates.hpp"
 
 
 void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
