@@ -13,15 +13,10 @@
 #include <memory>
 #include <initializer_list>
 
-#include "anemone/io/grid/device/events.hpp"
-#include "anemone/io/grid/device/coordinates.hpp"
-#include "anemone/io/grid/layout/layout.hpp"
-#include "anemone/io/grid/address.hpp"
-#include "anemone/io/grid/layout/names.hpp"
-
-
-/// @brief type alias for an initializer list of layout shared pointers.
-typedef std::initializer_list< std::shared_ptr<Layout> > layout_initializer_list;
+#include "anemone/rx.hpp"
+#include "anemone/types.hpp"
+#include "anemone/state/layout/layout.hpp"
+#include "anemone/state/layout/layouts/layouts.hpp"
 
 
 /// @brief Layout context for accessing current and inactive layouts.
@@ -30,13 +25,11 @@ typedef std::initializer_list< std::shared_ptr<Layout> > layout_initializer_list
 /// The `LayoutContext` class implements the state design pattern for storing and
 /// internally switching the current layout.
 ///
-class LayoutContext : public rxcpp::subjects::behavior< std::shared_ptr<Layout> > {
+class LayoutContext : public rx::behavior< std::shared_ptr<Layout> > {
 public:
   /// @brief Constructs a `LayoutContext` and sets the current layout.
   ///
-  /// @param layouts   an initializer list of layouts to use.
-  ///
-  LayoutContext(layout_initializer_list layouts);
+  LayoutContext(std::shared_ptr<GridLayouts> layouts);
 
   /// @brief Switches the current layout to a new layout
   ///
@@ -44,12 +37,18 @@ public:
   ///
   void use_layout(LayoutName new_layout);
 
+  /// @brief Get a collection of grid layouts
+  ///
+  /// @return ptr to `GridLayouts`
+  ///
+  std::shared_ptr<GridLayouts> get_layouts();
+  
 private:
   /// @brief A pointer to the current layout
   std::shared_ptr<Layout> current_layout;
 
-  /// @brief A map from `LayoutName` to `Layout` pointers
-  std::map< LayoutName, std::shared_ptr<Layout> > layout_by_name;
+  /// @brief A pointer to a collection of all the grid layouts
+  std::shared_ptr<GridLayouts> layouts;
 };
 
 

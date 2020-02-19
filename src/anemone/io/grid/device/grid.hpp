@@ -11,10 +11,8 @@
 
 #include <string>
 
-#include <rxcpp/rx.hpp>
-
-#include "anemone/io/grid/device/events.hpp"
-#include "anemone/io/grid/device/coordinates.hpp"
+#include "anemone/rx.hpp"
+#include "anemone/types.hpp"
 
 
 /// @brief Interface for grid devices.
@@ -29,7 +27,7 @@
 /// Additionally, this interface is a `grid_device_event_t` observable, so observers
 /// can subscribe to it to receive raw messages from the grid device.
 ///
-class GridDevice : protected rxcpp::subjects::subject<grid_device_event_t> {
+class GridDevice : protected rx::subject<grid_device_event_t> {
 public:
   virtual ~GridDevice() = default;
 
@@ -45,7 +43,7 @@ public:
   /// This is where any classes implementing this interface would broadcast new
   /// messages coming from the grid device.
   ///
-  virtual rxcpp::observable<grid_device_event_t> listen() = 0;
+  virtual rx::observable<grid_device_event_t> listen() = 0;
 
   /// @brief turns off the led at the provided device coordinate.
   ///

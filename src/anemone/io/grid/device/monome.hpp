@@ -12,19 +12,19 @@
 #include <thread>
 #include <string>
 
-#include <rxcpp/rx.hpp>
 #include <monome.h>
 
+#include "anemone/rx.hpp"
+#include "anemone/types.hpp"
+
 #include "anemone/io/grid/device/grid.hpp"
-#include "anemone/io/grid/device/events.hpp"
-#include "anemone/io/grid/device/coordinates.hpp"
 
 
 /// @brief Monome grid device.
 class Monome : public GridDevice {
 public:
   virtual void connect(std::string addr) override;
-  virtual rxcpp::observable<grid_device_event_t> listen() override;
+  virtual rx::observable<grid_device_event_t> listen() override;
 
   virtual void turn_off(grid_coordinates_t c) override;
   virtual void turn_on(grid_coordinates_t c) override;

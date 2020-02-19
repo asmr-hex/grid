@@ -54,7 +54,7 @@ public:
   ///
   /// return observable   a stream of `grid_event_t` observables.
   ///
-  rxcpp::observable<grid_event_t> connect();
+  rx::observable<grid_event_t> connect();
   
   /// @brief Turns off the led on the grid device at the specific grid address.
   ///

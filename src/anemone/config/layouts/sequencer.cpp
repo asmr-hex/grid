@@ -1,5 +1,5 @@
 #include "anemone/config/layouts/sequencer.hpp"
-#include "anemone/io/grid/device/coordinates.hpp"
+#include "anemone/types/io/grid/device/coordinates.hpp"
 
 
 Conf::Layout::Sequencer::Sequencer(Conf::Base base) : Conf::Base(base) {

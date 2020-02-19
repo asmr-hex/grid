@@ -14,11 +14,11 @@ Grid::Grid(std::shared_ptr<Config> config,
                });
 }
 
-void Grid::connect() {
+rx::observable<grid_event_t> Grid::connect() {
   device->connect(device_addr);
 
   return device->listen()
-    | rx::map([current_layout] (grid_device_event_t e) {
+    | rx::map([this] (grid_device_event_t e) {
                 return current_layout->translate(e);
               });
 }

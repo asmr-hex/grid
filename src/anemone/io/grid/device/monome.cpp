@@ -1,5 +1,7 @@
 #include <spdlog/spdlog.h>
 
+#include "anemone/io/grid/device/monome.hpp"
+
 
 void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
   // rpi : /dev/ttyUSB0

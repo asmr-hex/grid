@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 
 
-grid_event_t Layout::translate(const grid_device_event_t& event) const {
+grid_event_t Layout::translate(const grid_device_event_t& device_event) const {
   GridEvent type;
   std::shared_ptr<GridSection> section;
   
@@ -11,7 +11,7 @@ grid_event_t Layout::translate(const grid_device_event_t& event) const {
     section = section_of(device_event); 
   } catch (...) {
     spdlog::warn("Grid button ({}, {}) belongs to so section!", device_event.x, device_event.y);
-    return;
+    return {};
   }
 
   switch (device_event.type) {

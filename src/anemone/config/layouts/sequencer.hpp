@@ -2,7 +2,7 @@
 #define CONFIG_LAYOUTS_SEQUENCER_H
 
 #include "anemone/config/base.hpp"
-#include "anemone/io/grid/layout/section.hpp"
+#include "anemone/state/layout/section.hpp"
 
 
 namespace Conf {

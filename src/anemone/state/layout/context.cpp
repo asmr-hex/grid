@@ -3,21 +3,20 @@
 #include <spdlog/spdlog.h>
 
 
-LayoutContext::LayoutContext(layout_initializer_list layouts)
-  : rxcpp::subjects::behavior< std::shared_ptr<Layout> >(*layouts.begin())
+LayoutContext::LayoutContext(std::shared_ptr<GridLayouts> layouts)
+  : rxcpp::subjects::behavior< std::shared_ptr<Layout> >(layouts->sequencer),
+    layouts(layouts)
 {
-  if (layouts.size() == 0)
-    throw std::length_error("no layouts provided");
-
-  for (auto layout : layouts)
-    layout_by_name[layout->name] = layout;
-
-  current_layout = *layouts.begin();
+  current_layout = layouts->sequencer;
 }
 
 
 void LayoutContext::use_layout(LayoutName name) {
-  current_layout = layout_by_name[name];
+  current_layout = layouts->layout_by_name[name];
 
   get_subscriber().on_next(current_layout);
+}
+
+std::shared_ptr<GridLayouts> LayoutContext::get_layouts() {
+  return layouts;
 }

@@ -6,6 +6,7 @@
 
 
 #include "anemone/io.hpp"
+#include "anemone/types.hpp"
 #include "anemone/config.hpp"
 #include "anemone/state.hpp"
 
@@ -17,6 +18,7 @@ public:
   
   void run();
 
+  std::shared_ptr<Config> config;
   std::shared_ptr<IO> io;
   std::shared_ptr<State> state;
 };

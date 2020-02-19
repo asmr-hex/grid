@@ -12,7 +12,9 @@
 #include <memory>
 
 #include "anemone/config.hpp"
-#include "anemone/io/grid/layout/layouts/sequencer.hpp"
+#include "anemone/types.hpp"
+
+#include "anemone/state/layout/layouts/sequencer.hpp"
 
 
 class GridLayouts {
@@ -20,6 +22,9 @@ public:
   std::shared_ptr<GridLayout::Sequencer> sequencer;
 
   GridLayouts(std::shared_ptr<Config>);
+
+  /// @brief A map from `LayoutName` to `Layout` pointers
+  std::map< LayoutName, std::shared_ptr<Layout> > layout_by_name;
 };
 
 #endif
