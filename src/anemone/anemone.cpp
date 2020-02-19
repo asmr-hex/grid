@@ -20,6 +20,7 @@ Anemone::Anemone(std::string config_path,
   
   // initialize io
   spdlog::info("  initializing \tio");
+  io = std::make_shared<IO>(IO(config, grid_device, state->layout));
   // io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, {layouts->sequencer}));
 
 }
@@ -34,8 +35,12 @@ void Anemone::run() {
   //                              });
   // obs.subscribe([] (grid_device_event_t event) { spdlog::info("ok {} : ({}, {})", event.type, event.x, event.y); });
   
-
+  io->connect();
+  io->grid_events.subscribe([] (grid_event_t e) {
+                              spdlog::info("layout {}, section {}, index {}, type {}", e.layout, e.section, e.index, e.type);
+                            });
+  
   // wait for 20 seconds
-  // rxcpp::observable<>::timer(std::chrono::milliseconds(20000)).
-  //   subscribe( [&] (long) {});
+  rx::observable<>::timer(std::chrono::milliseconds(20000)).
+    subscribe( [&] (long) {});
 }
