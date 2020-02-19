@@ -1,7 +1,5 @@
 #include "anemone/state/layout/context.hpp"
 
-#include <spdlog/spdlog.h>
-
 
 LayoutContext::LayoutContext(std::shared_ptr<GridLayouts> layouts)
   : rxcpp::subjects::behavior< std::shared_ptr<Layout> >(layouts->sequencer),

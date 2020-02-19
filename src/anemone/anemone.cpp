@@ -23,23 +23,24 @@ Anemone::Anemone(std::string config_path,
   io = std::make_shared<IO>(IO(config, grid_device, state->layout));
   // io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, {layouts->sequencer}));
 
+  // initialize controllers
+  spdlog::info("  initializing \tcontrollers");
+  controllers = std::make_shared<Controllers>(Controllers(io, state));
+
+  // initialize ui
+  spdlog::info("  initializing \tui");
+  ui = std::make_shared<UI>(UI(config, io, state));
 }
 
 void Anemone::run() {
   spdlog::info("============= connecting ================");
-  // grid_device->connect("/dev/tty.usbserial-m1000843");
 
-  // auto obs = grid_device->listen()
-  //   | rxcpp::operators::filter([] (grid_device_event_t e) {
-  //                                return e.type == GridDeviceEvent::ButtonDown;
-  //                              });
-  // obs.subscribe([] (grid_device_event_t event) { spdlog::info("ok {} : ({}, {})", event.type, event.x, event.y); });
-  
   io->connect();
-  io->grid_events.subscribe([] (grid_event_t e) {
-                              spdlog::info("layout {}, section {}, index {}, type {}", e.layout, e.section, e.index, e.type);
-                            });
-  
+
+  controllers->connect();
+
+  ui->connect();
+
   // wait for 20 seconds
   rx::observable<>::timer(std::chrono::milliseconds(20000)).
     subscribe( [&] (long) {});
