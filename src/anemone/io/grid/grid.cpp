@@ -1,5 +1,3 @@
-#include <spdlog/spdlog.h>
-
 #include "anemone/io/grid/grid.hpp"
 
 
@@ -12,7 +10,6 @@ Grid::Grid(std::shared_ptr<Config> config,
   // subscribe to current layout
   layout->get_observable()
     .subscribe([this] (std::shared_ptr<Layout> l) {
-                 spdlog::info("SWITCHING TO LAYOUT {}", l->name);
                  current_layout = l;
                });
 }

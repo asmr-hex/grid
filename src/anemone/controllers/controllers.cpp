@@ -1,3 +1,5 @@
+#include <spdlog/spdlog.h>
+
 #include "anemone/controllers/controllers.hpp"
 
 
@@ -6,6 +8,8 @@ Controllers::Controllers(std::shared_ptr<IO> io, std::shared_ptr<State> state)
 {}
 
 void Controllers::connect() {
-  layout = std::make_unique<LayoutController>(io, state);
+  // layout = std::make_unique<LayoutController>(io, state);
   shift = std::make_unique<ShiftController>(io, state);
+
+  spdlog::info("  connected -> controllers");
 }

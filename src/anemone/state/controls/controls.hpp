@@ -21,6 +21,9 @@ public:
 
   rx::behavior<bool> shift;
   void set_shift(bool);
+
+  rx::behavior<double> bpm;
+  void set_bpm(double);
 };
 
 #endif

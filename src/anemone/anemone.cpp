@@ -20,7 +20,7 @@ Anemone::Anemone(std::string config_path,
   
   // initialize io
   spdlog::info("  initializing \tio");
-  io = std::make_shared<IO>(IO(config, grid_device, state->layout));
+  io = std::make_shared<IO>(IO(config, grid_device, state));
   // io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, {layouts->sequencer}));
 
   // initialize controllers

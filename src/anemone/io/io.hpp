@@ -15,6 +15,7 @@
 #include "anemone/rx.hpp"
 #include "anemone/state.hpp"
 
+#include "anemone/io/clock/clock.hpp"
 #include "anemone/io/grid/grid.hpp"
 #include "anemone/io/grid/device/grid.hpp"
 // #include "anemone/io/midi/midi.hpp"
@@ -31,25 +32,29 @@ public:
   /// @param config        pointer to a configuration object
   /// @param grid_device   pointer to a grid device object
   /// @param midi_device   pointer to a midi device object
-  /// @param layouts       pointer to the grid layout context
+  /// @param state         pointer to the state
   ///
   /// @details
   /// Constructs Grid and Midi objects (which wrap their respective device objects
   /// providing a higher level of abstraction) which are publicly exposed IO members.
   ///
-  IO(std::shared_ptr<Config> config,
-     std::shared_ptr<GridDevice> grid_device,
+  IO(std::shared_ptr<Config>,
+     std::shared_ptr<GridDevice>,
      // std::shared_ptr<MidiDeviceFactory> midi_device_factory,
-     std::shared_ptr<LayoutContext> layout);
+     std::shared_ptr<State>);
 
   /// @brief Connects Grid & Midi objects to their ports.
   void connect();
-  
+
+  std::shared_ptr<Clock> clock;
   std::shared_ptr<Grid> grid;
   // std::shared_ptr<Midi> midi;
 
   /// @brief observable stream of grid events
   rx::observable<grid_event_t> grid_events;
+
+  /// @brief observable stream of clock events
+  rx::observable<tick_t> clock_events;
 };
 
 #endif

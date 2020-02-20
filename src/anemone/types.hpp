@@ -14,7 +14,13 @@
 #include "anemone/types/io/grid/device/event.hpp"
 #include "anemone/types/io/grid/device/coordinates.hpp"
 
+// clock types
+#include "anemone/types/io/clock/tick.hpp"
+
 // layout types
 #include "anemone/types/layout/names.hpp"
+
+// ppqn
+#include "anemone/types/ppqn.hpp"
 
 #endif
