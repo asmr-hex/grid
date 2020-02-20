@@ -14,13 +14,25 @@
 #include "anemone/types/io/grid/device/event.hpp"
 #include "anemone/types/io/grid/device/coordinates.hpp"
 
+
+// midi types
+#include "anemone/types/io/midi.hpp"
+
 // clock types
 #include "anemone/types/io/clock/tick.hpp"
 
 // layout types
 #include "anemone/types/layout/names.hpp"
 
-// ppqn
+// ppqn types
 #include "anemone/types/ppqn.hpp"
+
+// instrument types
+#include "anemone/types/instrument/names.hpp"
+#include "anemone/types/instrument/part.hpp"
+#include "anemone/types/instrument/page.hpp"
+#include "anemone/types/instrument/sequence.hpp"
+#include "anemone/types/instrument/step.hpp"
+#include "anemone/types/instrument/step_event.hpp"
 
 #endif

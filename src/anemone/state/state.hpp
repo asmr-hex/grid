@@ -13,6 +13,7 @@
 #include "anemone/config.hpp"
 #include "anemone/state/layout/context.hpp"
 #include "anemone/state/controls/controls.hpp"
+#include "anemone/state/instruments.hpp"
 
 
 class State {
@@ -21,6 +22,7 @@ public:
 
   std::shared_ptr<LayoutContext> layout;
   std::shared_ptr<GlobalControls> controls;
+  std::shared_ptr<Instruments> instruments;
 };
 
 #endif

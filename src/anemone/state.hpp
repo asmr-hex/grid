@@ -17,4 +17,12 @@
 #include "anemone/state/layout/section.hpp"
 #include "anemone/state/layout/layouts/layouts.hpp"
 
+// controls
+#include "anemone/state/controls/controls.hpp"
+
+// instruments
+#include "anemone/state/instruments/instrument.hpp"
+#include "anemone/state/instruments/part.hpp"
+#include "anemone/state/instruments/sequence.hpp"
+
 #endif
