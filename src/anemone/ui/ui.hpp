@@ -16,6 +16,7 @@
 #include "anemone/state.hpp"
 
 #include "anemone/ui/shift.hpp"
+#include "anemone/ui/step_sequence.hpp"
 
 
 class UI {
@@ -30,6 +31,7 @@ private:
   std::shared_ptr<State> state;
     
   std::unique_ptr<ShiftUI> shift;
+  std::unique_ptr<StepSequenceUI> step_sequence;
 };
 
 #endif

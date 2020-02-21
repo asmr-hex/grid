@@ -12,6 +12,7 @@ UI::UI(std::shared_ptr<Config> config, std::shared_ptr<IO> io, std::shared_ptr<S
 
 void UI::connect() {
   shift = std::make_unique<ShiftUI>(LayoutName::SequencerAndInstrument, GridSectionName::Shift, io, state);
+  step_sequence = std::make_unique<StepSequenceUI>(LayoutName::SequencerAndInstrument, GridSectionName::Steps, io, state);
 
   spdlog::info("  connected -> ui");
 }
