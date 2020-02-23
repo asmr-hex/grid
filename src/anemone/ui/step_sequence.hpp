@@ -5,8 +5,8 @@
  * @date   2020-02-20
  *************************************************/
 
-#ifndef UI_SHIFT_H
-#define UI_SHIFT_H
+#ifndef UI_STEP_SEQUENCE_H
+#define UI_STEP_SEQUENCE_H
 
 #include <memory>
 

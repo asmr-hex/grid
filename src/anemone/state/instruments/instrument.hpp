@@ -25,8 +25,8 @@ public:
 
   struct status_t {
     struct part_t {
-      part_idx_t in_playback = 0;
-      part_idx_t under_edit = 0;
+      rx::behavior<std::shared_ptr<Part> > in_playback;
+      rx::behavior<std::shared_ptr<Part> > under_edit;
     };
     struct bank_t {
       bank_idx_t in_playback = 0;

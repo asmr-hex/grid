@@ -30,7 +30,7 @@ public:
   };
 
   struct Page {
-    page_idx_t rendered      = 0;
+    rx::behavior<page_idx_t> rendered = rx::behavior<page_idx_t>(0);
     page_idx_t under_edit    = 0;
     page_idx_t last          = 0;
     bool       follow_cursor = false;
