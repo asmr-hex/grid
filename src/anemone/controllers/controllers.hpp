@@ -16,6 +16,8 @@
 
 #include "anemone/controllers/layout.hpp"
 #include "anemone/controllers/shift.hpp"
+#include "anemone/controllers/step.hpp"
+#include "anemone/controllers/part.hpp"
 
 
 /// @brief An aggregation of all controllers which respond to i/o events.
@@ -46,6 +48,8 @@ private:
 
   std::unique_ptr<LayoutController> layout;
   std::unique_ptr<ShiftController>  shift;
+  std::unique_ptr<StepController>   step;
+  std::unique_ptr<PartController>   part;
 };
 
 #endif

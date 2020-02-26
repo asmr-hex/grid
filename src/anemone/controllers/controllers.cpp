@@ -10,6 +10,8 @@ Controllers::Controllers(std::shared_ptr<IO> io, std::shared_ptr<State> state)
 void Controllers::connect() {
   // layout = std::make_unique<LayoutController>(io, state);
   shift = std::make_unique<ShiftController>(io, state);
+  step = std::make_unique<StepController>(io, state);
+  part = std::make_unique<PartController>(io, state);
 
   spdlog::info("  connected -> controllers");
 }

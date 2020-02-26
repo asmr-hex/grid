@@ -26,9 +26,14 @@ public:
   rx::behavior<std::shared_ptr<Instrument> > rendered;
   void render(InstrumentName);
 
+  /// @brief midi output observable.
+  rx::subject<midi_data_t> midi_output;
+  
   std::shared_ptr<ER1> er1;
   
   std::map<InstrumentName, std::shared_ptr<Instrument> > by_name;
+
+  void advance_sequences();
 };
 
 #endif

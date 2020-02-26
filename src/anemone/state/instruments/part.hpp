@@ -20,6 +20,8 @@ class Part {
 public:
   Part(part_idx_t);
 
+  std::vector<step_event_t> advance_step();
+
   part_idx_t id;
   // TODO inntroduce bank_relative_part_idx_t?
 
@@ -54,8 +56,10 @@ public:
   };
 
   struct Step {
-    paged_step_idx_t last      = { .page = 1, .step = 31 };
-    bool             show_last = false;
+    granular_step_idx_t current               = 0;
+    paged_step_idx_t    current_page_relative = { .page = 0, .step = 0 };
+    paged_step_idx_t    last                  = { .page = 1, .step = 31 };
+    bool                show_last             = false;
   };
   
   Ppqn ppqn;
