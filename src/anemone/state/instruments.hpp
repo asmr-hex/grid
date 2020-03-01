@@ -33,7 +33,10 @@ public:
   
   std::map<InstrumentName, std::shared_ptr<Instrument> > by_name;
 
-  void advance_sequences();
+  /// @brief advance steps of all currently playing parts for currently
+  /// playing instruments.
+  ///
+  void advance_steps();
 };
 
 #endif

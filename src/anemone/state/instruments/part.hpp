@@ -9,6 +9,7 @@
 #define STATE_INSTRUMENTS_PART_H
 
 #include <memory>
+#include <vector>
 
 #include "anemone/rx.hpp"
 #include "anemone/types.hpp"

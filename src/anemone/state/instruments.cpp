@@ -13,18 +13,27 @@ void Instruments::render(InstrumentName name) {
 }
 
 void Instruments::advance_step() {
-  for (auto itr : by_name) {
-    auto instrument = itr.second;
-    if (!instrument->is_playing) continue;
+  auto playing_parts = rx::observable<>::iterate(by_name)
+    | rx::map([] (std::pair<InstrumentName, std::shared_ptr<Instrument> > p) {
+                return std::get<1>(p);
+              })
+    | rx::filter([] (std::shared_ptr<Instrument> i) {
+                   // filter for only playing instruments
+                   return i->is_playing;
+                 })
+    | rx::map([] (std::shared_ptr<Instrument> i) {
+                // retrieve the parts in playback.
+                return i->status.part.in_playback.get_value();
+              })
+    | rx::as_blocking();
 
-    auto part = instrument->status.part.in_playback.get_value();
-
-    // get midi data at this step
-    auto step_events = part->advance_step();
-
-    for (auto step_event : step_events) {
-      // output step events
-      midi_output.get_subscriber().on_next(step_event);
-    }
-  }
+    // advance steps of each part in playback.
+    playing_parts
+      .subscribe([this] (std::shared_ptr<Part> part) {
+                   auto step_events = part->advance_step();
+                   
+                   for (auto step_event : step_events) {
+                     midi_output.get_subscriber().on_next(step_event);
+                   }
+                 });
 }
