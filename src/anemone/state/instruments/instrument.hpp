@@ -19,7 +19,9 @@
 
 class Instrument {
 public:
-  Instrument(InstrumentName, std::shared_ptr<Config>);
+  Instrument(InstrumentName,
+             std::shared_ptr<Config>,
+             std::vector<std::shared_ptr<Part> >);
 
   InstrumentName name;
 
@@ -42,5 +44,8 @@ public:
   status_t status;
   std::vector<std::shared_ptr<Part> > parts;
 };
+
+/// @brief wrapper over Instrument constructor to initialize parts.
+Instrument create_instrument(InstrumentName, std::shared_ptr<Config>);
 
 #endif

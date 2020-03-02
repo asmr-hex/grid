@@ -49,7 +49,7 @@ private:
   std::unique_ptr<LayoutController> layout;
   std::unique_ptr<ShiftController>  shift;
   std::unique_ptr<StepController>   step;
-  std::unique_ptr<PartController>   part;
+  // std::unique_ptr<PartController>   part;
 };
 
 #endif

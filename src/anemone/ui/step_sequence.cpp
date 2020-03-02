@@ -22,40 +22,33 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
     | rx::map([] (std::shared_ptr<Part> rendered_part) {
                 return rendered_part->step.current.get_observable();
               })
-    | rx::switch_on_next();
-    // | rx::map([state] (granular_step_idx_t granular_step) {
-    //             auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+    | rx::switch_on_next()  
+    | rx::map([state] (granular_step_idx_t granular_step) {
+                auto page_size = state->layout->get_layouts()->sequencer->steps->size();
 
-    //             return granular_to_paged_step(granular_step, page_size);
-    //           });
-
-  current_step_observable.switch_on_next()
-    .subscribe([] (granular_step_idx_t  p) {
-                spdlog::info("AAAA");
+                return granular_to_paged_step(granular_step, page_size);
               });
-
-  // QUESTION: is it possible to have chained switch_on_next observables?
   
-  // rendered_page_observable.combine_latest(current_step_observable)
-  //   .subscribe([this, state] (std::tuple<page_idx_t, granular_step_idx_t> p) {
-  //                auto page_size = state->layout->get_layouts()->sequencer->steps->size();
-  //                auto page = std::get<0>(p);
-  //                auto paged_step = granular_to_paged_step(std::get<1>(p), page_size);
+  rendered_page_observable.combine_latest(current_step_observable)
+    .subscribe([this, state] (std::tuple<page_idx_t, paged_step_idx_t> p) {
+                 auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+                 auto page = std::get<0>(p);
+                 auto paged_step = std::get<1>(p);
 
-  //                if (page == paged_step.page) {
-  //                  // turn on this step
-  //                  turn_on_led(paged_step.step);
+                 if (page == paged_step.page) {
+                   // turn on this step
+                   turn_on_led(paged_step.step);
 
-  //                  if (paged_step.step != 0) {
-  //                    turn_off_led(paged_step.step - 1);
-  //                  }
-  //                }
+                   if (paged_step.step != 0) {
+                     turn_off_led(paged_step.step - 1);
+                   }
+                 }
 
-  //                if (page == (paged_step.page +1) && paged_step.step == 0) {
-  //                  // turn off last step on this page if cursor moved to a new page.
-  //                  turn_off_led(page_size-1);
-  //                }
-  //              });
+                 if (page == (paged_step.page +1) && paged_step.step == 0) {
+                   // turn off last step on this page if cursor moved to a new page.
+                   turn_off_led(page_size-1);
+                 }
+               });
   
   // TODO do the same for steps and rendered steps --^
 
