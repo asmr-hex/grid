@@ -1,52 +1,11 @@
+#include <spdlog/spdlog.h>
+
 #include "anemone/ui/step_sequence.hpp"
 
 
 StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> io, std::shared_ptr<State> state)
   : UIComponent(layout, section, io, state)
 {
-  // auto status_subscription = rx::composite_subscription();
-  // auto part_subscription = rx::composite_subscription();
-  // auto page_subscription = rx::composite_subscription();
-  // auto sequence_subscription = rx::composite_subscription();
-
-  // // TODO we need to subscribe to an observable, which yields another observable which
-  // // we want to subscribe to once the original observable updates (but ALSO (AND MOST IMPORTANTLY)
-  // // UNSUBSCRIBE to the previous second observable).....maybe there is a better way
-
-  // state->instruments->rendered.get_observable()
-  //   .subscribe([&] (std::shared_ptr<Instrument> rendered_instrument) {
-  //                // TODO if our status subscriber is subscribed, unsubscribe.
-                 
-  //                // we want to subscribe to the status of this newly rendered instrument
-  //                auto status_subscriber = rx::make_subscriber<part_idx_t>
-  //                  (status_subscription,
-  //                   [&] (part_idxt_t part_idx) {
-  //                     // TODO if part_subscription is subscribed, unsubscribe
-
-  //                     auto part = rendered_instrument->parts[part_idx];
-
-  //                     // we want to subscribe to the newly rendered page
-  //                     auto page_subscriber = rx::make_subscriber<page_idx_t>
-  //                       (page_subscription,
-  //                        [&] (page_idx_t page) {
-  //                          // if page_subscription is subscribed, unnsubscribe
-
-  //                          auto // subscribe to step
-  //                        });
-                      
-  //                     part->page.rendered.get_observable()
-  //                       .subscribe()
-  //                   });
-  
-  //                // get the part under_edit
-
-  //                // if our page subscriber is subscribed, unsubscribe
-  //                // subscribe to the rendered page of the part under edit
-
-  //                //
-  //              });
-
-  // OR use switch_on_next
   auto rendered_part_observable = state->instruments->rendered.get_observable()
     | rx::map([] (std::shared_ptr<Instrument> rendered_instrument) {
                 return rendered_instrument->status.part.under_edit.get_observable();
@@ -59,5 +18,46 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
               })
     | rx::switch_on_next();
 
+  auto current_step_observable = rendered_part_observable
+    | rx::map([] (std::shared_ptr<Part> rendered_part) {
+                return rendered_part->step.current.get_observable();
+              })
+    | rx::switch_on_next();
+    // | rx::map([state] (granular_step_idx_t granular_step) {
+    //             auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+
+    //             return granular_to_paged_step(granular_step, page_size);
+    //           });
+
+  current_step_observable.switch_on_next()
+    .subscribe([] (granular_step_idx_t  p) {
+                spdlog::info("AAAA");
+              });
+
+  // QUESTION: is it possible to have chained switch_on_next observables?
+  
+  // rendered_page_observable.combine_latest(current_step_observable)
+  //   .subscribe([this, state] (std::tuple<page_idx_t, granular_step_idx_t> p) {
+  //                auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+  //                auto page = std::get<0>(p);
+  //                auto paged_step = granular_to_paged_step(std::get<1>(p), page_size);
+
+  //                if (page == paged_step.page) {
+  //                  // turn on this step
+  //                  turn_on_led(paged_step.step);
+
+  //                  if (paged_step.step != 0) {
+  //                    turn_off_led(paged_step.step - 1);
+  //                  }
+  //                }
+
+  //                if (page == (paged_step.page +1) && paged_step.step == 0) {
+  //                  // turn off last step on this page if cursor moved to a new page.
+  //                  turn_off_led(page_size-1);
+  //                }
+  //              });
+  
   // TODO do the same for steps and rendered steps --^
+
+  // subscribe to the currently rendered part's step cursor location.
 }

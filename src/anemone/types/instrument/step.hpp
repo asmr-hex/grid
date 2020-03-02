@@ -71,4 +71,30 @@ struct paged_step_idx_t {
   };
 };
 
+/// @brief convert absolute step to paged step.
+///
+/// @param step        `step_idx_t`.
+/// @param page_size   `unsigned int`
+///
+/// @return `paged_step_idx_t`
+///
+inline paged_step_idx_t absolute_to_paged_step(step_idx_t step, unsigned int page_size) {
+  return { .page = step / page_size,
+           .step = step % page_size,
+  };
+};
+
+/// @brief convert granular step index to a paged step index
+///
+/// @param granular_step_idx   the granular step to convert
+/// @param page_size           `unsigned int` representing the size of each page.
+///
+/// @return paged_step_idx_t
+///
+inline paged_step_idx_t granular_to_paged_step(granular_step_idx_t granular_step_idx,
+                                        unsigned int page_size) {
+  return absolute_to_paged_step(granular_step_idx / static_cast<unsigned int>(PPQN::Max),
+                                page_size);
+};
+
 #endif

@@ -38,12 +38,12 @@ public:
   ///
   /// @return a vector of step events
   ///
-  std::vector<step_event_t> get_events_at(granular_step_idx_t, std::vector<step_event_id_t>);
+  std::vector<step_event_t> get_events_at(granular_step_idx_t, const std::vector<step_event_id_t>&);
 
 private:
   void collect_events_at(sequence_t,
                          granular_step_idx_t,
-                         step_event_id_t,
+                         const std::vector<step_event_id_t>&,
                          std::vector<step_event_t>&);
 };
 

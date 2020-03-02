@@ -21,46 +21,47 @@ class Part {
 public:
   Part(part_idx_t);
 
-  std::vector<step_event_t> advance_step();
-
   part_idx_t id;
   // TODO inntroduce bank_relative_part_idx_t?
 
   struct Ppqn {
-    PPQN current        = PPQN::Four;
-    PPQN next           = PPQN::Four;
-    bool pending_change = false;
+    rx::behavior<PPQN> current;
+    rx::behavior<PPQN> next;
+    rx::behavior<bool> pending_change;
   };
 
   struct Page {
-    rx::behavior<page_idx_t> rendered = rx::behavior<page_idx_t>(0);
-    page_idx_t under_edit    = 0;
-    page_idx_t last          = 0;
-    bool       follow_cursor = false;
+    rx::behavior<page_idx_t> rendered;
+    rx::behavior<page_idx_t> under_edit;
+    rx::behavior<page_idx_t> last;
+    rx::behavior<bool>       follow_cursor;
   };
 
   struct Transport {
-    bool is_playing          = false;
-    bool is_paused           = false;
-    bool is_stopped          = false;
+    rx::behavior<bool> is_playing;
+    rx::behavior<bool> is_paused;
+    rx::behavior<bool> is_stopped;
 
-    bool is_stopping         = false;
-    bool is_transitioning    = false;
-    bool is_about_to_start   = false;
-    bool is_about_to_unpause = false;
+    rx::behavior<bool> is_stopping;
+    rx::behavior<bool> is_transitioning;
+    rx::behavior<bool> is_about_to_start;
+    rx::behavior<bool> is_about_to_unpause;
 
     // since pausing a part may leave its cursor not 'on the beat', we must
     // keep track of how much 'off the beat' it has been paused. this allows
     // us to resume a paused part appropriately so that, once resumed, it is
     // still aligned with played 'on the beat'.
-    int pulse_pause_offset   = 0;  
+    rx::behavior<int> pulse_pause_offset;
   };
 
   struct Step {
-    granular_step_idx_t current               = 0;
-    paged_step_idx_t    current_page_relative = { .page = 0, .step = 0 };
-    paged_step_idx_t    last                  = { .page = 1, .step = 31 };
-    bool                show_last             = false;
+    rx::behavior<granular_step_idx_t> current;
+    // rx::behavior<paged_step_idx_t>    current_page_relative = { .page = 0, .step = 0 }; // TODO remove this redundancy!???
+    rx::behavior<paged_step_idx_t>    last;
+    rx::behavior<bool>                show_last;
+
+    /// @brief update the current step.
+    void update_current(granular_step_idx_t);
   };
   
   Ppqn ppqn;

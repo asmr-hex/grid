@@ -35,8 +35,8 @@ public:
 
     part_t part;
     bank_t bank;
-    bool   is_playing = false;
-    bool   stop_on_next_measure = false;
+    rx::behavior<bool> is_playing;
+    rx::behavior<bool> stop_on_next_measure;
   };
 
   status_t status;

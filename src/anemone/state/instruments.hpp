@@ -32,11 +32,6 @@ public:
   std::shared_ptr<ER1> er1;
   
   std::map<InstrumentName, std::shared_ptr<Instrument> > by_name;
-
-  /// @brief advance steps of all currently playing parts for currently
-  /// playing instruments.
-  ///
-  void advance_steps();
 };
 
 #endif

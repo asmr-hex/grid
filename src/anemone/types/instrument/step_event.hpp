@@ -37,9 +37,6 @@ enum class step_event_protocol_t {
 ///
 typedef unsigned short step_event_id_t;
 
-/// @brief Constant for an all step wildcard.
-const all_step_events = 0xffff;
-
 /// @brief Step event type.
 struct step_event_t {
   step_event_protocol_t protocol;
