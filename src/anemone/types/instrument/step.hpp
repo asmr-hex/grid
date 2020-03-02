@@ -92,7 +92,8 @@ inline paged_step_idx_t absolute_to_paged_step(step_idx_t step, unsigned int pag
 /// @return paged_step_idx_t
 ///
 inline paged_step_idx_t granular_to_paged_step(granular_step_idx_t granular_step_idx,
-                                        unsigned int page_size) {
+                                               unsigned int page_size)
+{
   return absolute_to_paged_step(granular_step_idx / static_cast<unsigned int>(PPQN::Max),
                                 page_size);
 };

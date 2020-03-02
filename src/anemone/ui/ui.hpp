@@ -17,6 +17,9 @@
 
 #include "anemone/ui/shift.hpp"
 #include "anemone/ui/step_sequence.hpp"
+#include "anemone/ui/page.hpp"
+#include "anemone/ui/parts.hpp"
+#include "anemone/ui/banks.hpp"
 
 
 class UI {
@@ -32,6 +35,9 @@ private:
     
   std::unique_ptr<ShiftUI> shift;
   std::unique_ptr<StepSequenceUI> step_sequence;
+  std::unique_ptr<PageUI> pages;
+  std::unique_ptr<PartsUI> parts;
+  std::unique_ptr<BanksUI> banks;
 };
 
 #endif

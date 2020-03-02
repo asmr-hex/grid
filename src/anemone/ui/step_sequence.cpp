@@ -44,9 +44,9 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                    }
                  }
 
-                 if (page == (paged_step.page +1) && paged_step.step == 0) {
+                 if ((page + 1) == paged_step.page && paged_step.step == 0) {
                    // turn off last step on this page if cursor moved to a new page.
-                   turn_off_led(page_size-1);
+                   turn_off_led(page_size - 1);
                  }
                });
   

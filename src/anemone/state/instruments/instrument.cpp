@@ -10,13 +10,9 @@ Instrument::Instrument(InstrumentName name,
              .bank                  = {},
              .is_playing            = rx::behavior<bool>(true),
              .stop_on_next_measure  = rx::behavior<bool>(false)
-      })
-{
-  // populate new parts TODO make this connfigurable....
-  for (unsigned int i = 0; i < 49; ++i) {
-    parts.push_back(std::make_shared<Part>(i));
-  }
-}
+      }),
+    parts(parts)
+{}
 
 
 Instrument create_instrument(InstrumentName name, std::shared_ptr<Config> config) {

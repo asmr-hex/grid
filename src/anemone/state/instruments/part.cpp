@@ -9,7 +9,7 @@ Part::Part(part_idx_t id)
       }),
     page({ .rendered      = rx::behavior<page_idx_t>(0),
            .under_edit    = rx::behavior<page_idx_t>(0),
-           .last          = rx::behavior<page_idx_t>(0),
+           .last          = rx::behavior<page_idx_t>(1), // TODO NOTE: this is duplicated state with step.last .... remove one of them. probably this one and make this derived inn the ui
            .follow_cursor = rx::behavior<bool>(false),
       }),
     transport({ .is_playing          = rx::behavior<bool>(true),

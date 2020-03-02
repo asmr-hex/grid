@@ -52,7 +52,6 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
 
                                 // update current granular step
                                 part->step.update_current(next_granular_step);
-  
                                 
                                 // TODO send events to midi output (on IO presumably)
                                 // TODO clean up advance step methods on instruments and part
