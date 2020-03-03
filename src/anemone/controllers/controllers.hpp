@@ -18,7 +18,10 @@
 #include "anemone/controllers/shift.hpp"
 #include "anemone/controllers/step.hpp"
 #include "anemone/controllers/play_pause.hpp"
+#include "anemone/controllers/page.hpp"
 #include "anemone/controllers/part.hpp"
+#include "anemone/controllers/bank.hpp"
+#include "anemone/controllers/ppqn.hpp"
 
 
 /// @brief An aggregation of all controllers which respond to i/o events.
@@ -51,7 +54,10 @@ private:
   std::unique_ptr<ShiftController>       shift;
   std::unique_ptr<StepController>        step;
   std::unique_ptr<PlayPauseController>   play_pause;
-  // std::unique_ptr<PartController>   part;
+  std::unique_ptr<PageController>        page;
+  std::unique_ptr<PartController>        part;
+  std::unique_ptr<BankController>        bank;
+  std::unique_ptr<PPQNController>        ppqn;
 };
 
 #endif

@@ -12,7 +12,10 @@ void Controllers::connect() {
   shift = std::make_unique<ShiftController>(io, state);
   step = std::make_unique<StepController>(io, state);
   play_pause = std::make_unique<PlayPauseController>(io, state);
-  // part = std::make_unique<PartController>(io, state);
+  page = std::make_unique<PageController>(io, state);
+  part = std::make_unique<PartController>(io, state);
+  bank = std::make_unique<BankController>(io, state);
+  ppqn = std::make_unique<PPQNController>(io, state);
 
   spdlog::info("  connected -> controllers");
 }
