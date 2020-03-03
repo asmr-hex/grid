@@ -52,6 +52,18 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
 
                                 // update current granular step
                                 part->step.update_current(next_granular_step);
+
+                                // check if the next granular step is a multiple of PPQN::Max, which
+                                // means that this step is "on beat".
+                                if ( (next_granular_step % PPQN::Max) == 0 ) {
+                                  // make all state changes for this part which need to happen "on beat"
+
+                                  // if there is a pending PPQN change, do it!
+                                  if ( part->ppqn.pending_change.get_value() ) {
+                                    part->ppqn.current.get_subscriber().on_next(part->ppqn.next.get_value());
+                                    part->ppqn.pending_change.get_subscriber().on_next(false);
+                                  }
+                                }
                                 
                                 // TODO send events to midi output (on IO presumably)
                                 // TODO clean up advance step methods on instruments and part

@@ -6,7 +6,9 @@ UIComponent::UIComponent(LayoutName layout, GridSectionName section, std::shared
     section(section),
     io(io),
     state(state)
-{}
+{
+  section_size = state->layout->get_layouts()->layout_by_name[layout]->section_by_name[section]->size();
+}
 
 void UIComponent::turn_on_led(grid_section_index index) {
   io->grid->turn_on
@@ -30,4 +32,10 @@ void UIComponent::set_led(grid_section_index index, unsigned int intensity) {
        .section = section,
        .index   = index,
     }, intensity);
+}
+
+void UIComponent::clear() {
+  for (unsigned int i = 0; i < section_size; i++) {
+    turn_off_led(i);
+  }
 }

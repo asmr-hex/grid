@@ -26,6 +26,7 @@ public:
 
   struct Ppqn {
     rx::behavior<PPQN> current;
+    rx::behavior<PPQN> previous;
     rx::behavior<PPQN> next;
     rx::behavior<bool> pending_change;
   };

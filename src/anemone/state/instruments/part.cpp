@@ -4,6 +4,7 @@
 Part::Part(part_idx_t id)
   : id(id),
     ppqn({ .current        = rx::behavior<PPQN>(PPQN::Four),
+           .previous       = rx::behavior<PPQN>(PPQN::Four),
            .next           = rx::behavior<PPQN>(PPQN::Four),
            .pending_change = rx::behavior<bool>(false),
       }),

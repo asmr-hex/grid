@@ -20,6 +20,18 @@
 class PartsUI : public UIComponent {
 public:
   PartsUI(LayoutName, GridSectionName, std::shared_ptr<IO>, std::shared_ptr<State>);
+private:
+  /// @brief a struct to keep track of the previous parts.
+  ///
+  /// @remark these values represent the section relative index of the parts
+  /// rather than the actual part ids.
+  ///
+  struct previous_parts {
+    unsigned int rendered_part;
+    unsigned int playing_part;
+  };
+
+  previous_parts previous;
 };
 
 #endif

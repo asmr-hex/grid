@@ -24,12 +24,15 @@ protected:
   void turn_off_led(grid_section_index index);
   void set_led(grid_section_index index, unsigned int intensity);
 
+  /// @brief clears the ui section to a tabula rasa
+  void clear();
 
 private:
   LayoutName layout;
   GridSectionName section;
   std::shared_ptr<IO> io;
   std::shared_ptr<State> state;
+  unsigned int section_size;
 };
 
 #endif

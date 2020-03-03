@@ -44,12 +44,14 @@ public:
   ///
   grid_coordinates_t translate(const grid_addr_t&) const;
 
+  /// @brief a map of sections by name.
+  std::map< GridSectionName, std::shared_ptr<GridSection> > section_by_name;
+  
 protected:
   void register_section(std::shared_ptr<GridSection>);
   
 private:
   std::vector<std::shared_ptr<GridSection> > sections;
-  std::map< GridSectionName, std::shared_ptr<GridSection> > section_by_name;
 
   /// @brief returns the grid section corresponding to the provided grid coordinates.
   ///

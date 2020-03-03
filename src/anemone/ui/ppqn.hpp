@@ -24,6 +24,13 @@ public:
 
 private:
   std::map<PPQN, unsigned int> ppqn_to_index;
+
+  /// @brief this struct tracks the previous values of the state in order to support
+  /// minimal ui re-rendering.
+  struct {
+    std::shared_ptr<Instrument> rendered_instrument;
+    part_idx_t                  rendered_part_idx;
+  } previous;
 };
 
 #endif
