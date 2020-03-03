@@ -17,6 +17,7 @@
 #include "anemone/controllers/layout.hpp"
 #include "anemone/controllers/shift.hpp"
 #include "anemone/controllers/step.hpp"
+#include "anemone/controllers/play_pause.hpp"
 #include "anemone/controllers/part.hpp"
 
 
@@ -46,9 +47,10 @@ private:
   std::shared_ptr<IO> io;
   std::shared_ptr<State> state;
 
-  std::unique_ptr<LayoutController> layout;
-  std::unique_ptr<ShiftController>  shift;
-  std::unique_ptr<StepController>   step;
+  std::unique_ptr<LayoutController>      layout;
+  std::unique_ptr<ShiftController>       shift;
+  std::unique_ptr<StepController>        step;
+  std::unique_ptr<PlayPauseController>   play_pause;
   // std::unique_ptr<PartController>   part;
 };
 

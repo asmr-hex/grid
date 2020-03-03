@@ -37,6 +37,10 @@ public:
     rx::behavior<bool>       follow_cursor;
   };
 
+  // TODO maybe refactor this to be on Instrument innstead of each part....
+  // Why is it on each part? is there a specific reasonn it needs to be on each part?
+  // well...if we are editing a part not in playback...we might want the transport buttons
+  // to tell us that this part is not actually playing. so maybe no refactor...
   struct Transport {
     rx::behavior<bool> is_playing;
     rx::behavior<bool> is_paused;

@@ -31,8 +31,8 @@ public:
       rx::behavior<std::shared_ptr<Part> > under_edit;
     };
     struct bank_t {
-      bank_idx_t in_playback = 0;
-      bank_idx_t under_edit = 0;
+      rx::behavior<bank_idx_t> in_playback;
+      rx::behavior<bank_idx_t> under_edit;
     };
 
     part_t part;

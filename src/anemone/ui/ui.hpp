@@ -20,6 +20,9 @@
 #include "anemone/ui/page.hpp"
 #include "anemone/ui/parts.hpp"
 #include "anemone/ui/banks.hpp"
+#include "anemone/ui/ppqn.hpp"
+#include "anemone/ui/play_pause.hpp"
+#include "anemone/ui/stop.hpp"
 
 
 class UI {
@@ -38,6 +41,9 @@ private:
   std::unique_ptr<PageUI> pages;
   std::unique_ptr<PartsUI> parts;
   std::unique_ptr<BanksUI> banks;
+  std::unique_ptr<PPQNUI> ppqn;
+  std::unique_ptr<PlayPauseUI> play_pause;
+  std::unique_ptr<StopUI> stop;
 };
 
 #endif

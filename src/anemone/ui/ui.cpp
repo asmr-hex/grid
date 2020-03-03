@@ -16,6 +16,9 @@ void UI::connect() {
   pages = std::make_unique<PageUI>(LayoutName::SequencerAndInstrument, GridSectionName::Pages, io, state);
   parts = std::make_unique<PartsUI>(LayoutName::SequencerAndInstrument, GridSectionName::Parts, io, state);
   banks = std::make_unique<BanksUI>(LayoutName::SequencerAndInstrument, GridSectionName::Banks, io, state);
+  ppqn = std::make_unique<PPQNUI>(LayoutName::SequencerAndInstrument, GridSectionName::PPQN, io, state);
+  play_pause = std::make_unique<PlayPauseUI>(LayoutName::SequencerAndInstrument, GridSectionName::PlayPause, io, state);
+  stop = std::make_unique<StopUI>(LayoutName::SequencerAndInstrument, GridSectionName::Stop, io, state);
 
   spdlog::info("  connected -> ui");
 }
