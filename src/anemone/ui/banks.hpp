@@ -20,6 +20,15 @@
 class BanksUI : public UIComponent {
 public:
   BanksUI(LayoutName, GridSectionName, std::shared_ptr<IO>, std::shared_ptr<State>);
+
+private:
+  /// @brief this struct tracks the previous values of the state in order to support
+  /// minimal ui re-rendering.
+  struct {
+    std::shared_ptr<Instrument> rendered_instrument;
+    bank_idx_t                  rendered_bank;
+    bank_idx_t                  playing_bank;
+  } previous;
 };
 
 #endif

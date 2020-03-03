@@ -41,6 +41,7 @@ PPQNUI::PPQNUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
   
   auto current_ppqn = rendered_part
     | rx::map([] (std::shared_ptr<Part> p) {
+                
                 return p->ppqn.current.get_observable();
               })
     | rx::switch_on_next();
