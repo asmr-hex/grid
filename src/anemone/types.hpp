@@ -16,6 +16,7 @@
 
 // grid animation types
 #include "anemone/types/io/grid/animation.hpp"
+#include "anemone/types/io/grid/animations/periodic_waveforms.hpp"
 
 // midi types
 #include "anemone/types/io/midi.hpp"

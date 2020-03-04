@@ -20,6 +20,17 @@ struct grid_addr_t {
   LayoutName layout;
   GridSectionName section;
   grid_section_index index;
+
+  /// @brief grid address equality operator.
+  ///
+  /// @remark
+  /// Providing an equality (`==`) operator definition is necessary for using this
+  /// struct as a key in a std lib map collection.
+  ///
+  bool operator==(const grid_addr_t &m) const {
+    return layout == m.layout && section == m.section && index == m.index;
+  };
+
 };
 
 /// @brief a grid address hasher functor.

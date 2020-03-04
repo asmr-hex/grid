@@ -36,7 +36,8 @@ PlayPauseUI::PlayPauseUI(LayoutName layout, GridSectionName section, std::shared
                  if (rendered_part_is_playing) {
                    turn_on_led(0);
                  } else if (rendered_part_is_paused) {
-                   set_led(0, 7);
+                   add_animation(std::make_shared<animation::SineWave>(std::chrono::milliseconds(1000)),
+                                 0);
                  } else {
                    turn_off_led(0);
                  }
