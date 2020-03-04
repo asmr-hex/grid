@@ -14,6 +14,8 @@
 #include "anemone/types/io/grid/device/event.hpp"
 #include "anemone/types/io/grid/device/coordinates.hpp"
 
+// grid animation types
+#include "anemone/types/io/grid/animation.hpp"
 
 // midi types
 #include "anemone/types/io/midi.hpp"

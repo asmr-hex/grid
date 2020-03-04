@@ -17,6 +17,10 @@ Grid::Grid(std::shared_ptr<Config> config,
 rx::observable<grid_event_t> Grid::connect() {
   device->connect(device_addr);
 
+  // build animator and run
+  animation = std::make_shared<Animator>(device, current_layout);
+  animation->run();
+  
   return device->listen()
     | rx::map([this] (grid_device_event_t e) {
                 return current_layout->translate(e);

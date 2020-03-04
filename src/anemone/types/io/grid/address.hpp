@@ -22,4 +22,22 @@ struct grid_addr_t {
   grid_section_index index;
 };
 
+/// @brief a grid address hasher functor.
+///
+/// @remark
+/// In order to use `grid_addr_t` as a std lib unnordered map key, it is necessary
+/// to provide a hasher function to the map constructor.
+///
+struct grid_addr_hasher {
+  /// @brief override `()` operator for hash function.
+  size_t operator()(const grid_addr_t &m) const
+  {
+    size_t h1 = std::hash<LayoutName>()(m.layout);
+    size_t h2 = std::hash<GridSectionName>()(m.section);
+    size_t h3 = std::hash<grid_section_index>()(m.index);
+    return h1 ^ (h2 ^ (h3 << 1));
+  };
+};
+
+
 #endif

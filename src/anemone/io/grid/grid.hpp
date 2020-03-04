@@ -18,6 +18,7 @@
 #include "anemone/state.hpp"
 
 #include "anemone/io/grid/device/grid.hpp"
+#include "anemone/io/grid/animation/animator.hpp"
 
 
 /// @brief High-Level class for interacting with a connected grid device.
@@ -35,6 +36,9 @@
 ///
 class Grid {
 public:
+  /// @brief api for applying animations to the grid.
+  std::shared_ptr<Animator> animation;
+  
   /// @brief Constructs a high-level `Grid` object.
   ///
   /// @param config        pointer to a configuration object
@@ -86,6 +90,8 @@ public:
   /// to the appropriate grid device address.
   void set(const grid_addr_t& address, unsigned int intensity);
 
+  // TODO implement turn_off, turn_on, and set for `grid_addr_region_t`!!!!
+  
   // on calls which use animator (like add animation, the addresses are translated and THEN stored in the animator) (animator has a shared_ptr of the GridDevice)
   // TODO implement animator...
 
