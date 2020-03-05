@@ -24,6 +24,7 @@ public:
 
 protected:
   void turn_on_led(grid_section_index index);
+  void turn_on_leds(std::vector<grid_section_index> indices);
   void turn_off_led(grid_section_index index);
   void set_led(grid_section_index index, unsigned int intensity);
 

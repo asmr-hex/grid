@@ -18,6 +18,12 @@ void UIComponent::turn_on_led(grid_section_index index) {
     });
 }
 
+void UIComponent::turn_on_leds(std::vector<grid_section_index> indices) {
+  for (auto index : indices) {
+    turn_on_led(index);
+  }
+}
+
 void UIComponent::turn_off_led(grid_section_index index) {
   // removes animation and sets intensity to 0
   remove_animation(index, 0);

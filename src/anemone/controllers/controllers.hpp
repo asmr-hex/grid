@@ -22,6 +22,7 @@
 #include "anemone/controllers/part.hpp"
 #include "anemone/controllers/bank.hpp"
 #include "anemone/controllers/ppqn.hpp"
+#include "anemone/controllers/sequence.hpp"
 
 
 /// @brief An aggregation of all controllers which respond to i/o events.
@@ -58,6 +59,7 @@ private:
   std::unique_ptr<PartController>        part;
   std::unique_ptr<BankController>        bank;
   std::unique_ptr<PPQNController>        ppqn;
+  std::unique_ptr<SequenceController>    sequence;
 };
 
 #endif

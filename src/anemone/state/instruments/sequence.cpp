@@ -1,5 +1,29 @@
+#include <spdlog/spdlog.h>
+
 #include "anemone/state/instruments/sequence.hpp"
 
+
+void Sequence::add_midi_note_events_at(paged_step_idx_t paged_step,
+                                       granular_step_idx_t granular_step,
+                                       sequence_layer_t sequence_layer)
+{
+  // add to rendered steps
+  try {
+    rendered_steps.at(paged_step.page).insert(paged_step.step);  
+  } catch (std::out_of_range &error) {
+    // no rendered steps previously existed on that page.
+    rendered_steps[paged_step.page] = { paged_step.step };
+  }
+
+  // broadcast that a rendered step was added
+  added_steps.get_subscriber().on_next(paged_step);
+}
+
+void Sequence::remove_midi_note_events_at(paged_step_idx_t paged_step,
+                                          granular_step_idx_t granular_step)
+{
+  
+}
 
 std::vector<step_event_t> Sequence::get_events_at(granular_step_idx_t step) {
   // passing an empty layers vector gets all layers.

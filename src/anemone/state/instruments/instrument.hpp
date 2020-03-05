@@ -21,7 +21,8 @@ class Instrument {
 public:
   Instrument(InstrumentName,
              std::shared_ptr<Config>,
-             std::vector<std::shared_ptr<Part> >);
+             std::vector<std::shared_ptr<Part> >,
+             sequence_layer_t);
 
   InstrumentName name;
 
@@ -43,6 +44,12 @@ public:
 
   status_t status;
   std::vector<std::shared_ptr<Part> > parts;
+
+  /// @brief the last midi notes played.
+  ///
+  /// @description this is used as the default note for when new steps are added by hand.
+  rx::behavior<sequence_layer_t> last_midi_notes_played;
+  
 };
 
 /// @brief wrapper over Instrument constructor to initialize parts.
