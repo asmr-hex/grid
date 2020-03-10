@@ -16,7 +16,8 @@
 class Anemone {
 public:
   Anemone(std::string config_path,
-          std::shared_ptr<GridDevice>);
+          std::shared_ptr<GridDevice>,
+          std::shared_ptr<MidiDeviceFactory>);
   
   void run();
 

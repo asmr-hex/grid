@@ -19,6 +19,7 @@ class midi_event_t {
 public:
   midi_event_uid_t id;
   std::string source;
+  std::string destination;
   double timestamp;
   const std::vector<unsigned char> *data;
 

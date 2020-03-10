@@ -19,7 +19,8 @@
 #include "anemone/types/io/grid/animations/periodic_waveforms.hpp"
 
 // midi types
-#include "anemone/types/io/midi.hpp"
+#include "anemone/types/io/midi/data.hpp"
+#include "anemone/types/io/midi/event.hpp"
 
 // clock types
 #include "anemone/types/io/clock/tick.hpp"

@@ -17,4 +17,10 @@
 #include "anemone/io/grid/device/grid.hpp"
 #include "anemone/io/grid/device/monome.hpp"
 
+// midi
+#include "anemone/io/midi/midi.hpp"
+#include "anemone/io/midi/device/midi.hpp"
+#include "anemone/io/midi/device/factory.hpp"
+#include "anemone/io/midi/device/rtmidi.hpp"
+
 #endif

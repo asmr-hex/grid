@@ -4,9 +4,11 @@
 
 
 Anemone::Anemone(std::string config_path,
-                 std::shared_ptr<GridDevice> grid_device)
+                 std::shared_ptr<GridDevice> grid_device,
+                 std::shared_ptr<MidiDeviceFactory> midi_device_factory)
 {
   spdlog::set_level(spdlog::level::info);
+  spdlog::set_pattern("[%H:%M:%S:%e] [thread %t] %^[%l]%$ %v");
 
   spdlog::info("============= initialization ============");
   
@@ -20,8 +22,7 @@ Anemone::Anemone(std::string config_path,
   
   // initialize io
   spdlog::info("  initializing \tio");
-  io = std::make_shared<IO>(IO(config, grid_device, state));
-  // io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, {layouts->sequencer}));
+  io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, state));
 
   // initialize controllers
   spdlog::info("  initializing \tcontrollers");
@@ -41,6 +42,11 @@ void Anemone::run() {
 
   ui->connect();
 
+  io->midi_events
+    .subscribe([] (midi_event_t e) {
+                 spdlog::info("MIDI EVENT");
+               });
+  
   // wait for 20 seconds
   rx::observable<>::timer(std::chrono::milliseconds(20000)).
     subscribe( [&] (long) {});

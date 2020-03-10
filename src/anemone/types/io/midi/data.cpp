@@ -1,6 +1,6 @@
-#include "anemone/types/io/midi.hpp"
-
 #include <locale>
+
+#include "anemone/types/io/midi/data.hpp"
 
 
 unsigned int spn_to_num(std::string spn) {

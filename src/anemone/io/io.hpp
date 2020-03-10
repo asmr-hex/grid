@@ -18,8 +18,8 @@
 #include "anemone/io/clock/clock.hpp"
 #include "anemone/io/grid/grid.hpp"
 #include "anemone/io/grid/device/grid.hpp"
-// #include "anemone/io/midi/midi.hpp"
-// #include "anemone/io/midi/device/factory.hpp"
+#include "anemone/io/midi/midi.hpp"
+#include "anemone/io/midi/device/factory.hpp"
 
 
 /// @brief Class for consolidating all I/O devices.
@@ -40,7 +40,7 @@ public:
   ///
   IO(std::shared_ptr<Config>,
      std::shared_ptr<GridDevice>,
-     // std::shared_ptr<MidiDeviceFactory> midi_device_factory,
+     std::shared_ptr<MidiDeviceFactory> midi_device_factory,
      std::shared_ptr<State>);
 
   /// @brief Connects Grid & Midi objects to their ports.
@@ -48,11 +48,14 @@ public:
 
   std::shared_ptr<Clock> clock;
   std::shared_ptr<Grid> grid;
-  // std::shared_ptr<Midi> midi;
+  std::shared_ptr<Midi> midi;
 
   /// @brief observable stream of grid events
   rx::observable<grid_event_t> grid_events;
 
+  /// @brief observable stream of midi events
+  rx::observable<midi_event_t> midi_events;
+  
   /// @brief observable stream of clock events
   rx::observable<tick_t> clock_events;
 };

@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "anemone/types/io/midi.hpp"
+#include "anemone/types/io/midi/data.hpp"
 
 
 // forward declaration. see anemone/types/midi.hpp

@@ -1,13 +1,13 @@
 /**
- * @file   types/io/midi.hpp
- * @brief  Midi Related Types & Helpers
+ * @file   types/io/midi/data.hpp
+ * @brief  Midi Data Related Types & Helpers
  * @author coco
  * @date   2020-01-22
  *************************************************/
 
 
-#ifndef ANEMONE_TYPES_IO_MIDI_H
-#define ANEMONE_TYPES_IO_MIDI_H
+#ifndef ANEMONE_TYPES_IO_MIDI_DATA_H
+#define ANEMONE_TYPES_IO_MIDI_DATA_H
 
 #include <string>
 #include <vector>
