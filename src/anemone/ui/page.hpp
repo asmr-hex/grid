@@ -24,8 +24,6 @@ private:
   /// @brief values of previous pages
   struct {
     page_idx_t rendered_page    = 0;
-    page_idx_t page_under_edit  = 0;
-    page_idx_t last_page        = 0;
     page_idx_t page_in_playback = 0;
   } previous;
 

@@ -19,6 +19,7 @@ void UI::connect() {
   ppqn = std::make_unique<PPQNUI>(LayoutName::SequencerAndInstrument, GridSectionName::PPQN, io, state);
   play_pause = std::make_unique<PlayPauseUI>(LayoutName::SequencerAndInstrument, GridSectionName::PlayPause, io, state);
   stop = std::make_unique<StopUI>(LayoutName::SequencerAndInstrument, GridSectionName::Stop, io, state);
+  show_last_step = std::make_unique<ShowLastStepUI>(LayoutName::SequencerAndInstrument, GridSectionName::LastStep, io, state);
 
   spdlog::info("  connected -> ui");
 }

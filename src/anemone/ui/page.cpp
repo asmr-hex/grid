@@ -65,8 +65,6 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
                                           in_playback_page_observable)
     .subscribe([this] (std::tuple<page_idx_t, page_idx_t, page_idx_t, page_idx_t> t) {
                  auto rendered_page    = std::get<0>(t);
-                 auto page_under_edit  = std::get<1>(t);
-                 auto last_page        = std::get<2>(t);
                  auto page_in_playback = std::get<3>(t);
 
                  // clear previous rendered page when current changes
@@ -96,7 +94,6 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
 
                  // update previous pages.
                  previous.rendered_page = rendered_page;
-                 previous.page_under_edit = page_under_edit;
                  previous.page_in_playback = page_in_playback;
                });
 }

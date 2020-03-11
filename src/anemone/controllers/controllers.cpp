@@ -17,5 +17,7 @@ void Controllers::connect() {
   bank = std::make_unique<BankController>(io, state);
   ppqn = std::make_unique<PPQNController>(io, state);
   sequence = std::make_unique<SequenceController>(io, state);
+  show_last_step = std::make_unique<LastStepController>(io, state);
+  
   spdlog::info("  connected -> controllers");
 }
