@@ -1,3 +1,5 @@
+#include <spdlog/spdlog.h>
+
 #include "anemone/io/grid/animation/animator.hpp"
 
 
@@ -69,7 +71,7 @@ void Animator::remove(grid_addr_t grid_addr, unsigned int intensity) {
 
   // translate grid_addr to grid_coordinates.
   auto coordinates = current_layout->translate(grid_addr);
-
+  
   pixels.erase(coordinates);
 
   grid_device->set(coordinates, intensity);

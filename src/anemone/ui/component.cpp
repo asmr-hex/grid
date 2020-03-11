@@ -1,3 +1,5 @@
+#include <spdlog/spdlog.h>
+
 #include "anemone/ui/component.hpp"
 
 
@@ -35,6 +37,12 @@ void UIComponent::set_led(grid_section_index index, unsigned int intensity) {
        .section = section,
        .index   = index,
     }, intensity);
+}
+
+void UIComponent::set_leds(std::vector<grid_section_index> indices, unsigned int intensity) {
+  for (auto index : indices) {
+    set_led(index, intensity);
+  }
 }
 
 void UIComponent::add_animation(std::shared_ptr<Animation> animation, grid_section_index index) {

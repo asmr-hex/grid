@@ -27,6 +27,7 @@ protected:
   void turn_on_leds(std::vector<grid_section_index> indices);
   void turn_off_led(grid_section_index index);
   void set_led(grid_section_index index, unsigned int intensity);
+  void set_leds(std::vector<grid_section_index> indices, unsigned int intensity);
 
 
   void add_animation(std::shared_ptr<Animation>, grid_section_index);

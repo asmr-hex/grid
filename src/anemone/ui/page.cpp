@@ -31,7 +31,19 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
     | rx::map([] (std::shared_ptr<Part> rendered_part) {
                 return rendered_part->page.last.get_observable();
               })
-    | rx::switch_on_next();
+    | rx::switch_on_next()
+    | rx::map([this] (page_idx_t last_page) {
+                // side-effects only map
+
+                clear();
+                
+                // fill pages up to last page.
+                std::vector<grid_section_index> indices;
+                for (auto i = 0; i <= last_page; i++) { indices.push_back(i); }
+                set_leds(indices, led_level.active_pages);
+                
+                return last_page;
+              });
   
   // page in playback observable
   auto in_playback_page_observable = rendered_part_observable
@@ -52,15 +64,39 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
                                           last_page_observable,
                                           in_playback_page_observable)
     .subscribe([this] (std::tuple<page_idx_t, page_idx_t, page_idx_t, page_idx_t> t) {
+                 auto rendered_page    = std::get<0>(t);
+                 auto page_under_edit  = std::get<1>(t);
                  auto last_page        = std::get<2>(t);
                  auto page_in_playback = std::get<3>(t);
 
-                 turn_on_led(page_in_playback);
+                 // clear previous rendered page when current changes
+                 if (previous.rendered_page != rendered_page)
+                   set_led(previous.rendered_page, led_level.active_pages);
 
-                 if (page_in_playback == 0) {
-                   turn_off_led(last_page);
+                 // clear previous playing page when current changes
+                 if (previous.page_in_playback != page_in_playback)
+                   set_led(previous.page_in_playback, led_level.active_pages);
+
+                 
+                 if (page_in_playback == rendered_page) {
+                   // if the playing page and rendered pages are overlapping, animate the led
+                   add_animation(led_level.animate.rendered_and_playing_overlapping, page_in_playback);
                  } else {
-                   turn_off_led(page_in_playback - 1);
+                   // if the current playing & rendered pages are nont the same, but the previous
+                   // playing & rendered pages *were* the same, remove the animation!
+                   if (previous.page_in_playback == previous.rendered_page)
+                     remove_animation(previous.page_in_playback, led_level.active_pages);
+                   
+                   // set the currently rendered page
+                   set_led(rendered_page, led_level.rendered_page);
+
+                   // set the currently playing page
+                   set_led(page_in_playback, led_level.playing_page);
                  }
+
+                 // update previous pages.
+                 previous.rendered_page = rendered_page;
+                 previous.page_under_edit = page_under_edit;
+                 previous.page_in_playback = page_in_playback;
                });
 }
