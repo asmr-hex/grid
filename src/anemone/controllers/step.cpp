@@ -7,7 +7,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
   
   // subscribe to clock ticks
   auto tick_events = io->clock_events
-    .subscribe([state] (tick_t t) {
+    .subscribe([this, state] (tick_t t) {
                  // when the clock ticks, create an observable of all playing parts.
                  auto playing_parts = rx::observable<>::iterate(state->instruments->by_name)
                    | rx::map([] (std::pair<InstrumentName, std::shared_ptr<Instrument> > p) {
@@ -25,7 +25,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
 
                  // advance steps of each part in playback.
                  playing_parts
-                   .subscribe([state] (std::shared_ptr<Part> part) {
+                   .subscribe([this, state] (std::shared_ptr<Part> part) {
                                 // get step section size.
                                 // TODO idea: conntrollers (and ui eventually) can be organized by specific layout
                                 // and we can have these controllers store the sizes of relevant sections.
@@ -63,6 +63,20 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
                                     part->ppqn.current.get_subscriber().on_next(part->ppqn.next.get_value());
                                     part->ppqn.pending_change.get_subscriber().on_next(false);
                                   }
+                                }
+
+                                // if we are following the cursor, update the rendered/under-edit pages
+                                if (part->page.follow_cursor.get_value()) {
+                                  // compute current playing page from granular step
+                                  auto playing_page = granular_to_paged_step(next_granular_step, page_size).page;
+
+                                  if (previous.playing_page != playing_page) {
+                                    // if the page has changed, update the rendered/under_edit pages
+                                    part->page.rendered.get_subscriber().on_next(playing_page);
+                                    part->page.under_edit.get_subscriber().on_next(playing_page);
+                                  }
+
+                                  previous.playing_page = playing_page;
                                 }
                                 
                                 // TODO send events to midi output (on IO presumably)

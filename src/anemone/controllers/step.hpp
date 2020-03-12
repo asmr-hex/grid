@@ -22,6 +22,11 @@
 class StepController {
 public:
   StepController(std::shared_ptr<IO>, std::shared_ptr<State>);
+private:
+  /// @brief previous values
+  struct {
+    page_idx_t playing_page = 0;
+  } previous;
 };
 
 #endif

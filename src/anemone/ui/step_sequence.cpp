@@ -87,13 +87,14 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                    }
                  }
 
-                 if ((page + 1) == paged_step.page && paged_step.step == 0) {
+                 auto was_final_step_on_page = ((page + 1) == paged_step.page || paged_step.page == 0 ) && paged_step.step == 0;
+                 auto final_step_on_page_activated = rendered_steps.find(page_size - 1) == rendered_steps.end();
+                 
+                 if (was_final_step_on_page && !final_step_on_page_activated) {
                    // turn off last step on this page if cursor moved to a new page.
                    turn_off_led(page_size - 1);
                  }
                });
   
-  // TODO do the same for steps and rendered steps --^
-
   // subscribe to the currently rendered part's step cursor location.
 }

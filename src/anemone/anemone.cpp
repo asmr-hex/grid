@@ -48,6 +48,10 @@ void Anemone::run() {
                });
   
   // wait for 20 seconds
-  rx::observable<>::timer(std::chrono::milliseconds(20000)).
-    subscribe( [&] (long) {});
+  // rx::observable<>::timer(std::chrono::milliseconds(20000)).
+  //   subscribe( [&] (long) {});
+
+  while (true) {
+    std::this_thread::sleep_for(std::chrono::minutes(5));
+  }
 }

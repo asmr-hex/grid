@@ -12,28 +12,28 @@ Midi::Midi(std::shared_ptr<Config> config, std::shared_ptr<MidiDeviceFactory> de
 
 rx::observable<midi_event_t> Midi::connect() {
   // connect to all input devices
-  for (auto itr : input_devices) {
-    auto name = itr.first;
-    auto device = itr.second;
+  // for (auto itr : input_devices) {
+  //   auto name = itr.first;
+  //   auto device = itr.second;
 
-    std::thread t
-      ([name, device] {
-         device->connect();
-         device->listen();
-       });
-    t.detach();
-  }
+  //   std::thread t
+  //     ([name, device] {
+  //        device->connect();
+  //        device->listen();
+  //      });
+  //   t.detach();
+  // }
 
-  // connect to all input devices
-  for (auto itr : output_devices) {
-    auto name = itr.first;
-    auto device = itr.second;
-    std::thread t
-      ([name, &device] {
-         device->connect();
-       });
-    t.detach();
-  }
+  // // connect to all input devices
+  // for (auto itr : output_devices) {
+  //   auto name = itr.first;
+  //   auto device = itr.second;
+  //   std::thread t
+  //     ([name, &device] {
+  //        device->connect();
+  //      });
+  //   t.detach();
+  // }
 
   return incoming_events.get_observable();
 }
