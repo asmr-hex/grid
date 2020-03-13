@@ -78,15 +78,24 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                  auto rendered_page = std::get<0>(p);
                  auto current_paged_step = std::get<1>(p);
 
+                 
                  // when the rendered page is the same as the playing page
                  if (rendered_page == current_paged_step.page) {
+                   auto current_step_active =
+                     rendered_page == current_paged_step.page &&
+                     rendered_steps.find(current_paged_step.step) != rendered_steps.end();
+                   auto previous_step_active =
+                     rendered_steps.find(current_paged_step.step - 1) != rendered_steps.end();
+
                    // turn on this step
-                   turn_on_led(current_paged_step.step);
+                   set_led(current_paged_step.step,
+                           current_step_active ? led_level.cursor_on_active_step : led_level.cursor);
 
                    // when the current step is *not* the first step on the page
                    // and the previous step is *not* an active (on) step, turn off the previous step.
-                   if (current_paged_step.step != 0 && rendered_steps.find(current_paged_step.step - 1) == rendered_steps.end()) {
-                     turn_off_led(current_paged_step.step - 1);
+                   if (current_paged_step.step != 0) {
+                     set_led(current_paged_step.step - 1,
+                             previous_step_active ? led_level.active : led_level.inactive);
                    }
                  } else {
                    // when the rendered page is *not* the same as the playing page
@@ -102,7 +111,8 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                    // if the previous step was the final step on the page AND the final step on the
                    // page was *not* activated, turn off the final step on this page.
                    if (was_final_step_on_page && !final_step_on_page_activated)
-                     turn_off_led(page_size - 1);
+                     set_led(page_size - 1,
+                             final_step_on_page_activated ? led_level.active : led_level.inactive);
                  }
                });
 }

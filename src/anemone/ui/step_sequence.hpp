@@ -23,6 +23,14 @@ public:
 
 private:
   std::set<page_relative_step_idx_t> rendered_steps;
+
+  /// @brief led levels
+  struct {
+    unsigned int active = 15;
+    unsigned int inactive = 0;
+    unsigned int cursor_on_active_step = 6;
+    unsigned int cursor = 15;
+  } led_level;
 };
 
 #endif
