@@ -23,16 +23,23 @@ LastStepController::LastStepController(std::shared_ptr<IO> io, std::shared_ptr<S
                         auto rendered_part = rendered_instrument->status.part.under_edit.get_value();
                         auto last_page = rendered_part->page.last.get_value();
                         auto shift = state->controls->shift.get_value();
-
+                        auto follow_cursor = rendered_part->page.follow_cursor;
+                        
                         if (shift) {
-                          // turn on follow cursor
-                          rendered_part->page.follow_cursor.get_subscriber().on_next(true);
+                          
+                          if (follow_cursor.get_value()) {
+                            // turn off follow cursor
+                            follow_cursor.get_subscriber().on_next(false);
+                          } else {
+                            // turn on follow cursor
+                            follow_cursor.get_subscriber().on_next(true);
 
-                          // make playing, rendered, and under edit page equal
-                          auto page_size = state->layout->get_layouts()->sequencer->steps->size();
-                          auto page_in_playback = granular_to_paged_step(rendered_part->step.current.get_value(), page_size).page;
-                          rendered_part->page.under_edit.get_subscriber().on_next(page_in_playback);
-                          rendered_part->page.rendered.get_subscriber().on_next(page_in_playback);
+                            // make playing, rendered, and under edit page equal
+                            auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+                            auto page_in_playback = granular_to_paged_step(rendered_part->step.current.get_value(), page_size).page;
+                            rendered_part->page.under_edit.get_subscriber().on_next(page_in_playback);
+                            rendered_part->page.rendered.get_subscriber().on_next(page_in_playback);
+                          }
                         } else {
                           // make the last page visible
                           rendered_part->page.rendered.get_subscriber().on_next(last_page);
@@ -48,10 +55,7 @@ LastStepController::LastStepController(std::shared_ptr<IO> io, std::shared_ptr<S
                                        auto page_under_edit = rendered_part->page.under_edit.get_value();
                                        auto shift = state->controls->shift.get_value();
 
-                                       if (shift) {
-                                         // turn off follow cursor
-                                         rendered_part->page.follow_cursor.get_subscriber().on_next(false);                                         
-                                       } else {
+                                       if (!shift) {
                                          // go back to page under edit as the rendered page.
                                          rendered_part->page.rendered.get_subscriber().on_next(page_under_edit);
 

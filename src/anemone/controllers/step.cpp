@@ -66,7 +66,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
                                 }
 
                                 // if we are following the cursor, update the rendered/under-edit pages
-                                if (part->page.follow_cursor.get_value()) {
+                                if (part->page.follow_cursor.get_value() && !part->step.show_last.get_value()) {
                                   // compute current playing page from granular step
                                   auto playing_page = granular_to_paged_step(next_granular_step, page_size).page;
 

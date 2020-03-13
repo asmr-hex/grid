@@ -75,26 +75,34 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
   rendered_page.combine_latest(current_step)
     .subscribe([this, state] (std::tuple<page_idx_t, paged_step_idx_t> p) {
                  auto page_size = state->layout->get_layouts()->sequencer->steps->size();
-                 auto page = std::get<0>(p);
-                 auto paged_step = std::get<1>(p);
+                 auto rendered_page = std::get<0>(p);
+                 auto current_paged_step = std::get<1>(p);
 
-                 if (page == paged_step.page) {
+                 // when the rendered page is the same as the playing page
+                 if (rendered_page == current_paged_step.page) {
                    // turn on this step
-                   turn_on_led(paged_step.step);
+                   turn_on_led(current_paged_step.step);
 
-                   if (paged_step.step != 0 && rendered_steps.find(paged_step.step - 1) == rendered_steps.end()) {
-                     turn_off_led(paged_step.step - 1);
+                   // when the current step is *not* the first step on the page
+                   // and the previous step is *not* an active (on) step, turn off the previous step.
+                   if (current_paged_step.step != 0 && rendered_steps.find(current_paged_step.step - 1) == rendered_steps.end()) {
+                     turn_off_led(current_paged_step.step - 1);
                    }
-                 }
+                 } else {
+                   // when the rendered page is *not* the same as the playing page
 
-                 auto was_final_step_on_page = ((page + 1) == paged_step.page || paged_step.page == 0 ) && paged_step.step == 0;
-                 auto final_step_on_page_activated = rendered_steps.find(page_size - 1) == rendered_steps.end();
-                 
-                 if (was_final_step_on_page && !final_step_on_page_activated) {
-                   // turn off last step on this page if cursor moved to a new page.
-                   turn_off_led(page_size - 1);
+                   // was the previous step the last step on the currently rendered page?
+                   auto was_final_step_on_page =
+                     ((rendered_page + 1) == current_paged_step.page || current_paged_step.page == 0 )
+                     && current_paged_step.step == 0;
+
+                   // is the final step on this page activated (on)?
+                   auto final_step_on_page_activated = rendered_steps.find(page_size - 1) != rendered_steps.end();
+
+                   // if the previous step was the final step on the page AND the final step on the
+                   // page was *not* activated, turn off the final step on this page.
+                   if (was_final_step_on_page && !final_step_on_page_activated)
+                     turn_off_led(page_size - 1);
                  }
                });
-  
-  // subscribe to the currently rendered part's step cursor location.
 }
