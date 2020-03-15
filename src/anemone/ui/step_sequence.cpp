@@ -24,9 +24,11 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                 auto rendered_part = rendered_instrument->status.part.under_edit.get_value();
 
                 // since this is a new page, lets clear the page
-                clear();
+                if (rendered_page != previous.rendered_page)
+                  clear();
 
                 try {
+                  // collect all rendered steps for this page into a vector
                   std::vector<grid_section_index> rendered_steps_vector;
                   auto rendered_steps_set = rendered_part->sequence.rendered_steps.at(rendered_page);
                   for (auto rendered_step : rendered_steps_set) {
@@ -65,6 +67,19 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                 return granular_to_paged_step(granular_step, page_size);
               });
 
+  auto last_step = rendered_part
+    | rx::map([] (std::shared_ptr<Part> rendered_part) {
+                return rendered_part->step.last.get_observable();
+              })
+    | rx::switch_on_next();
+  
+  auto show_last_step = rendered_part
+    | rx::map([] (std::shared_ptr<Part> rendered_part) {
+                return rendered_part->step.show_last.get_observable();
+              })
+    | rx::switch_on_next();
+
+  // render newly added steps to this page
   added_steps
     .subscribe([this] (page_relative_step_idx_t step) {
                  rendered_steps.insert(step);
@@ -72,25 +87,32 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                  turn_on_led(step);
                });
   
-  rendered_page.combine_latest(current_step)
-    .subscribe([this, state] (std::tuple<page_idx_t, paged_step_idx_t> p) {
-                 auto page_size = state->layout->get_layouts()->sequencer->steps->size();
-                 auto rendered_page = std::get<0>(p);
+  rendered_page.combine_latest(current_step, show_last_step, last_step)
+    .subscribe([this, state] (std::tuple<page_idx_t, paged_step_idx_t, bool, paged_step_idx_t> p) {
+                 auto rendered_page      = std::get<0>(p);
                  auto current_paged_step = std::get<1>(p);
+                 auto show_last_step     = std::get<2>(p);
+                 auto last_step          = std::get<3>(p);
 
-                 
-                 // when the rendered page is the same as the playing page
                  if (rendered_page == current_paged_step.page) {
+                   // when the rendered page is the same as the playing page (cursor is on this page).
+                   // we want to:
+                   // 1) turn on the step where the cursor is located
+                   //      - set the led brightness appropriately if the cursor step is on an active step
+                   // 2) turn off the previous cursor step if if is on this page
+                   //      - set the previous step led brighntess appropriately if it was on an active step
+                   
                    auto current_step_active =
                      rendered_page == current_paged_step.page &&
                      rendered_steps.find(current_paged_step.step) != rendered_steps.end();
                    auto previous_step_active =
                      rendered_steps.find(current_paged_step.step - 1) != rendered_steps.end();
 
-                   // turn on this step
+                   // 1) turn the current cursor step on (to the appropriate led brightness)
                    set_led(current_paged_step.step,
                            current_step_active ? led_level.cursor_on_active_step : led_level.cursor);
 
+                   // 2) turn off the previous cursor step (to the appropriate led brightness)
                    // when the current step is *not* the first step on the page
                    // and the previous step is *not* an active (on) step, turn off the previous step.
                    if (current_paged_step.step != 0) {
@@ -98,21 +120,60 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                              previous_step_active ? led_level.active : led_level.inactive);
                    }
                  } else {
-                   // when the rendered page is *not* the same as the playing page
+                   // when the rendered page is *not* the same as the playing page (cursor is nont on this page).
+                   // we want to:
+                   // 1) turn off the final step on the page that is currently rendered, but only if the cursor
+                   //    has *just* moved to the next step on the next page (including cycling back to the first page).
 
                    // was the previous step the last step on the currently rendered page?
                    auto was_final_step_on_page =
                      ((rendered_page + 1) == current_paged_step.page || current_paged_step.page == 0 )
                      && current_paged_step.step == 0;
 
+                   // get the last step on the rendered page
+                   auto last_step_on_rendered_page =
+                     rendered_page == last_step.page ?
+                     last_step.step : state->layout->get_layouts()->sequencer->steps->size() - 1;
+                     
                    // is the final step on this page activated (on)?
-                   auto final_step_on_page_activated = rendered_steps.find(page_size - 1) != rendered_steps.end();
+                   auto final_step_on_page_activated = rendered_steps.find(last_step_on_rendered_page) != rendered_steps.end();
 
                    // if the previous step was the final step on the page AND the final step on the
                    // page was *not* activated, turn off the final step on this page.
                    if (was_final_step_on_page && !final_step_on_page_activated)
-                     set_led(page_size - 1,
+                     set_led(last_step_on_rendered_page,
                              final_step_on_page_activated ? led_level.active : led_level.inactive);
                  }
+
+                 // if show_last_step has been activated, we want to add an animation for the last step.
+                 // since we are observing both rendered_page AND show_last_step (via combine_latest), they
+                 // will not change in lock-step, but one-by-one, meaninng that we will never have a situation
+                 // in which the previous rendered_page != current rendered_page AND previous show_last_step !=
+                 // current show_last_step.
+                 if (rendered_page == last_step.page &&
+                     show_last_step &&
+                     (previous.rendered_page != rendered_page || previous.show_last_step != show_last_step))
+                   add_animation(led_level.animate.last_step, last_step.step);
+
+                 // turn off the previous last step if it has changed!
+                 if (rendered_page == previous.last_step.page &&
+                     last_step != previous.last_step)
+                   remove_animation(previous.last_step.step, 0);
+                   
+                 // turn on new last step animation if it has changed!
+                 if (rendered_page == last_step.page &&
+                     last_step != previous.last_step)
+                   add_animation(led_level.animate.last_step, last_step.step);
+                 
+                 // remove last step animation if show_last_step has changed
+                 // set the led to the appropriate brightness if the last_step was active
+                 if (rendered_page == last_step.page && !show_last_step && previous.show_last_step)
+                   remove_animation(last_step.step, 0);
+                   
+
+                 // update previous values
+                 previous.rendered_page = rendered_page;
+                 previous.last_step = last_step;
+                 previous.show_last_step = show_last_step;
                });
 }

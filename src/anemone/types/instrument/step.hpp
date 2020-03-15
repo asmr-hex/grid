@@ -61,6 +61,12 @@ struct paged_step_idx_t {
       step == rhs.step;
   };
 
+  bool operator!=(const paged_step_idx_t& rhs) {
+    return
+      page != rhs.page ||
+      step != rhs.step;
+  };
+
   /// @brief converts a paged_idx_t to a sequence relative (absolute) sequence step index.
   ///
   /// @param page_size   `unsigned int` representing the size of each page.
