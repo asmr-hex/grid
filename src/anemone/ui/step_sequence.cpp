@@ -119,17 +119,13 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                      set_led(current_paged_step.step - 1,
                              previous_step_active ? led_level.active : led_level.inactive);
                    }
-                 } else {
-                   // when the rendered page is *not* the same as the playing page (cursor is nont on this page).
-                   // we want to:
-                   // 1) turn off the final step on the page that is currently rendered, but only if the cursor
-                   //    has *just* moved to the next step on the next page (including cycling back to the first page).
+                 }
 
-                   // was the previous step the last step on the currently rendered page?
-                   auto was_final_step_on_page =
-                     ((rendered_page + 1) == current_paged_step.page || current_paged_step.page == 0 )
-                     && current_paged_step.step == 0;
-
+                 // turn off the last step on the rendered page if the cursor just moved to a new page.
+                 auto cursor_moved_to_next_page =
+                   (rendered_page != last_step.page && current_paged_step == paged_step_idx_t{ .page=rendered_page + 1, .step=0 }) ||
+                   (rendered_page == last_step.page && current_paged_step == paged_step_idx_t{ .page=0, .step=0 } );
+                 if (cursor_moved_to_next_page) {
                    // get the last step on the rendered page
                    auto last_step_on_rendered_page =
                      rendered_page == last_step.page ?
@@ -138,13 +134,12 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                    // is the final step on this page activated (on)?
                    auto final_step_on_page_activated = rendered_steps.find(last_step_on_rendered_page) != rendered_steps.end();
 
-                   // if the previous step was the final step on the page AND the final step on the
-                   // page was *not* activated, turn off the final step on this page.
-                   if (was_final_step_on_page && !final_step_on_page_activated)
-                     set_led(last_step_on_rendered_page,
-                             final_step_on_page_activated ? led_level.active : led_level.inactive);
+                   // if the previous step was the final step on the page, set the led to the appropraite brightness.
+                   // spdlog::warn("WAS FINAL STEP ON PAGE"); TODO: this fires a bunch of times, we can optimize so it only fires once
+                   set_led(last_step_on_rendered_page,
+                           final_step_on_page_activated ? led_level.active : led_level.inactive);                     
                  }
-
+                 
                  // if show_last_step has been activated, we want to add an animation for the last step.
                  // since we are observing both rendered_page AND show_last_step (via combine_latest), they
                  // will not change in lock-step, but one-by-one, meaninng that we will never have a situation

@@ -42,6 +42,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
                    // if we are setting the last step, update the last step!
 
                    rendered_part->step.last.get_subscriber().on_next(selected_paged_step);
+                   rendered_part->page.last.get_subscriber().on_next(selected_paged_step.page);
                  } else {
                    // if we are not setting the last step, add a midi note
                    
