@@ -44,7 +44,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
                                 auto next_granular_step = current_granular_step + part->ppqn.current.get_value();
   
                                 // the current step is now greater than the last step, cycle back to first step.
-                                if (current_granular_step > (last_step * PPQN::Max) ) {
+                                if (current_granular_step > (last_step * PPQN::Max) - 1 ) {
                                   next_granular_step = 0;
 
                                   // TODO update stuff that needs updating on "end-of-sequence".

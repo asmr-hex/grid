@@ -6,28 +6,28 @@
 PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> io, std::shared_ptr<State> state)
   : UIComponent(layout, section, io, state)
 {
-  auto rendered_part_observable = state->instruments->rendered.get_observable()
+  auto rendered_part = state->instruments->rendered.get_observable()
     | rx::map([] (std::shared_ptr<Instrument> rendered_instrument) {
                 return rendered_instrument->status.part.under_edit.get_observable();
               })
     | rx::switch_on_next();
 
   // rendered page observable
-  auto rendered_page_observable = rendered_part_observable
+  auto rendered_page = rendered_part
     | rx::map([] (std::shared_ptr<Part> rendered_part) {
                 return rendered_part->page.rendered.get_observable();
               })
     | rx::switch_on_next();
 
-  // page under edit observable
-  auto under_edit_page_observable = rendered_part_observable
-    | rx::map([] (std::shared_ptr<Part> rendered_part) {
-                return rendered_part->page.under_edit.get_observable();
-              })
-    | rx::switch_on_next();
+  // // page under edit observable
+  // auto under_edit_page_observable = rendered_part_observable
+  //   | rx::map([] (std::shared_ptr<Part> rendered_part) {
+  //               return rendered_part->page.under_edit.get_observable();
+  //             })
+  //   | rx::switch_on_next();
 
   // last page observable
-  auto last_page_observable = rendered_part_observable
+  auto last_page = rendered_part
     | rx::map([] (std::shared_ptr<Part> rendered_part) {
                 return rendered_part->page.last.get_observable();
               })
@@ -46,7 +46,7 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
               });
   
   // page in playback observable
-  auto in_playback_page_observable = rendered_part_observable
+  auto page_in_playback = rendered_part
     | rx::map([] (std::shared_ptr<Part> rendered_part) {
                 return rendered_part->step.current.get_observable();
               })
@@ -60,20 +60,25 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
   
 
   // page ui logic.
-  rendered_page_observable.combine_latest(under_edit_page_observable,
-                                          last_page_observable,
-                                          in_playback_page_observable)
-    .subscribe([this] (std::tuple<page_idx_t, page_idx_t, page_idx_t, page_idx_t> t) {
+  rendered_page.combine_latest(page_in_playback, last_page)
+    .subscribe([this] (std::tuple<page_idx_t, page_idx_t, page_idx_t> t) {
                  auto rendered_page    = std::get<0>(t);
-                 auto page_in_playback = std::get<3>(t);
+                 auto page_in_playback = std::get<1>(t);
+                 auto last_page        = std::get<2>(t);
 
                  // clear previous rendered page when current changes
                  if (previous.rendered_page != rendered_page)
-                   set_led(previous.rendered_page, led_level.active_pages);
+                   set_led(previous.rendered_page,
+                           previous.rendered_page > last_page ?
+                           led_level.inactive_pages :
+                           led_level.active_pages);
 
                  // clear previous playing page when current changes
                  if (previous.page_in_playback != page_in_playback)
-                   set_led(previous.page_in_playback, led_level.active_pages);
+                   set_led(previous.page_in_playback,
+                           previous.page_in_playback > last_page ?
+                           led_level.inactive_pages :
+                           led_level.active_pages);
 
                  
                  if (page_in_playback == rendered_page) {
