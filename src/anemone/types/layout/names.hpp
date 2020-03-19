@@ -47,6 +47,13 @@ GridSectionName {
 
                  /// switch layout section
                  SwitchLayout,
+
+                 // TODO seperate this out into a seperate InstrumentSectionName enum
+                 // ER1 stuff
+                 OSC1,
+                 OSC2,
+                 OSC3,
+                 OSC4,
 };
 
 
@@ -57,6 +64,9 @@ LayoutName {
             SequencerAndInstrument,
             /// parallel sequencer layout
             ParallelSequencer,
+
+            // TODO seperate this into a seperate InstrumentLayoutName enum
+            ER1,
 };
 
 #endif

@@ -3,6 +3,8 @@
 
 #include "anemone/config/base.hpp"
 #include "anemone/config/layouts/sequencer.hpp"
+#include "anemone/config/layouts/instruments/er1.hpp"
+
 
 
 namespace Conf {
@@ -12,6 +14,8 @@ namespace Conf {
     Layout::Sequencer sequencer;
     // Layout::Patterns  patterns;
 
+    Layout::Instrument::ER1 er1;
+    
     Layouts(Base);
   };
 

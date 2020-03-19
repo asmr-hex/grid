@@ -2,13 +2,14 @@
 #define CONFIG_LAYOUTS_SEQUENCER_H
 
 #include "anemone/config/base.hpp"
+#include "anemone/config/layouts/layout.hpp"
 #include "anemone/state/layout/section.hpp"
 
 
 namespace Conf {
   namespace Layout {
 
-    class Sequencer : public Base {
+    class Sequencer : public LayoutBase {
     public:
       GridSection instrument_select;
       GridSection instrument_panel;
@@ -23,13 +24,8 @@ namespace Conf {
       GridSection record;
       GridSection last_step;
       GridSection metronome;
-      
-      Sequencer(Base);
 
-    private:
-      // TODO (coco|12.29.2019) implement function to ensure there are no overlapping sections!
-      
-      grid_region_t parse_grid_region(std::string);
+      Sequencer(Base);
     };
     
   }
