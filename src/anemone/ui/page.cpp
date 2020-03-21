@@ -52,7 +52,7 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
               })
     | rx::switch_on_next()  
     | rx::map([state] (granular_step_idx_t granular_step) {
-                auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+                auto page_size = state->layouts->sequencer->steps->size();
 
                 return granular_to_paged_step(granular_step, page_size).page;
               })

@@ -9,7 +9,7 @@ UIComponent::UIComponent(LayoutName layout, GridSectionName section, std::shared
     io(io),
     state(state)
 {
-  section_size = state->layout->get_layouts()->layout_by_name[layout]->section_by_name[section]->size();
+  section_size = state->layouts->layout_by_name[layout]->section_by_name[section]->size();
 }
 
 void UIComponent::turn_on_led(grid_section_index index) {

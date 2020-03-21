@@ -29,7 +29,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
                                 // get step section size.
                                 // TODO idea: conntrollers (and ui eventually) can be organized by specific layout
                                 // and we can have these controllers store the sizes of relevant sections.
-                                auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+                                auto page_size = state->layouts->sequencer->steps->size();
 
                                 // get granular cursor step
                                 auto current_granular_step = part->step.current.get_value();

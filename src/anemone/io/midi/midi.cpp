@@ -6,8 +6,8 @@
 Midi::Midi(std::shared_ptr<Config> config, std::shared_ptr<MidiDeviceFactory> device_factory)
   : device_factory(device_factory)
 {
-  make_input_devices({config->ports.midi.in});
-  make_output_devices({config->ports.midi.out});
+  make_input_devices(config->at("ports")["midi"]["in"].as<std::vector<std::string> >());
+  make_output_devices(config->at("ports")["midi"]["out"].as<std::vector<std::string> >());
 }
 
 rx::observable<midi_event_t> Midi::connect() {

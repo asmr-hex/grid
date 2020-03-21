@@ -20,7 +20,7 @@ PartController::PartController(std::shared_ptr<IO> io, std::shared_ptr<State> st
        auto rendered_instrument = state->instruments->rendered.get_value();
        auto current_bank = rendered_instrument->status.bank.under_edit.get_value();
        
-       auto part_size = state->layout->get_layouts()->sequencer->parts->size();
+       auto part_size = state->layouts->sequencer->parts->size();
 
        auto part_idx = (current_bank * part_size) + selected_part_idx;
        auto part = rendered_instrument->parts[part_idx];

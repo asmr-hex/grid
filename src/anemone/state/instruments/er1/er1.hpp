@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "anemone/config.hpp"
-#include "anemone/state/instruments/instrument.hpp"
+#include "anemone/types.hpp"
 
 #include "anemone/state/instruments/er1/layout.hpp"
 

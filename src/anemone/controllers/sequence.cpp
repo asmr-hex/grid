@@ -32,7 +32,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
                  auto show_last_step = rendered_part->step.show_last.get_value();
 
                  // get page size
-                 auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+                 auto page_size = state->layouts->sequencer->steps->size();
 
                  // construct paged inndex and convert to absolute index and then granular index;
                  paged_step_idx_t selected_paged_step = { .page = rendered_page, .step = index };

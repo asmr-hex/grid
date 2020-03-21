@@ -7,7 +7,7 @@ IO::IO(std::shared_ptr<Config> config,
        std::shared_ptr<State> state)
 {
   clock = std::make_shared<Clock>(state);
-  grid = std::make_shared<Grid>(config, grid_device, state->layout);
+  grid = std::make_shared<Grid>(config, grid_device, state->layouts);
   midi = std::make_shared<Midi>(config, midi_device_factory);
 }
 

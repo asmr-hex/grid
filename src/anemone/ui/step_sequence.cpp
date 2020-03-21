@@ -62,7 +62,7 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
               })
     | rx::switch_on_next()  
     | rx::map([state] (granular_step_idx_t granular_step) {
-                auto page_size = state->layout->get_layouts()->sequencer->steps->size();
+                auto page_size = state->layouts->sequencer->steps->size();
 
                 return granular_to_paged_step(granular_step, page_size);
               });
@@ -129,7 +129,7 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
                    // get the last step on the rendered page
                    auto last_step_on_rendered_page =
                      rendered_page == last_step.page ?
-                     last_step.step : state->layout->get_layouts()->sequencer->steps->size() - 1;
+                     last_step.step : state->layouts->sequencer->steps->size() - 1;
                      
                    // is the final step on this page activated (on)?
                    auto final_step_on_page_activated = rendered_steps.find(last_step_on_rendered_page) != rendered_steps.end();

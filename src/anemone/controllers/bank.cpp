@@ -18,7 +18,7 @@ BankController::BankController(std::shared_ptr<IO> io, std::shared_ptr<State> st
        auto rendered_instrument = state->instruments->rendered.get_value();
        auto current_part_idx = rendered_instrument->status.part.under_edit.get_value()->id;
        
-       auto part_size = state->layout->get_layouts()->sequencer->parts->size();
+       auto part_size = state->layouts->sequencer->parts->size();
 
        auto part_idx = (selected_bank_idx * part_size) + (current_part_idx % part_size);
        auto part = rendered_instrument->parts[part_idx];

@@ -3,12 +3,12 @@
 
 Grid::Grid(std::shared_ptr<Config> config,
            std::shared_ptr<GridDevice> device,
-           std::shared_ptr<LayoutContext> layout)
-  : device_addr(config->ports.grid),
+           std::shared_ptr<GridLayouts> layouts)
+  : device_addr(config->at("ports")["grid"].as<std::string>()),
     device(device)
 {
   // subscribe to current layout
-  layout->get_observable()
+  layouts->current_layout.get_observable()
     .subscribe([this] (std::shared_ptr<Layout> l) {
                  current_layout = l;
                });

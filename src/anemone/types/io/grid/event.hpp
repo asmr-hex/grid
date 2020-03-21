@@ -8,8 +8,8 @@
 #ifndef TYPES_IO_GRID_EVENT_H
 #define TYPES_IO_GRID_EVENT_H
 
-#include "anemone/types/layout/names.hpp"
 #include "anemone/types/io/grid/address.hpp"
+#include "anemone/types/io/grid/layout/names.hpp"
 
 
 /// @brief Grid event type

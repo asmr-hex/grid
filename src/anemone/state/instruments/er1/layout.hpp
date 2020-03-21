@@ -11,9 +11,7 @@
 #include <memory>
 
 #include "anemone/config.hpp"
-#include "anemone/state/layout/layout.hpp"
-#include "anemone/state/layout/section.hpp"
-#include "anemone/types/layout/names.hpp"
+#include "anemone/types.hpp"
 
 
 // TODO make a base class for InstrumentLayout?
@@ -25,10 +23,17 @@ public:
   std::shared_ptr<GridSection> OSC4;
   
   ER1Layout(std::shared_ptr<Config> config) : Layout(LayoutName::ER1) {
-    OSC1 = std::make_shared<GridSection>(config->layouts.er1.OSC1);
-    OSC2 = std::make_shared<GridSection>(config->layouts.er1.OSC2);
-    OSC3 = std::make_shared<GridSection>(config->layouts.er1.OSC3);
-    OSC4 = std::make_shared<GridSection>(config->layouts.er1.OSC4);
+
+    auto layout = config->at("instruments")["er1"]["layout"];
+      
+    OSC1 = std::make_shared<GridSection>(GridSectionName::OSC1,
+                                         layout.parse_grid_region("osc1"));
+    OSC2 = std::make_shared<GridSection>(GridSectionName::OSC2,
+                                         layout.parse_grid_region("osc2"));
+    OSC3 = std::make_shared<GridSection>(GridSectionName::OSC3,
+                                         layout.parse_grid_region("osc3"));
+    OSC4 = std::make_shared<GridSection>(GridSectionName::OSC4,
+                                         layout.parse_grid_region("osc4"));
 
     register_section(OSC1);
     register_section(OSC2);

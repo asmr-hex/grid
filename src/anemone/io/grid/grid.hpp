@@ -47,7 +47,7 @@ public:
   ///
   Grid(std::shared_ptr<Config> config,
        std::shared_ptr<GridDevice> grid_device,
-       std::shared_ptr<LayoutContext> layout);
+       std::shared_ptr<GridLayouts> layouts);
 
   /// @brief Connects and subscribes this object to the wrapped `GridDevice`.
   ///

@@ -16,14 +16,14 @@ PartsUI::PartsUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO>
   auto rendered_part_observable = rendered_part
     | rx::map([state] (std::shared_ptr<Part> p) {
                 // get the part section relative index of this part
-                auto part_size = state->layout->get_layouts()->sequencer->parts->size();
+                auto part_size = state->layouts->sequencer->parts->size();
                 return p->id % part_size;
               });
 
   auto in_playback_part_observable = rendered_part
     | rx::map([state] (std::shared_ptr<Part> p) {
                 // get the part section relative index of this part
-                auto part_size = state->layout->get_layouts()->sequencer->parts->size();
+                auto part_size = state->layouts->sequencer->parts->size();
                 return p->id % part_size;
               });
 
