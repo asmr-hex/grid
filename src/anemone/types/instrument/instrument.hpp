@@ -16,16 +16,21 @@
 #include "anemone/types/instrument/names.hpp"
 #include "anemone/types/instrument/part/part.hpp"
 #include "anemone/types/instrument/sequence/sequence.hpp"
+#include "anemone/types/io/grid/layout/layout.hpp"
 
 
 class Instrument {
 public:
   Instrument(InstrumentName,
              std::shared_ptr<Config>,
+             std::shared_ptr<Layout>,
              std::vector<std::shared_ptr<Part> >,
              sequence_layer_t);
 
   InstrumentName name;
+
+  /// @brief pointer to the layout for this instrument
+  std::shared_ptr<Layout> layout;
 
   struct status_t {
     struct part_t {
@@ -54,6 +59,6 @@ public:
 };
 
 /// @brief wrapper over Instrument constructor to initialize parts.
-Instrument create_instrument(InstrumentName, std::shared_ptr<Config>);
+Instrument create_instrument(InstrumentName, std::shared_ptr<Config>, std::shared_ptr<Layout>);
 
 #endif

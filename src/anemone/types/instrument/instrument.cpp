@@ -3,9 +3,11 @@
 
 Instrument::Instrument(InstrumentName name,
                        std::shared_ptr<Config> config,
+                       std::shared_ptr<Layout> layout,
                        std::vector<std::shared_ptr<Part> > parts,
                        sequence_layer_t default_midi_notes)
   : name(name),
+    layout(layout),
     status({ .part = { .in_playback = rx::behavior<std::shared_ptr<Part> >(parts[0]),
                        .under_edit  = rx::behavior<std::shared_ptr<Part> >(parts[0])},
              .bank = { .in_playback = rx::behavior<bank_idx_t>(0),
@@ -18,7 +20,7 @@ Instrument::Instrument(InstrumentName name,
 {}
 
 
-Instrument create_instrument(InstrumentName name, std::shared_ptr<Config> config) {
+Instrument create_instrument(InstrumentName name, std::shared_ptr<Config> config, std::shared_ptr<Layout> layout) {
   std::vector<std::shared_ptr<Part> > parts;
   
   // populate new parts TODO make this connfigurable....
@@ -30,5 +32,5 @@ Instrument create_instrument(InstrumentName name, std::shared_ptr<Config> config
   auto default_note = step_event_t::make_midi_note_on("c4", 1, 127);
   sequence_layer_t default_notes = { {default_note.id, default_note } };
   
-  return Instrument(name, config, parts, default_notes);
+  return Instrument(name, config, layout, parts, default_notes);
 }

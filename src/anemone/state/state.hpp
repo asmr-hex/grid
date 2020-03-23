@@ -11,18 +11,27 @@
 #include <memory>
 
 #include "anemone/config.hpp"
+
 #include "anemone/state/layouts/layouts.hpp"
 #include "anemone/state/controls/controls.hpp"
 #include "anemone/state/instruments/instruments.hpp"
 
 
-class State {
-public:
-  State(std::shared_ptr<Config>);
+// forward declare
+class PluginManager;
 
+
+class State : std::enable_shared_from_this<State> {
+public:
   std::shared_ptr<GridLayouts>    layouts;
   std::shared_ptr<GlobalControls> controls;
   std::shared_ptr<Instruments>    instruments;
+  
+  State(std::shared_ptr<Config>, std::shared_ptr<PluginManager>);
+
+  /// @brief allows particular parts of the state to subscribe to the
+  /// state itself.
+  void connect();
 };
 
 #endif

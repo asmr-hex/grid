@@ -10,10 +10,16 @@
 #include "anemone/types/io/grid/layout/section.hpp"
 
 
+// forward declare
+class PluginManager;
+
+
 namespace GridLayout {
 
   class Sequencer : public Layout {
   public:
+    std::shared_ptr<PluginManager> plugin_manager;
+    
     std::shared_ptr<GridSection> instrument_select;
     std::shared_ptr<GridSection> instrument_panel;
     std::shared_ptr<GridSection> steps;
@@ -28,15 +34,9 @@ namespace GridLayout {
     std::shared_ptr<GridSection> last_step;
     std::shared_ptr<GridSection> metronome;
 
-    // TODO make Instruments Sub-Layout and Override `translate` function
-    // if the original translate function spits out an `InstrumentPanel` event,
-    // re-translate with the Instrument Sub-Layout and return!
-    // this mean moving all logic from, for example, state/instruments/er1/layout into the
-    // state/layout/layouts/ dir for each instrument!
-    // though.. there needs to be a way that this layout can get updates for which instrument is
-    // currently rendered.....hmmmmmm
-    
-    Sequencer(std::shared_ptr<Config>);
+    Sequencer(std::shared_ptr<Config>, std::shared_ptr<PluginManager>);
+
+    virtual void register_sections() override;
   };
 };
 

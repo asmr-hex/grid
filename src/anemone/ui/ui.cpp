@@ -3,10 +3,14 @@
 #include "anemone/ui/ui.hpp"
 
 
-UI::UI(std::shared_ptr<Config> config, std::shared_ptr<IO> io, std::shared_ptr<State> state)
+UI::UI(std::shared_ptr<Config> config,
+       std::shared_ptr<IO> io,
+       std::shared_ptr<State> state,
+       std::shared_ptr<PluginManager> plugin_manager)
   : config(config),
     io(io),
-    state(state)
+    state(state),
+    plugin_manager(plugin_manager)
 {}
 
 
@@ -21,5 +25,10 @@ void UI::connect() {
   stop           = std::make_unique<StopUI>(LayoutName::SequencerAndInstrument, GridSectionName::Stop, io, state);
   show_last_step = std::make_unique<ShowLastStepUI>(LayoutName::SequencerAndInstrument, GridSectionName::LastStep, io, state);
 
+  // create ui plugins
+  for (auto plugin : plugin_manager->plugins) {
+    ui_plugins.push_back(plugin->make_ui(io, state));
+  }
+  
   spdlog::info("  connected -> ui");
 }

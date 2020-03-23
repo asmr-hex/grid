@@ -16,9 +16,13 @@ Anemone::Anemone(std::string config_path,
   spdlog::info("  initializing \tconfiguration");
   config = std::make_shared<Config>(config_path);
 
+  // initialize plugin-manager
+  spdlog::info("  initializing \tplugin manager");
+  plugin_manager = std::make_shared<PluginManager>(config);
+  
   // initialize state
   spdlog::info("  initializing \tstate");
-  state = std::make_shared<State>(State(config));
+  state = std::make_shared<State>(State(config, plugin_manager));
   
   // initialize io
   spdlog::info("  initializing \tio");
@@ -26,16 +30,18 @@ Anemone::Anemone(std::string config_path,
 
   // initialize controllers
   spdlog::info("  initializing \tcontrollers");
-  controllers = std::make_shared<Controllers>(Controllers(io, state));
+  controllers = std::make_shared<Controllers>(Controllers(io, state, plugin_manager));
 
   // initialize ui
   spdlog::info("  initializing \tui");
-  ui = std::make_shared<UI>(UI(config, io, state));
+  ui = std::make_shared<UI>(UI(config, io, state, plugin_manager));
 }
 
 void Anemone::run() {
   spdlog::info("============= connecting ================");
 
+  state->connect();
+  
   io->connect();
 
   controllers->connect();

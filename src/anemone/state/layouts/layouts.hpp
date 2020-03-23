@@ -18,6 +18,13 @@
 #include "anemone/state/layouts/sequencer.hpp"
 
 
+// forward declare
+class State;
+
+// forward declare
+class PluginManager;
+
+
 class GridLayouts {
 public:
   /// @brief the Sequencer Layout.
@@ -30,7 +37,10 @@ public:
   rx::behavior< std::shared_ptr<Layout> > current_layout;
   
   /// @brief constructs all layouts from the provided config.
-  GridLayouts(std::shared_ptr<Config>);
+  GridLayouts(std::shared_ptr<Config>, std::shared_ptr<PluginManager>);
+
+  /// @brief connect and register layouts.
+  void connect(std::shared_ptr<State>);
 };
 
 #endif

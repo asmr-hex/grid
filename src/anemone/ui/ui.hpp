@@ -12,9 +12,12 @@
 
 #include "anemone/io.hpp"
 #include "anemone/config.hpp"
+#include "anemone/plugins.hpp"
 #include "anemone/types.hpp"
 #include "anemone/state.hpp"
 
+#include "anemone/ui/layout_ui.hpp"
+#include "anemone/ui/component.hpp"
 #include "anemone/ui/shift.hpp"
 #include "anemone/ui/step_sequence.hpp"
 #include "anemone/ui/page.hpp"
@@ -28,7 +31,10 @@
 
 class UI {
 public:
-  UI(std::shared_ptr<Config>, std::shared_ptr<IO>, std::shared_ptr<State>);
+  UI(std::shared_ptr<Config>,
+     std::shared_ptr<IO>,
+     std::shared_ptr<State>,
+     std::shared_ptr<PluginManager>);
 
   void connect();
 
@@ -36,6 +42,7 @@ private:
   std::shared_ptr<Config> config;
   std::shared_ptr<IO> io;
   std::shared_ptr<State> state;
+  std::shared_ptr<PluginManager> plugin_manager;
     
   std::unique_ptr<ShiftUI> shift;
   std::unique_ptr<StepSequenceUI> step_sequence;
@@ -46,6 +53,8 @@ private:
   std::unique_ptr<PlayPauseUI> play_pause;
   std::unique_ptr<StopUI> stop;
   std::unique_ptr<ShowLastStepUI> show_last_step;
+
+  std::vector< std::shared_ptr<LayoutUI> > ui_plugins;
 };
 
 #endif

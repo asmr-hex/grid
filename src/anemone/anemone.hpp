@@ -9,6 +9,7 @@
 #include "anemone/ui.hpp"
 #include "anemone/types.hpp"
 #include "anemone/config.hpp"
+#include "anemone/plugins.hpp"
 #include "anemone/state.hpp"
 #include "anemone/controllers.hpp"
 
@@ -21,11 +22,12 @@ public:
   
   void run();
 
-  std::shared_ptr<Config> config;
-  std::shared_ptr<IO> io;
-  std::shared_ptr<UI> ui;
-  std::shared_ptr<State> state;
-  std::shared_ptr<Controllers> controllers;
+  std::shared_ptr<Config>        config;
+  std::shared_ptr<PluginManager> plugin_manager;
+  std::shared_ptr<IO>            io;
+  std::shared_ptr<UI>            ui;
+  std::shared_ptr<State>         state;
+  std::shared_ptr<Controllers>   controllers;
 };
 
 #endif

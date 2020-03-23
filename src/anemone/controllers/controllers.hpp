@@ -13,7 +13,9 @@
 
 #include "anemone/io.hpp"
 #include "anemone/state.hpp"
+#include "anemone/plugins.hpp"
 
+#include "anemone/controllers/controller.hpp"
 #include "anemone/controllers/layout.hpp"
 #include "anemone/controllers/shift.hpp"
 #include "anemone/controllers/step.hpp"
@@ -30,7 +32,7 @@
 ///
 class Controllers {
 public:
-  Controllers(std::shared_ptr<IO>, std::shared_ptr<State>);
+  Controllers(std::shared_ptr<IO>, std::shared_ptr<State>, std::shared_ptr<PluginManager>);
 
   /// @brief this method instantiates all controller classes and connects them to
   /// IO and State.
@@ -51,6 +53,7 @@ public:
 private:
   std::shared_ptr<IO> io;
   std::shared_ptr<State> state;
+  std::shared_ptr<PluginManager> plugin_manager;
 
   std::unique_ptr<LayoutController>      layout;
   std::unique_ptr<ShiftController>       shift;
@@ -62,6 +65,9 @@ private:
   std::unique_ptr<PPQNController>        ppqn;
   std::unique_ptr<SequenceController>    sequence;
   std::unique_ptr<LastStepController>    show_last_step;
+
+  /// @brief plugin controllers
+  std::vector< std::shared_ptr<StateController> > plugin_controllers;
 };
 
 #endif

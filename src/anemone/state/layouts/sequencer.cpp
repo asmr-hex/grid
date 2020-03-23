@@ -1,8 +1,13 @@
+#include <spdlog/spdlog.h>
+
+#include "anemone/plugins.hpp"
+#include "anemone/state/state.hpp"
 #include "anemone/state/layouts/sequencer.hpp"
 
 
-GridLayout::Sequencer::Sequencer(std::shared_ptr<Config> config) :
-      Layout(LayoutName::SequencerAndInstrument)
+GridLayout::Sequencer::Sequencer(std::shared_ptr<Config> config, std::shared_ptr<PluginManager> plugin_manager)
+  : Layout(LayoutName::SequencerAndInstrument),
+    plugin_manager(plugin_manager)
 {
   auto layouts = config->at("layouts")["sequencer"]["layout"];
   
@@ -32,7 +37,9 @@ GridLayout::Sequencer::Sequencer(std::shared_ptr<Config> config) :
                                                     layouts.parse_grid_region("last_step"));
   metronome         = std::make_shared<GridSection>(GridSectionName::Metronome,
                                                     layouts.parse_grid_region("metronome"));
-  
+}
+
+void GridLayout::Sequencer::register_sections() {
   register_section(instrument_select);
   register_section(instrument_panel);
   register_section(steps);
@@ -47,6 +54,23 @@ GridLayout::Sequencer::Sequencer(std::shared_ptr<Config> config) :
   register_section(last_step);
   register_section(metronome);
 
-  // register_sub_layout();
-}
+  spdlog::warn("ABOUT TO REGISTER SUBLAYOUTS OF SEQUENCER");
+  
+  // register all instrument layouts as sublayouts
+  for (auto instrument_plugin : plugin_manager->instrument_plugins->plugins) {
+    register_sublayout(GridSectionName::InstrumentPanel, instrument_plugin->get_layout());
+  }
 
+  spdlog::warn("FINISHED REGISTERING  SUBLAYOUTS OF SEQUENCER");
+  
+  // add handler for sublayout updates
+  add_sublayout_update_handler
+    ([this] (std::shared_ptr<State> state) {
+       state->instruments->rendered.get_observable()
+         .subscribe([this] (std::shared_ptr<Instrument> instrument) {
+                      // update instrument_panel sublayout
+                      update_sublayout_for(GridSectionName::InstrumentPanel,
+                                           instrument->layout);
+                    });       
+     });
+}

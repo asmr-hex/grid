@@ -10,6 +10,11 @@
 #define TYPES_IO_GRID_LAYOUT_NAMES_H
 
 
+// TODO it would be *nice* to eventually create the names of layouts and sections
+// within the plugins that they are relevant to (i.e. in anemone/plugins/...), so that
+// when someone is making a new plugin, they don't have to edit this file of global
+// names...but let's cross that bridge when we get there....
+
 /// @brief Names of grid layout sections.
 enum class
 GridSectionName {
