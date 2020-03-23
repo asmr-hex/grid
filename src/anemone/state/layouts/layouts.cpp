@@ -14,8 +14,5 @@ GridLayouts::GridLayouts(std::shared_ptr<Config> config, std::shared_ptr<PluginM
 {}
 
 void GridLayouts::connect(std::shared_ptr<State> state) {
-
-  spdlog::warn("ABOUT TO CONNECT TO SEQUENCER");
-  
   sequencer->connect(state); 
 }

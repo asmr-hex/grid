@@ -21,7 +21,7 @@
 class PluginManager;
 
 
-class State : std::enable_shared_from_this<State> {
+class State : public std::enable_shared_from_this<State> {
 public:
   std::shared_ptr<GridLayouts>    layouts;
   std::shared_ptr<GlobalControls> controls;

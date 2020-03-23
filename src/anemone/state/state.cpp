@@ -11,8 +11,6 @@ State::State(std::shared_ptr<Config> config, std::shared_ptr<PluginManager> plug
 {}
 
 void State::connect() {
-  spdlog::warn("ABOUT TO CONNECT TO LAYOUTS");
-
   layouts->connect(shared_from_this());
 
   spdlog::info("  connected -> state");

@@ -46,6 +46,8 @@ private:
   std::shared_ptr<IO> io;
   std::shared_ptr<State> state;
   unsigned int section_size;
+
+  bool get_section_size(std::vector< std::shared_ptr<Layout> >);
 };
 
 #endif

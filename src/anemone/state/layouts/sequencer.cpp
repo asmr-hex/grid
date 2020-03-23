@@ -54,14 +54,10 @@ void GridLayout::Sequencer::register_sections() {
   register_section(last_step);
   register_section(metronome);
 
-  spdlog::warn("ABOUT TO REGISTER SUBLAYOUTS OF SEQUENCER");
-  
   // register all instrument layouts as sublayouts
   for (auto instrument_plugin : plugin_manager->instrument_plugins->plugins) {
     register_sublayout(GridSectionName::InstrumentPanel, instrument_plugin->get_layout());
   }
-
-  spdlog::warn("FINISHED REGISTERING  SUBLAYOUTS OF SEQUENCER");
   
   // add handler for sublayout updates
   add_sublayout_update_handler

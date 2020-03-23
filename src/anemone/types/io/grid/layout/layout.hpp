@@ -80,6 +80,12 @@ public:
   
   /// @brief a map of sections by name.
   std::map< GridSectionName, std::shared_ptr<GridSection> > section_by_name;
+
+  /// @brief a vector of all registered sublayouts.
+  ///
+  /// @details it is necessary to keep track of all registered sublayouts so that
+  /// when `connect` is called, we can also call it for each sublayout.
+  std::vector< std::shared_ptr<Layout> > sublayouts;
   
 protected:
   /// @brief virtual method for registering sections and sublayouts.
@@ -126,12 +132,6 @@ protected:
 private:
   /// @brief registerd sections of this layout.
   std::vector<std::shared_ptr<GridSection> > sections;
-
-  /// @brief a vector of all registered sublayouts.
-  ///
-  /// @details it is necessary to keep track of all registered sublayouts so that
-  /// when `connect` is called, we can also call it for each sublayout.
-  std::vector< std::shared_ptr<Layout> > sublayouts;
 
   /// @brief a vector of handler functions for sublayout updates.
   ///

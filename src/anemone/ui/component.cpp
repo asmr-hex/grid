@@ -9,7 +9,15 @@ UIComponent::UIComponent(LayoutName layout, GridSectionName section, std::shared
     io(io),
     state(state)
 {
-  section_size = state->layouts->layout_by_name[layout]->section_by_name[section]->size();
+  std::vector< std::shared_ptr<Layout> > top_level_layouts;
+  for (auto itr : state->layouts->layout_by_name) {
+    top_level_layouts.push_back(itr.second);
+  }
+    
+  if ( !get_section_size(top_level_layouts) ) {
+    spdlog::error("could not find ui component's corresponding layout/section!");
+    exit( EXIT_FAILURE );
+  }
 }
 
 void UIComponent::turn_on_led(grid_section_index index) {
@@ -109,4 +117,43 @@ void UIComponent::clear() {
   for (unsigned int i = 0; i < section_size; i++) {
     turn_off_led(i);
   }
+}
+
+bool UIComponent::get_section_size(std::vector< std::shared_ptr<Layout> > layouts) {
+    // get the size of this section. since this section may not be in a top-level layout
+  // (i.e. it may be a sublayout) we must search through the layout tree to find this particular
+  // layout/section. depth-first search.
+  //
+  // NOTE: this will find the *first* matching layout/section which means that if there is a
+  // layout/section pair with the *same* names in another branch of the layout tree, it will
+  // not take that into account. the upshot of this is that all layout/section pairs in the
+  // layout tree *must* be unique.
+  //
+  // TODO relax this constraint when we eventually refactor everything
+  // to be conditioned on the current top-level layout, for example, in the future, there may be many
+  // InstrumentA ui's each for a given top-level layout, thus we need to encode that a specific ui is
+  // a child ui of a particular top-level layout (*~dreams of the future*~).
+  for (auto candidate_layout : layouts) {
+    if (candidate_layout->name == layout) {
+      // great, does this layout contain the right section?
+      try {
+        auto matched_section = candidate_layout->section_by_name.at(section);
+
+        // cool! lets set the size.
+        section_size = matched_section->size();
+
+        return true;
+      } catch (std::out_of_range &error) {
+        // dag, this layout doesn't contain that section...
+        spdlog::error("section not contained in layout!");
+        exit( EXIT_FAILURE );
+      }
+    } else {
+      // hmm okay, maybe the layout is a sublayout of this layout.
+
+      return get_section_size(candidate_layout->sublayouts);
+    }
+  }
+
+  return false;
 }
