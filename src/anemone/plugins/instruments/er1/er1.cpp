@@ -10,9 +10,9 @@ std::shared_ptr<Layout> ER1::ER1::get_layout() {
 }
 
 std::shared_ptr<StateController> ER1::ER1::make_controller(std::shared_ptr<IO> io, std::shared_ptr<State> state) {
-  return std::make_shared<Controller>(Controller(io, state));
+  return std::make_shared<Controller>(io, state, shared_from_this());
 }
 
 std::shared_ptr<LayoutUI> ER1::ER1::make_ui(std::shared_ptr<IO> io, std::shared_ptr<State> state) {
-  return std::make_shared<UI>(UI(config, io, state));
+  return std::make_shared<UI>(config, io, state, shared_from_this());
 }

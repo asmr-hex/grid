@@ -1,7 +1,10 @@
+#include "anemone/plugins/instruments/er1/er1.hpp"
 #include "anemone/plugins/instruments/er1/controllers/controller.hpp"
 
 
-ER1::Controller::Controller(std::shared_ptr<IO> io, std::shared_ptr<State> state) {
+ER1::Controller::Controller(std::shared_ptr<IO> io,
+                            std::shared_ptr<State> state,
+                            std::shared_ptr<ER1>) {
   // auto on_events = io->grid_events
   //   | rx::filter([] (grid_event_t e) {
   //                  return

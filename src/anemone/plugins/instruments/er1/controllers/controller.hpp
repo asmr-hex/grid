@@ -20,11 +20,17 @@
 
 
 namespace ER1 {
+
+  // forward declaration
+  class ER1;
+
   /// @brief A controller for controlling the ER1.
   ///
   class Controller : public StateController {
   public:
-    Controller(std::shared_ptr<IO>, std::shared_ptr<State>);
+    Controller(std::shared_ptr<IO>,
+               std::shared_ptr<State>,
+               std::shared_ptr<ER1>);
   };
 };
 

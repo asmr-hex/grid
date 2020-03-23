@@ -20,11 +20,16 @@
 
 
 namespace ER1 {
+
+  // forward declaration
+  class ER1;
+  
   class UI : public LayoutUI {
   public:
     UI(std::shared_ptr<Config>,
-          std::shared_ptr<IO>,
-          std::shared_ptr<State>);
+       std::shared_ptr<IO>,
+       std::shared_ptr<State>,
+       std::shared_ptr<ER1>);
 
   private:
     std::shared_ptr<Config> config;

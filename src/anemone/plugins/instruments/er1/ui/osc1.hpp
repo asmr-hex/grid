@@ -17,9 +17,17 @@
 #include "anemone/ui/component.hpp"
 
 namespace ER1 {
+
+  // forward declaration
+  class ER1;
+
   class OSC1_UI : public UIComponent {
   public:
-    OSC1_UI(LayoutName, GridSectionName, std::shared_ptr<IO>, std::shared_ptr<State>);
+    OSC1_UI(LayoutName,
+            GridSectionName,
+            std::shared_ptr<IO>,
+            std::shared_ptr<State>,
+            std::shared_ptr<ER1>);
   };
 };
 

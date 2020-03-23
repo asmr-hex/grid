@@ -26,7 +26,7 @@
 
 
 namespace ER1 {
-  class ER1 : public Plugin, public Instrument {
+  class ER1 : public Plugin, public Instrument, public std::enable_shared_from_this<ER1> {
   public:
     ER1(std::shared_ptr<Config>);
 
