@@ -49,4 +49,40 @@ ER1::Controller::Controller(std::shared_ptr<IO> io,
 
                         er1_state->pad_is_playing.osc1.get_subscriber().on_next(false);
                       });
+
+  auto playback_midi_note_on_events = er1_state->playback_midi_events.get_observable()
+    | rx::filter([er1_state] (midi_event_t midi_event) {
+                   if (midi_event.data.size() == 0) return false;
+                   
+                   midi_data_t osc1_midi_on = midi_note_on(er1_state->midi_map.notes.osc1,
+                                                           er1_state->midi_map.channel,
+                                                           127);
+                   
+                   // filter only for notes corresponding to osc1 not on
+                   return
+                     midi_event.data[0] == osc1_midi_on[0] &&
+                     midi_event.data[1] == osc1_midi_on[1];
+
+                 });
+  playback_midi_note_on_events
+    .subscribe([er1_state] (midi_event_t midi_event) {
+                 er1_state->pad_is_playing.osc1.get_subscriber().on_next(true);
+               });
+    
+  auto playback_midi_note_off_events = er1_state->playback_midi_events.get_observable()
+    | rx::filter([er1_state] (midi_event_t midi_event) {
+                   if (midi_event.data.size() == 0) return false;
+
+                   midi_data_t osc1_midi_on = midi_note_off(er1_state->midi_map.notes.osc1,
+                                                            er1_state->midi_map.channel);
+                   
+                   // filter only for notes corresponding to osc1 not on
+                   return
+                     midi_event.data[0] == osc1_midi_on[0] &&
+                     midi_event.data[1] == osc1_midi_on[1];
+                 });
+  playback_midi_note_off_events
+    .subscribe([er1_state] (midi_event_t midi_event) {
+                 er1_state->pad_is_playing.osc1.get_subscriber().on_next(false);
+               });
 }

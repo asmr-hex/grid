@@ -53,6 +53,15 @@ public:
   status_t status;
   std::vector<std::shared_ptr<Part> > parts;
 
+  /// @brief an abservable stream of midi events in playback.
+  ///
+  /// @details this stream is useful for when a specific instrument class
+  /// derived from the Instrument class needs to know when/what notes are being
+  /// played back by the step sequencer. For example, if there is a drum machine
+  /// instrument plugin which needs to turn on/off the leds of specific drum pads
+  /// it can subscribe to this stream and filter on specific notes.
+  rx::behavior<midi_event_t> playback_midi_events = rx::behavior<midi_event_t>({});
+  
   /// @brief the last midi notes played.
   ///
   /// @description this is used as the default note for when new steps are added by hand.

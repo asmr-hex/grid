@@ -31,5 +31,7 @@ midi_data_t midi_note_on(midi_spn_t note, unsigned int channel, unsigned int vel
 /// @brief create a midi off note given an spn note.
 midi_data_t midi_note_off(midi_spn_t note, unsigned int channel);
 
+/// @brief create a midi off note from midi on note data.
+midi_data_t midi_note_off_from_on(midi_data_t data);
 
 #endif

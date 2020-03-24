@@ -20,6 +20,15 @@ void Sequence::add_midi_note_events_at(paged_step_idx_t paged_step,
 
   // add actual notes to sequence
   midi_on[granular_step] = sequence_layer;
+
+  // HACKY add note off TODO MAKE BETTER
+  sequence_layer_t off_layer;
+  for (auto itr : sequence_layer) {
+    auto off_data = midi_note_off_from_on(itr.second.data);
+    step_event_t off_step_event(step_event_protocol_t::Midi, off_data);
+    off_layer.insert_or_assign(off_step_event.id, off_step_event);
+  }
+  midi_off[granular_step + PPQN::Max] = off_layer;
 }
 
 void Sequence::remove_midi_note_events_at(paged_step_idx_t paged_step,

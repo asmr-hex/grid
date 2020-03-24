@@ -53,7 +53,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
 
                    // TODO MAKE THIS SO IT CAN TURN OFF AND REMOVE NOTES!!!
                    
-                   rendered_part->sequence.add_midi_note_events_at(selected_paged_step, step, notes);                   
+                   rendered_part->sequence.add_midi_note_events_at(selected_paged_step, step, notes);                  
                  }
                });
 

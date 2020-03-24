@@ -89,3 +89,9 @@ midi_data_t midi_note_off(midi_spn_t note, unsigned int channel) {
 
   return data;
 }    
+
+midi_data_t midi_note_off_from_on(midi_data_t data) {
+  data[0] = (unsigned char)((unsigned int)data[0] - 16);
+
+  return data;
+}
