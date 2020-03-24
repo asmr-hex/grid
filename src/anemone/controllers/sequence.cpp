@@ -1,3 +1,5 @@
+#include <spdlog/spdlog.h>
+
 #include "anemone/controllers/sequence.hpp"
 
 
@@ -36,7 +38,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
 
                  // construct paged inndex and convert to absolute index and then granular index;
                  paged_step_idx_t selected_paged_step = { .page = rendered_page, .step = index };
-                 granular_step_idx_t step = selected_paged_step.to_absolute_idx(page_size);
+                 granular_step_idx_t step = selected_paged_step.to_absolute_idx(page_size) * PPQN::Max;
 
                  if (show_last_step) {
                    // if we are setting the last step, update the last step!
@@ -49,6 +51,8 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
                    // get the midi notes to put at step
                    auto notes = rendered_instrument->last_midi_notes_played.get_value();
 
+                   // TODO MAKE THIS SO IT CAN TURN OFF AND REMOVE NOTES!!!
+                   
                    rendered_part->sequence.add_midi_note_events_at(selected_paged_step, step, notes);                   
                  }
                });

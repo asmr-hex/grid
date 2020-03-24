@@ -17,14 +17,17 @@ ER1::Controller::Controller(std::shared_ptr<IO> io,
                  });
 
   on_events.subscribe([io, state, er1_state] (grid_event_t e) {
+                        midi_event_t midi_event = { .source      = "",
+                                                    .destination = "",
+                                                    .data        = midi_note_on(er1_state->midi_map.notes.osc1,
+                                                                                er1_state->midi_map.channel,
+                                                                                127),
+                        };
+                        
                         // emit ocs1 midi on note
-                        io->midi->emit({ .source      = "",
-                                         .destination = "",
-                                         .data        = midi_note_on(er1_state->midi_map.notes.osc1,
-                                                                     er1_state->midi_map.channel,
-                                                                     127),
-                          });
+                        io->midi->emit(midi_event);
 
+                        er1_state->update_last_midi_notes_played(midi_event);
                         er1_state->pad_is_playing.osc1.get_subscriber().on_next(true);
                       });
 

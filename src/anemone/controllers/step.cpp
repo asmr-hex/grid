@@ -7,7 +7,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
   
   // subscribe to clock ticks
   auto tick_events = io->clock_events
-    .subscribe([this, state] (tick_t t) {
+    .subscribe([this, io, state] (tick_t t) {
                  // when the clock ticks, create an observable of all playing parts.
                  auto playing_parts = rx::observable<>::iterate(state->instruments->by_name)
                    | rx::map([] (std::pair<InstrumentName, std::shared_ptr<Instrument> > p) {
@@ -25,7 +25,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
 
                  // advance steps of each part in playback.
                  playing_parts
-                   .subscribe([this, state] (std::shared_ptr<Part> part) {
+                   .subscribe([this, io, state] (std::shared_ptr<Part> part) {
                                 // get step section size.
                                 // TODO idea: conntrollers (and ui eventually) can be organized by specific layout
                                 // and we can have these controllers store the sizes of relevant sections.
@@ -45,6 +45,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
   
                                 // the current step is now greater than the last step, cycle back to first step.
                                 if (current_granular_step > (last_step * PPQN::Max) - 1 ) {
+                                  // this is eht "end-of-sequence"
                                   next_granular_step = 0;
 
                                   // TODO update stuff that needs updating on "end-of-sequence".
@@ -78,11 +79,19 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
 
                                   previous.playing_page = playing_page;
                                 }
-                                
-                                // TODO send events to midi output (on IO presumably)
-                                // TODO clean up advance step methods on instruments and part
-                                // TODO clean up midi_output observable on instruments
-                                
+
+                                // emit midi_events from step_events
+                                // TODO either we should consolidate these types or figure out a principled
+                                // way top use them! add better support for them.
+                                for (auto step_event : step_events) {
+
+                                  spdlog::error("EMITTING note: {}, channel: {}", (unsigned int)step_event.data[1], (unsigned int)step_event.data[0]);
+                                  
+                                  io->midi->emit({ .source      = "",
+                                                   .destination = "",
+                                                   .data = step_event.data,
+                                    });
+                                }
                               });
                });
 }

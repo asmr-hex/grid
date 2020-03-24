@@ -2,7 +2,7 @@
 
 #include "anemone/types/instrument/sequence/sequence.hpp"
 
-
+// TODO make this so it can handle on/off/nrpn/(cc??)
 void Sequence::add_midi_note_events_at(paged_step_idx_t paged_step,
                                        granular_step_idx_t granular_step,
                                        sequence_layer_t sequence_layer)
@@ -17,6 +17,9 @@ void Sequence::add_midi_note_events_at(paged_step_idx_t paged_step,
 
   // broadcast that a rendered step was added
   added_steps.get_subscriber().on_next(paged_step);
+
+  // add actual notes to sequence
+  midi_on[granular_step] = sequence_layer;
 }
 
 void Sequence::remove_midi_note_events_at(paged_step_idx_t paged_step,

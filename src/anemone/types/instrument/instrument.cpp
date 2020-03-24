@@ -19,6 +19,14 @@ Instrument::Instrument(InstrumentName name,
     last_midi_notes_played(rx::behavior<sequence_layer_t>(default_midi_notes))
 {}
 
+void Instrument::update_last_midi_notes_played(midi_event_t midi_event) {
+  // TODO add timing logic to aggregate closely timed updates!
+
+  // convert midi_event into a step_event
+  step_event_t step_event(step_event_protocol_t::Midi, midi_event.data);
+
+  last_midi_notes_played.get_subscriber().on_next(sequence_layer_t{ {step_event.id, step_event} });
+}
 
 Instrument create_instrument(InstrumentName name, std::shared_ptr<Config> config, std::shared_ptr<Layout> layout) {
   std::vector<std::shared_ptr<Part> > parts;

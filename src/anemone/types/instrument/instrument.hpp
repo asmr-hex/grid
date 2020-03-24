@@ -14,9 +14,11 @@
 #include "anemone/config.hpp"
 
 #include "anemone/types/instrument/names.hpp"
+#include "anemone/types/instrument/step/event.hpp"
 #include "anemone/types/instrument/part/part.hpp"
 #include "anemone/types/instrument/sequence/sequence.hpp"
 #include "anemone/types/io/grid/layout/layout.hpp"
+#include "anemone/types/io/midi/event.hpp"
 
 
 class Instrument {
@@ -55,7 +57,8 @@ public:
   ///
   /// @description this is used as the default note for when new steps are added by hand.
   rx::behavior<sequence_layer_t> last_midi_notes_played;
-  
+
+  void update_last_midi_notes_played(midi_event_t);
 };
 
 /// @brief wrapper over Instrument constructor to initialize parts.
