@@ -2,15 +2,15 @@
 # TODO: make these *relative* to instrument panel...
 # right now they are the absolute positions on the grid.
 osc1:
-  x: 8
-  y: 2
+  x: 0
+  y: 0
 osc2:
-  x: 9
-  y: 2
+  x: 1
+  y: 0
 osc3:
-  x: 10
-  y: 2
+  x: 2
+  y: 0
 osc4:
-  x: 11
-  y: 2
+  x: 3
+  y: 0
 ...

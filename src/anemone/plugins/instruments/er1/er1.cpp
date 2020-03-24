@@ -3,7 +3,9 @@
 ER1::ER1::ER1(std::shared_ptr<Config> config)
   : Plugin(config),
     Instrument(create_instrument(InstrumentName::ER1, config, std::make_shared<ER1Layout>(ER1Layout(config))))
-{}
+{
+  
+}
 
 std::shared_ptr<Layout> ER1::ER1::get_layout() {
   return layout;

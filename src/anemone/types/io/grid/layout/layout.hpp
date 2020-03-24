@@ -146,9 +146,15 @@ private:
   /// @brief registered superlayout. this never changes.
   struct {
     GridSectionName section;
-    std::shared_ptr<Layout> layout;  
+    std::shared_ptr<Layout> layout = nullptr;  
   } superlayout;
 
+  /// @brief this is a flat map of all nested layouts. this is important because calls
+  /// to the translate method are sometimes for grid addresses of sublayouts to the current
+  /// rendered top-level layout. keeping this map ensures that we don't have to search for the
+  /// appropriate sublayout on each translate.
+  std::map<LayoutName, std::shared_ptr<Layout> > sublayout_flat_map_by_name;
+  
   /// @brief returns the grid layout, section, and coordinates corresponding to the provided grid coordinates.
   ///
   /// @details this method will convert global grid coordinates to the coordinates of the most specific section.

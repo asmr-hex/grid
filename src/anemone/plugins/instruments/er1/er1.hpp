@@ -28,6 +28,27 @@
 namespace ER1 {
   class ER1 : public Plugin, public Instrument, public std::enable_shared_from_this<ER1> {
   public:
+    /// @brief midi mapping
+    struct {
+      unsigned int channel = 10;
+      struct {
+        midi_spn_t osc1 = "c2";
+        midi_spn_t osc2 = "c#2";
+        midi_spn_t osc3 = "d2";
+        midi_spn_t osc4 = "d#2";
+      } notes;
+    } midi_map;
+
+
+    /// @brief keep track of the playing pads
+    struct {
+      rx::behavior<bool> osc1 = rx::behavior<bool>(false);
+      rx::behavior<bool> osc2 = rx::behavior<bool>(false);
+      rx::behavior<bool> osc3 = rx::behavior<bool>(false);
+      rx::behavior<bool> osc4 = rx::behavior<bool>(false);
+    } pad_is_playing;
+    
+    
     ER1(std::shared_ptr<Config>);
 
     virtual std::shared_ptr<Layout>

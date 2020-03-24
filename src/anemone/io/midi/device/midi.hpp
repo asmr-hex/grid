@@ -51,7 +51,7 @@ public:
 class MidiOutputDevice : public MidiDevice {
 public:
   /// @brief emits midi messages to the midi output.
-  virtual void emit(midi_event_t) = 0;
+  virtual void emit(midi_data_t) = 0;
 };
 
 #endif

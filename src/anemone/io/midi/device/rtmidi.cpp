@@ -147,8 +147,8 @@ std::map<std::string, unsigned int> RTMidiOut::list_devices() {
   return devices;  
 }
 
-void RTMidiOut::emit(midi_event_t event) {
-  output->sendMessage(&event.data);
+void RTMidiOut::emit(midi_data_t data) {
+  output->sendMessage(&data);
 }
 
 std::string RTMidiOut::name() {

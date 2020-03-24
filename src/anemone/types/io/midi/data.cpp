@@ -3,7 +3,7 @@
 #include "anemone/types/io/midi/data.hpp"
 
 
-unsigned int spn_to_num(std::string spn) {
+midi_note_number_t spn_to_num(midi_spn_t spn) {
   int octave, note;
   int octave_num_offset = 1;
   std::locale loc;
@@ -50,6 +50,9 @@ unsigned int spn_to_num(std::string spn) {
   }
   
   // parse octave
+  // TODO we aren't parsing negative octaves here... in the official
+  // midi spec, there is a -1 octave.
+  // officially C0 has the midi note number 12?
   octave = stoi(spn.substr(octave_num_offset));
   
   // adjust for sharps/flats causing octave change.
@@ -66,21 +69,21 @@ unsigned int spn_to_num(std::string spn) {
     break;
   }
   
-  return (unsigned int)((octave * 12) + note);
+  return (midi_note_number_t)(((octave + 1) * 12) + note);
 }
 
-midi_data_t midi_note_on(std::string note, unsigned int channel, unsigned int velocity) {
+midi_data_t midi_note_on(midi_spn_t note, unsigned int channel, unsigned int velocity) {
   std::vector<unsigned char> data;
-  data.push_back((unsigned char)(144 + channel));
+  data.push_back((unsigned char)(143 + channel));
   data.push_back((unsigned char)spn_to_num(note));
   data.push_back((unsigned char)velocity);
 
   return data;
 }
 
-midi_data_t midi_note_off(std::string note, unsigned int channel) {
+midi_data_t midi_note_off(midi_spn_t note, unsigned int channel) {
   std::vector<unsigned char> data;
-  data.push_back((unsigned char)(128 + channel));
+  data.push_back((unsigned char)(127 + channel));
   data.push_back((unsigned char)spn_to_num(note));
   data.push_back(0);
 

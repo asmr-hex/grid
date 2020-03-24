@@ -45,23 +45,53 @@ grid_event_t Layout::translate(const grid_device_event_t& device_event) const {
 }
 
 grid_coordinates_t Layout::translate(const grid_addr_t& addr) const {
-  auto section = section_by_name.at(addr.section);
-
-  auto coordinates = section->coordinates_of(addr.index);
+  // since the incoming adrid address could be addressed to a sublayout of this
+  // layout, we must retreive it.
+  std::shared_ptr<GridSection> section;
+  std::shared_ptr<const Layout> layout;
   
+  if (addr.layout == name) {
+    // this address if for this layout, get the section.
+    section = section_by_name.at(addr.section);
+    layout  = shared_from_this();
+  } else {
+    // this address must be for a sublayout
+    try {
+      layout = sublayout_flat_map_by_name.at(addr.layout);
+    } catch (std::out_of_range &error) {
+      // no such layout exists as a sublayout!
+      spdlog::error("cannot translate from a non-existent sublayout!");
+      exit( EXIT_FAILURE );
+    }
+
+    // now lets try to get the section of the sublayout
+    try {
+      section = layout->section_by_name.at(addr.section);
+    } catch (std::out_of_range &error) {
+      // no such section exists in the sublayout!
+      spdlog::error("cannot translate from a non-existent sublayout section!");
+      exit( EXIT_FAILURE );
+    }
+  }
+  
+  auto coordinates = section->coordinates_of(addr.index);
+
   // if this layout has a parent layout
-  if (superlayout.layout != nullptr) {
+  if (layout->superlayout.layout != nullptr) {
+
     // add the section offsets to the coordinates
     coordinates.x += section->region().min.x;
     coordinates.y += section->region().min.y;
 
+    auto superlayout_width = layout->superlayout.layout->section_by_name[layout->superlayout.section]->width();
+    
     // re-construct the corresponding grid address of the parent layout's section
     // and call translate on it. this will cause the translation to bubble up until
     // there is no parent layout in case there are deeply nested layouts.
-    coordinates = superlayout.layout->translate
-      ({ .layout  = superlayout.layout->name,
-         .section = superlayout.section,
-         .index   = superlayout.layout->section_by_name[superlayout.section]->index_of(coordinates),
+    coordinates = layout->superlayout.layout->translate
+      ({ .layout  = layout->superlayout.layout->name,
+         .section = layout->superlayout.section,
+         .index   = ((coordinates.y * superlayout_width ) + coordinates.x),
       });
   }
 
@@ -75,6 +105,12 @@ void Layout::connect(std::shared_ptr<State> state) {
   // iterate over all registered sublayouts and invoke this method on them.
   for (auto sublayout : sublayouts) {
     sublayout->connect(state);
+
+    // combine sublayout flat maps of this sublayout
+    sublayout_flat_map_by_name[sublayout->name] = sublayout;
+    for (auto itr : sublayout->sublayout_flat_map_by_name) {
+      sublayout_flat_map_by_name[itr.first] = itr.second;
+    }
   }
   
   // iterate over all handlers and call them

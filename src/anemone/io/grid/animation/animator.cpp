@@ -59,19 +59,19 @@ void Animator::add(std::unordered_map<grid_addr_t, std::shared_ptr<Animation>, g
 
 void Animator::remove(grid_addr_t grid_addr) {
   std::lock_guard<std::mutex> guard(lock);
-
+  
   // translate grid_addr to grid_coordinates.
   auto coordinates = current_layout->translate(grid_addr);
-
+  
   pixels.erase(coordinates);
 }
 
 void Animator::remove(grid_addr_t grid_addr, unsigned int intensity) {
   std::lock_guard<std::mutex> guard(lock);
-
+  
   // translate grid_addr to grid_coordinates.
   auto coordinates = current_layout->translate(grid_addr);
-  
+
   pixels.erase(coordinates);
 
   grid_device->set(coordinates, intensity);

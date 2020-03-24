@@ -10,6 +10,7 @@
 
 #include <memory>
 
+#include "anemone/rx.hpp"
 #include "anemone/io.hpp"
 #include "anemone/types.hpp"
 #include "anemone/state.hpp"

@@ -85,7 +85,7 @@ public:
   virtual std::map<std::string, unsigned int> list_devices() override;
 
   /// @brief emits midi messages to the midi output.
-  virtual void emit(midi_event_t) override;
+  virtual void emit(midi_data_t) override;
 
   /// @returns the name of the midi device.
   virtual std::string name() override;

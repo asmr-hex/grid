@@ -39,11 +39,17 @@ rx::observable<midi_event_t> Midi::connect() {
 }
 
 void Midi::emit(midi_event_t event) {
-  
+  // TODO make routing better (right now sends to all output devices...)
+  for (auto itr : output_devices) {
+    auto device = itr.second;
+    device->emit(event.data);
+  }
 }
 
 void Midi::emit(std::vector<midi_event_t>& events) {
-  
+  for (auto event : events) {
+    emit(event);
+  }
 }
 
 void Midi::make_input_devices(std::vector<std::string> names) {
