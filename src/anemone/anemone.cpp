@@ -47,11 +47,6 @@ void Anemone::run() {
   controllers->connect();
 
   ui->connect();
-
-  io->midi_events
-    .subscribe([] (midi_event_t e) {
-                 spdlog::info("MIDI EVENT");
-               });
   
   // wait for 20 seconds
   // rx::observable<>::timer(std::chrono::milliseconds(20000)).
