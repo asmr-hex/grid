@@ -83,10 +83,7 @@ StepController::StepController(std::shared_ptr<IO> io, std::shared_ptr<State> st
                                 // emit midi_events from step_events
                                 // TODO either we should consolidate these types or figure out a principled
                                 // way top use them! add better support for them.
-                                for (auto step_event : step_events) {
-
-                                  spdlog::error("EMITTING note: {}, channel: {}", (unsigned int)step_event.data[1], (unsigned int)step_event.data[0]);
-                                  
+                                for (auto step_event : step_events) {                                  
                                   io->midi->emit({ .source      = "",
                                                    .destination = "",
                                                    .data = step_event.data,
