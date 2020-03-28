@@ -98,7 +98,6 @@ ER1::Controller::Controller(std::shared_ptr<IO> io,
   knobs_cc_events
     .subscribe([io] (midi_event_t midi_event) {
                  auto value = (unsigned int)midi_event.data[2];
-                 spdlog::warn("value: {}", value);
 
                  // output nrpn message to control er1 delay
                  midi_data_t nrpn_data_lsb;
