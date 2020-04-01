@@ -23,6 +23,7 @@ class InstrumentPluginManager;
 class Instruments {
 public:
   std::map<InstrumentName, std::shared_ptr<Instrument> > by_name;
+  std::map<unsigned int, std::shared_ptr<Instrument> > by_index;
 
   rx::behavior<std::shared_ptr<Instrument> > rendered;
 

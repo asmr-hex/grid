@@ -26,6 +26,7 @@
 #include "anemone/controllers/ppqn.hpp"
 #include "anemone/controllers/sequence.hpp"
 #include "anemone/controllers/last_step.hpp"
+#include "anemone/controllers/instrument_select.hpp"
 
 
 /// @brief An aggregation of all controllers which respond to i/o events.
@@ -55,16 +56,17 @@ private:
   std::shared_ptr<State> state;
   std::shared_ptr<PluginManager> plugin_manager;
 
-  std::unique_ptr<LayoutController>      layout;
-  std::unique_ptr<ShiftController>       shift;
-  std::unique_ptr<StepController>        step;
-  std::unique_ptr<PlayPauseController>   play_pause;
-  std::unique_ptr<PageController>        page;
-  std::unique_ptr<PartController>        part;
-  std::unique_ptr<BankController>        bank;
-  std::unique_ptr<PPQNController>        ppqn;
-  std::unique_ptr<SequenceController>    sequence;
-  std::unique_ptr<LastStepController>    show_last_step;
+  std::unique_ptr<LayoutController>           layout;
+  std::unique_ptr<ShiftController>            shift;
+  std::unique_ptr<StepController>             step;
+  std::unique_ptr<PlayPauseController>        play_pause;
+  std::unique_ptr<PageController>             page;
+  std::unique_ptr<PartController>             part;
+  std::unique_ptr<BankController>             bank;
+  std::unique_ptr<PPQNController>             ppqn;
+  std::unique_ptr<SequenceController>         sequence;
+  std::unique_ptr<LastStepController>         show_last_step;
+  std::unique_ptr<InstrumentSelectController> instrument_select;
 
   /// @brief plugin controllers
   std::vector< std::shared_ptr<StateController> > plugin_controllers;

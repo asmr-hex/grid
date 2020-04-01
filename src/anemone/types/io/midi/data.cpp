@@ -5,6 +5,7 @@
 
 midi_note_number_t spn_to_num(midi_spn_t spn) {
   int octave, note;
+  int octave_sign = 1;
   int octave_num_offset = 1;
   std::locale loc;
   
@@ -40,7 +41,7 @@ midi_note_number_t spn_to_num(midi_spn_t spn) {
     break;
   }
   
-  // detect sharps/flats
+  // detect sharps/flats, and negative octave
   if (spn[1] == 'b') {
     note--;
     octave_num_offset++;
@@ -48,12 +49,17 @@ midi_note_number_t spn_to_num(midi_spn_t spn) {
     note++;
     octave_num_offset++;
   }
+  if (spn[octave_num_offset] == '-') {
+    // this must be octave -1
+    octave_sign = -1;
+    octave_num_offset++;
+  }
   
   // parse octave
-  // TODO we aren't parsing negative octaves here... in the official
+  // Note: we are parsing negative octaves here... in the official
   // midi spec, there is a -1 octave.
   // officially C0 has the midi note number 12?
-  octave = stoi(spn.substr(octave_num_offset));
+  octave = octave_sign * stoi(spn.substr(octave_num_offset));
   
   // adjust for sharps/flats causing octave change.
   switch (note) {
@@ -94,4 +100,31 @@ midi_data_t midi_note_off_from_on(midi_data_t data) {
   data[0] = (unsigned char)((unsigned int)data[0] - 16);
 
   return data;
+}
+
+midi_data_t make_cc_message(unsigned int channel, unsigned int control, unsigned int value) {
+  std::vector<unsigned char> data;
+  data.push_back((unsigned char)(175 + channel));
+  data.push_back(control);
+  data.push_back(value);
+
+  return data;
+}
+
+bool is_midi_on_note_message(midi_data_t msg) {
+  return
+    (unsigned int)msg[0] >= 144 &&
+    (unsigned int)msg[0] <= 159;
+}
+
+bool is_midi_off_note_message(midi_data_t msg) {
+  return
+    (unsigned int)msg[0] >= 128 &&
+    (unsigned int)msg[0] <= 143;
+}
+
+bool is_midi_cc_message(midi_data_t msg) {
+  return
+    (unsigned int)msg[0] >= 176 &&
+    (unsigned int)msg[0] <= 191;  
 }

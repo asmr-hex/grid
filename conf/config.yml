@@ -13,7 +13,7 @@ layouts:
   pattern:
     layout_file: "pattern/layout.yml"
 
-instruments:  # TODO make this its own section....
+instruments:
   sp404:
     layout_file: "sp404_layout.yml"
   ms20:
@@ -23,6 +23,8 @@ instruments:  # TODO make this its own section....
     layout_file: "gr1_layout.yml"
   er1:
     layout_file: "er1_layout.yml"
+  microgranny:
+    layout_file: "microgranny_layout.yml"
 
 controllers:
   - nanokey

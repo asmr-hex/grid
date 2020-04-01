@@ -11,7 +11,7 @@ InstrumentPluginManager::InstrumentPluginManager(std::shared_ptr<Config> config)
   for (auto itr : instrument_map.yml) {
     auto instrument_name = itr.first.as<std::string>();
 
-    // create and pluginn ER1
+    // create and plugin ER1
     if ( instrument_name == "er1" ) {
       auto er1 = std::make_shared<ER1::ER1>(config);
 
@@ -22,9 +22,16 @@ InstrumentPluginManager::InstrumentPluginManager(std::shared_ptr<Config> config)
       
       spdlog::info("    created instrument '{}'", instrument_name);
     }
-    // creat and plugin SP404
-    else if ( instrument_name == "sp404" ) {
-      // TODO
+    // creat and plugin MICROGRANNNY
+    else if ( instrument_name == "microgranny" ) {
+      auto microgranny = std::make_shared<MicroGranny::MicroGranny>(config);
+
+      if (instruments.size() == 0) default_instrument = microgranny;
+      
+      instruments.push_back(microgranny);
+      plugins.push_back(microgranny);
+      
+      spdlog::info("    created instrument '{}'", instrument_name);
     }
   }
 }

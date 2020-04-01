@@ -13,13 +13,13 @@
 
 
 /// @brief type alias for grid sectionn index.
-typedef unsigned int grid_section_index;
+typedef unsigned int grid_section_index_t;
 
 /// @breif grid address.
 struct grid_addr_t {
-  LayoutName layout;
-  GridSectionName section;
-  grid_section_index index;
+  LayoutName           layout;
+  GridSectionName      section;
+  grid_section_index_t index;
 
   /// @brief grid address equality operator.
   ///
@@ -45,7 +45,7 @@ struct grid_addr_hasher {
   {
     size_t h1 = std::hash<LayoutName>()(m.layout);
     size_t h2 = std::hash<GridSectionName>()(m.section);
-    size_t h3 = std::hash<grid_section_index>()(m.index);
+    size_t h3 = std::hash<grid_section_index_t>()(m.index);
     return h1 ^ (h2 ^ (h3 << 1));
   };
 };

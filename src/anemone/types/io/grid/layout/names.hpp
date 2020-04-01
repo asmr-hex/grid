@@ -59,6 +59,11 @@ GridSectionName {
                  OSC2,
                  OSC3,
                  OSC4,
+
+                 // MicroGRanny Names
+                 MicroGrannySamples,
+                 MicroGrannyPresets,
+                 MicroGrannyBanks,
 };
 
 
@@ -72,6 +77,7 @@ LayoutName {
 
             // TODO seperate this into a seperate InstrumentLayoutName enum
             ER1,
+            MicroGranny,
 };
 
 #endif

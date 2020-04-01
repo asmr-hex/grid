@@ -15,6 +15,7 @@ enum class InstrumentName { ER1,
                             MS20,
                             VOLCABEAT,
                             MICROBRUTE,
-                            JUNO60 };
+                            JUNO60,
+                            MICROGRANNY};
 
 #endif

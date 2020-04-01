@@ -17,6 +17,7 @@
 
 // include all specific instrument plugins
 #include "anemone/plugins/instruments/er1/er1.hpp"
+#include "anemone/plugins/instruments/microgranny/microgranny.hpp"
 
 
 class InstrumentPluginManager {

@@ -7,8 +7,11 @@ Instruments::Instruments(std::shared_ptr<Config> config, std::shared_ptr<Instrum
   : rendered(rx::behavior<std::shared_ptr<Instrument> >(plugin_manager->default_instrument))
 {
   // add instruments from plugin manager
+  unsigned int idx = 0;
   for (auto instrument : plugin_manager->instruments) {
-    by_name[instrument->name] = instrument; 
+    by_name[instrument->name] = instrument;
+    by_index[idx] = instrument;
+    idx++;
   }
 }
 

@@ -60,6 +60,8 @@ public:
   /// played back by the step sequencer. For example, if there is a drum machine
   /// instrument plugin which needs to turn on/off the leds of specific drum pads
   /// it can subscribe to this stream and filter on specific notes.
+  /// events are added to this stream within the step controller when step events are
+  /// emitted by the sequencer.
   rx::behavior<midi_event_t> playback_midi_events = rx::behavior<midi_event_t>({});
   
   /// @brief the last midi notes played.

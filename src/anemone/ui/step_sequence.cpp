@@ -29,7 +29,7 @@ StepSequenceUI::StepSequenceUI(LayoutName layout, GridSectionName section, std::
 
                 try {
                   // collect all rendered steps for this page into a vector
-                  std::vector<grid_section_index> rendered_steps_vector;
+                  std::vector<grid_section_index_t> rendered_steps_vector;
                   auto rendered_steps_set = rendered_part->sequence.rendered_steps.at(rendered_page);
                   for (auto rendered_step : rendered_steps_set) {
                     rendered_steps_vector.push_back(rendered_step);

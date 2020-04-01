@@ -27,6 +27,7 @@
 #include "anemone/ui/play_pause.hpp"
 #include "anemone/ui/stop.hpp"
 #include "anemone/ui/show_last_step.hpp"
+#include "anemone/ui/instrument_select.hpp"
 
 
 class UI {
@@ -53,6 +54,7 @@ private:
   std::unique_ptr<PlayPauseUI> play_pause;
   std::unique_ptr<StopUI> stop;
   std::unique_ptr<ShowLastStepUI> show_last_step;
+  std::unique_ptr<InstrumentSelectUI> instrument_select;
 
   std::vector< std::shared_ptr<LayoutUI> > ui_plugins;
 };

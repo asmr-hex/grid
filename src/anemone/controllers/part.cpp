@@ -10,7 +10,7 @@ PartController::PartController(std::shared_ptr<IO> io, std::shared_ptr<State> st
                      e.section == GridSectionName::Parts &&
                      e.type    == GridEvent::Pressed;
                  })
-    | rx::map([] (grid_event_t e) -> grid_section_index {
+    | rx::map([] (grid_event_t e) -> grid_section_index_t {
                 return e.index;
               });
 

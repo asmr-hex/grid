@@ -38,7 +38,7 @@ PageUI::PageUI(LayoutName layout, GridSectionName section, std::shared_ptr<IO> i
                 clear();
                 
                 // fill pages up to last page.
-                std::vector<grid_section_index> indices;
+                std::vector<grid_section_index_t> indices;
                 for (auto i = 0; i <= last_page; i++) { indices.push_back(i); }
                 set_leds(indices, led_level.active_pages);
                 

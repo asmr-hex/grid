@@ -23,19 +23,19 @@ public:
   UIComponent(LayoutName, GridSectionName, std::shared_ptr<IO>, std::shared_ptr<State>);
 
 protected:
-  void turn_on_led(grid_section_index index);
-  void turn_on_leds(std::vector<grid_section_index> indices);
-  void turn_off_led(grid_section_index index);
-  void set_led(grid_section_index index, unsigned int intensity);
-  void set_leds(std::vector<grid_section_index> indices, unsigned int intensity);
+  void turn_on_led(grid_section_index_t index);
+  void turn_on_leds(std::vector<grid_section_index_t> indices);
+  void turn_off_led(grid_section_index_t index);
+  void set_led(grid_section_index_t index, unsigned int intensity);
+  void set_leds(std::vector<grid_section_index_t> indices, unsigned int intensity);
 
 
-  void add_animation(std::shared_ptr<Animation>, grid_section_index);
-  void add_animation(std::map<grid_section_index, std::shared_ptr<Animation> >);
-  void remove_animation(grid_section_index);
-  void remove_animation(grid_section_index, unsigned int);
-  void remove_animation(std::vector<grid_section_index>);
-  void remove_animation(std::vector<grid_section_index>, unsigned int);
+  void add_animation(std::shared_ptr<Animation>, grid_section_index_t);
+  void add_animation(std::map<grid_section_index_t, std::shared_ptr<Animation> >);
+  void remove_animation(grid_section_index_t);
+  void remove_animation(grid_section_index_t, unsigned int);
+  void remove_animation(std::vector<grid_section_index_t>);
+  void remove_animation(std::vector<grid_section_index_t>, unsigned int);
   
   /// @brief clears the ui section to a tabula rasa
   void clear();

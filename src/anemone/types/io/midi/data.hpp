@@ -34,4 +34,16 @@ midi_data_t midi_note_off(midi_spn_t note, unsigned int channel);
 /// @brief create a midi off note from midi on note data.
 midi_data_t midi_note_off_from_on(midi_data_t data);
 
+/// @brief create a midi cc message.
+midi_data_t make_cc_message(unsigned int channel, unsigned int control, unsigned int value);
+
+/// @brief determines if a midi message is a note on message.
+bool is_midi_on_note_message(midi_data_t);
+
+/// @brief determines if a midi message is a note off message.
+bool is_midi_off_note_message(midi_data_t);
+
+/// @brief determines if a midi message is a cc message.
+bool is_midi_cc_message(midi_data_t);
+
 #endif

@@ -26,7 +26,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
 
 
   on_events
-    .subscribe([state] (grid_section_index index) {
+    .subscribe([state] (grid_section_index_t index) {
                  // get current instrument and part annd page
                  auto rendered_instrument = state->instruments->rendered.get_value();
                  auto rendered_part = rendered_instrument->status.part.under_edit.get_value();
