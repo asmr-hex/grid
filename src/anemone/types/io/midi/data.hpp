@@ -22,20 +22,23 @@ typedef unsigned int midi_note_number_t;
 /// @brief midi scientific pitch notation typedef.
 typedef std::string midi_spn_t;
 
+/// @brief midi channel type.
+typedef unsigned int midi_channel_t;
+
 /// @brief translate 'scientific pitch notation' to note number.
 midi_note_number_t spn_to_num(midi_spn_t spn);
 
 /// @brief create a midi on note given an spn note.
-midi_data_t midi_note_on(midi_spn_t note, unsigned int channel, unsigned int velocity);
+midi_data_t midi_note_on(midi_spn_t note, midi_channel_t channel, unsigned int velocity);
 
 /// @brief create a midi off note given an spn note.
-midi_data_t midi_note_off(midi_spn_t note, unsigned int channel);
+midi_data_t midi_note_off(midi_spn_t note, midi_channel_t channel);
 
 /// @brief create a midi off note from midi on note data.
 midi_data_t midi_note_off_from_on(midi_data_t data);
 
 /// @brief create a midi cc message.
-midi_data_t make_cc_message(unsigned int channel, unsigned int control, unsigned int value);
+midi_data_t make_cc_message(midi_channel_t channel, unsigned int control, unsigned int value);
 
 /// @brief determines if a midi message is a note on message.
 bool is_midi_on_note_message(midi_data_t);

@@ -19,7 +19,7 @@ MicroGranny::SamplesUI::SamplesUI(LayoutName layout_name,
       .get_observable()
       .subscribe([this, i] (bool on) {
                    if (on) { turn_on_led(i); }
-                   else    { turn_off_led(i); }                   
+                   else    { turn_off_led(i); }    
                  });      
   }
 }

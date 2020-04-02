@@ -7,10 +7,10 @@
 ER1::UI::UI(std::shared_ptr<Config> config,
             std::shared_ptr<IO> io,
             std::shared_ptr<State> state,
-            std::shared_ptr<ER1> er1_state)
+            std::shared_ptr<ER1> er1)
   : config(config),
     io(io),
     state(state)
 {
-  osc1 = std::make_unique<OSC1_UI>(LayoutName::ER1, GridSectionName::OSC1, io, state, er1_state);
+  osc = std::make_unique<OSC_UI>(LayoutName::ER1, GridSectionName::Oscillators, io, state, er1);
 }

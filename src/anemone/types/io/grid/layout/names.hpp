@@ -55,10 +55,7 @@ GridSectionName {
 
                  // TODO seperate this out into a seperate InstrumentSectionName enum
                  // ER1 stuff
-                 OSC1,
-                 OSC2,
-                 OSC3,
-                 OSC4,
+                 Oscillators,
 
                  // MicroGRanny Names
                  MicroGrannySamples,

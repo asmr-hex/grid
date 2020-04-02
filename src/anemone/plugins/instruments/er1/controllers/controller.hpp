@@ -17,6 +17,8 @@
 #include "anemone/state.hpp"
 
 #include "anemone/controllers/controller.hpp"
+#include "anemone/plugins/instruments/er1/controllers/midi.hpp"
+#include "anemone/plugins/instruments/er1/controllers/pads.hpp"
 
 
 namespace ER1 {
@@ -28,6 +30,12 @@ namespace ER1 {
   ///
   class Controller : public StateController {
   public:
+    /// @brief midi controller.
+    std::unique_ptr<MidiController> midi;
+
+    /// @brief pads controller.
+    std::unique_ptr<PadsController> pads;
+
     Controller(std::shared_ptr<IO>,
                std::shared_ptr<State>,
                std::shared_ptr<ER1>);

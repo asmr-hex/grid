@@ -18,10 +18,7 @@
 namespace ER1 {
   class ER1Layout : public Layout {
   public:
-    std::shared_ptr<GridSection> OSC1;
-    std::shared_ptr<GridSection> OSC2;
-    std::shared_ptr<GridSection> OSC3;
-    std::shared_ptr<GridSection> OSC4;
+    std::shared_ptr<GridSection> oscillators;
   
     ER1Layout(std::shared_ptr<Config> config);
 
