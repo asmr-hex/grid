@@ -19,9 +19,11 @@ namespace GridLayout {
   class Sequencer : public Layout {
   public:
     std::shared_ptr<PluginManager> plugin_manager;
-    
+
+    std::shared_ptr<GridSection> control_select;
     std::shared_ptr<GridSection> instrument_select;
     std::shared_ptr<GridSection> instrument_panel;
+    std::shared_ptr<GridSection> instrument_controls;
     std::shared_ptr<GridSection> steps;
     std::shared_ptr<GridSection> pages;
     std::shared_ptr<GridSection> parts;

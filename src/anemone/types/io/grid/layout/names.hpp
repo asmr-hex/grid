@@ -30,10 +30,15 @@ GridSectionName {
                  /// shift section
                  Shift,
 
+                 /// control selection section
+                 ControlSelect,
+                 
                  /// instrument selection section
                  InstrumentSelect,
                  /// instrument panel section
                  InstrumentPanel,
+                 /// instrument control panel
+                 InstrumentControls,
 
                  /// step sequencer section
                  Steps,
@@ -56,6 +61,19 @@ GridSectionName {
                  // TODO seperate this out into a seperate InstrumentSectionName enum
                  // ER1 stuff
                  Oscillators,
+                 Cymbals,
+                 AudioIns,
+                 DelayDepth,
+                 DelayTime,
+                 Level,
+                 Pan,
+                 LowBoost,
+                 Pitch,
+                 Decay,
+                 ModType,
+                 ModDepth,
+                 ModSpeed,
+                 WaveType,
 
                  // MicroGRanny Names
                  MicroGrannySamples,

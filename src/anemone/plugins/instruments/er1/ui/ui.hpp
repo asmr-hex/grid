@@ -17,6 +17,7 @@
 #include "anemone/state.hpp"
 
 #include "anemone/plugins/instruments/er1/ui/osc.hpp"
+#include "anemone/plugins/instruments/er1/ui/cymbals.hpp"
 
 
 namespace ER1 {
@@ -36,7 +37,8 @@ namespace ER1 {
     std::shared_ptr<IO> io;
     std::shared_ptr<State> state;
     
-    std::unique_ptr<OSC_UI> osc;
+    std::unique_ptr<OSC_UI>    osc;
+    std::unique_ptr<CymbalsUI> cymbals;
   
   };  
 };

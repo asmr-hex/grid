@@ -12,5 +12,6 @@ ER1::UI::UI(std::shared_ptr<Config> config,
     io(io),
     state(state)
 {
-  osc = std::make_unique<OSC_UI>(LayoutName::ER1, GridSectionName::Oscillators, io, state, er1);
+  osc     = std::make_unique<OSC_UI>(LayoutName::ER1, GridSectionName::Oscillators, io, state, er1);
+  cymbals = std::make_unique<CymbalsUI>(LayoutName::ER1, GridSectionName::Cymbals, io, state, er1);
 }

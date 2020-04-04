@@ -1,5 +1,5 @@
 /**
- * @file   plugins/instruments/er1/ui/osc1.hpp
+ * @file   plugins/instruments/er1/ui/osc.hpp
  * @brief  ER1 OSC UI
  * @author coco
  * @date   2020-03-22

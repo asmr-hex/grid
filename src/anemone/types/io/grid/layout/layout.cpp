@@ -51,7 +51,7 @@ grid_coordinates_t Layout::translate(const grid_addr_t& addr) const {
   std::shared_ptr<const Layout> layout;
   
   if (addr.layout == name) {
-    // this address if for this layout, get the section.
+    // this address is for this layout, get the section.
     section = section_by_name.at(addr.section);
     layout  = shared_from_this();
   } else {
@@ -75,14 +75,10 @@ grid_coordinates_t Layout::translate(const grid_addr_t& addr) const {
   }
   
   auto coordinates = section->coordinates_of(addr.index);
-
+  
   // if this layout has a parent layout
   if (layout->superlayout.layout != nullptr) {
-
-    // add the section offsets to the coordinates
-    coordinates.x += section->region().min.x;
-    coordinates.y += section->region().min.y;
-
+    
     auto superlayout_width = layout->superlayout.layout->section_by_name[layout->superlayout.section]->width();
     
     // re-construct the corresponding grid address of the parent layout's section
@@ -94,7 +90,7 @@ grid_coordinates_t Layout::translate(const grid_addr_t& addr) const {
          .index   = ((coordinates.y * superlayout_width ) + coordinates.x),
       });
   }
-
+  
   return coordinates;
 }
 

@@ -4,4 +4,50 @@ oscillators:
     min: 0
     max: 3
   y: 0
+cymbals:
+  x:
+    min: 0
+    max: 3
+  y: 1
+aux:
+  x: 4
+  y:
+    min: 0
+    max: 1
+
+delay_depth:
+  x: 6
+  y: 0
+delay_time:
+  x: 6
+  y: 1
+
+level:
+  x: 0
+  y: 3
+pan:
+  x: 1
+  y: 3
+low_boost:
+  x: 2
+  y: 3
+pitch:
+  x: 3
+  y: 3
+decay:
+  x: 4
+  y: 3
+
+mod_type:
+  x: 0
+  y: 4
+mod_depth:
+  x: 1
+  y: 4
+mod_speed:
+  x: 2
+  y: 4
+wave_type:
+  x: 3
+  y: 4
 ...
