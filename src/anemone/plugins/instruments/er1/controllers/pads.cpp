@@ -31,8 +31,7 @@ ER1::PadsController::PadsController(std::shared_ptr<IO> io,
                      e.layout  == LayoutName::ER1              &&
                      e.section == GridSectionName::AudioIns;
                  });
-  
-  
+    
   // subscribe to oscillator pad events
   osc_pad_events
     .subscribe([io, er1] (grid_event_t e) {

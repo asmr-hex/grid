@@ -8,8 +8,10 @@ ER1::Controller::Controller(std::shared_ptr<IO> io,
                             std::shared_ptr<State> state,
                             std::shared_ptr<ER1> er1)
 {
-  midi = std::make_unique<MidiController>(io, state, er1);
-  pads = std::make_unique<PadsController>(io, state, er1);
+  midi       = std::make_unique<MidiController>(io, state, er1);
+  pads       = std::make_unique<PadsController>(io, state, er1);
+  parameters = std::make_unique<ParametersController>(io, state, er1);
+
   
   // auto on_events = io->grid_events
   //   | rx::filter([] (grid_event_t e) {

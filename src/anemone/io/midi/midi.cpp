@@ -52,6 +52,10 @@ void Midi::emit(std::vector<midi_event_t>& events) {
   }
 }
 
+void Midi::emit(std::vector<midi_event_t>&& events) {
+  emit(events);
+}
+
 void Midi::make_input_devices(std::vector<std::string> names) {
   for (auto name : names) {
     input_devices[name] = device_factory->make_input(name, incoming_events.get_subscriber());

@@ -36,6 +36,9 @@ public:
 
   /// @brief emits a vector of midi events.
   void emit(std::vector<midi_event_t>&);
+
+  /// @brief emits a vector of midi events. TODO do we needs this....?
+  void emit(std::vector<midi_event_t>&&);
 private:
   /// @brief incoming events subject.
   rx::subject<midi_event_t> incoming_events;

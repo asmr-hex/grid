@@ -12,6 +12,8 @@ ER1::UI::UI(std::shared_ptr<Config> config,
     io(io),
     state(state)
 {
-  osc     = std::make_unique<OSC_UI>(LayoutName::ER1, GridSectionName::Oscillators, io, state, er1);
-  cymbals = std::make_unique<CymbalsUI>(LayoutName::ER1, GridSectionName::Cymbals, io, state, er1);
+  osc        = std::make_unique<OSC_UI>(LayoutName::ER1, GridSectionName::Oscillators, io, state, er1);
+  cymbals    = std::make_unique<CymbalsUI>(LayoutName::ER1, GridSectionName::Cymbals, io, state, er1);
+  audio_ins  = std::make_unique<AudioInsUI>(LayoutName::ER1, GridSectionName::AudioIns, io, state, er1);
+  delay_time = std::make_unique<DelayTimeUI>(LayoutName::ER1, GridSectionName::DelayTime, io, state, er1);
 }

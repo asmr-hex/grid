@@ -40,3 +40,6 @@ coverage/
 
 # doc html output
 doc/html
+
+# idk mac shit
+.DS_Store
