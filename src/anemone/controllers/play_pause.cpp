@@ -5,14 +5,14 @@ PlayPauseController::PlayPauseController(std::shared_ptr<IO> io, std::shared_ptr
   auto press_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::PlayPause &&
+                     e.section == "PlayPause" &&
                      e.type    == GridEvent::Pressed;
                  });
 
   // auto unpress_events = io->grid_events
   //   | rx::filter([] (grid_event_t e) {
   //                  return
-  //                    e.section == GridSectionName::PlayPause &&
+  //                    e.section == "PlayPause" &&
   //                    e.type    == GridEvent::Unpressed;
   //                });
     

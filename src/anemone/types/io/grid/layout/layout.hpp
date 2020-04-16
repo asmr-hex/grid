@@ -79,7 +79,7 @@ public:
   void connect(std::shared_ptr<State>);
   
   /// @brief a map of sections by name.
-  std::map< GridSectionName, std::shared_ptr<GridSection> > section_by_name;
+  std::map<GridSectionName, std::shared_ptr<GridSection> > section_by_name;
 
   /// @brief a vector of all registered sublayouts.
   ///
@@ -93,7 +93,7 @@ protected:
   /// @remark this method is where all registration should occur. this is
   /// important because we can't call registration methods within the Layout
   /// constructor since they make use of `shared_from_this()`.
-  ///
+  /// TODO: wait is this even true anymore --^ ???
   virtual void register_sections() = 0;
 
   void register_section(std::shared_ptr<GridSection>);

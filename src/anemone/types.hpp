@@ -42,5 +42,8 @@
 #include "anemone/types/instrument/sequence/sequence.hpp"
 #include "anemone/types/instrument/step/step.hpp"
 #include "anemone/types/instrument/step/event.hpp"
+#include "anemone/types/instrument/parameter/parameter.hpp"
+#include "anemone/types/instrument/pad/pad.hpp"
+#include "anemone/types/instrument/keyboard/keyboard.hpp"
 
 #endif

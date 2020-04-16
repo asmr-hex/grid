@@ -5,14 +5,14 @@ ShiftController::ShiftController(std::shared_ptr<IO> io, std::shared_ptr<State> 
   auto on_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::Shift &&
+                     e.section == "Shift" &&
                      e.type    == GridEvent::Pressed;
                  });
 
   auto off_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::Shift &&
+                     e.section == "Shift" &&
                      e.type    == GridEvent::Unpressed;
                  });
     

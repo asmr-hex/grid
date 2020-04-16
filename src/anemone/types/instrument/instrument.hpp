@@ -14,6 +14,9 @@
 #include "anemone/config.hpp"
 
 #include "anemone/types/instrument/names.hpp"
+#include "anemone/types/instrument/parameter/parameter.hpp"
+#include "anemone/types/instrument/pad/pad.hpp"
+#include "anemone/types/instrument/keyboard/keyboard.hpp"
 #include "anemone/types/instrument/step/event.hpp"
 #include "anemone/types/instrument/part/part.hpp"
 #include "anemone/types/instrument/sequence/sequence.hpp"
@@ -25,7 +28,7 @@ class Instrument {
 public:
   Instrument(InstrumentName,
              std::shared_ptr<Config>,
-             std::shared_ptr<Layout>,
+             std::shared_ptr<::Layout>,
              std::vector<std::shared_ptr<Part> >,
              sequence_layer_t);
 
@@ -53,6 +56,21 @@ public:
   status_t status;
   std::vector<std::shared_ptr<Part> > parts;
 
+  /// @brief instrument global parameters
+  std::vector< std::shared_ptr<Parameter> > parameters;
+
+  /// @brief pads
+  std::vector< std::shared_ptr<Pad> > pads;
+
+  /// @brief midi mapping
+  struct {
+    midi_channel_t channel = 1;
+    std::map<midi_note_number_t, std::shared_ptr<Pad> > note_to_pad;
+  } midi_map;
+  
+  /// @brief instrument keyboard
+  std::shared_ptr<Keyboard> keyboard;
+
   /// @brief an abservable stream of midi events in playback.
   ///
   /// @details this stream is useful for when a specific instrument class
@@ -70,9 +88,19 @@ public:
   rx::behavior<sequence_layer_t> last_midi_notes_played;
 
   void update_last_midi_notes_played(midi_event_t);
-};
 
-/// @brief wrapper over Instrument constructor to initialize parts.
-Instrument create_instrument(InstrumentName, std::shared_ptr<Config>, std::shared_ptr<Layout>);
+  /// @brief wrapper over Instrument constructor to initialize parts.
+  static Instrument create(InstrumentName, std::shared_ptr<Config>);
+
+  /// @brief instrument layout class.
+  class Layout : public ::Layout {
+  public:
+    std::shared_ptr<Config> config;
+    
+    Layout(InstrumentName, std::shared_ptr<Config>);
+
+    virtual void register_sections() override;
+  };
+};
 
 #endif

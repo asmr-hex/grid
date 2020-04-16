@@ -75,7 +75,7 @@ public:
 
       return Config(yml[field], path);
   };
-
+  
   /// @brief similar to the [] operator, but works with pointers to configs.
   ///
   /// @param field   a string representation of a field.

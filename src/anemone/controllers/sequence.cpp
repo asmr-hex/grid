@@ -7,7 +7,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
   auto on_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::Steps &&
+                     e.section == "Steps" &&
                      e.type    == GridEvent::Pressed;
                  })
     | rx::map([] (grid_event_t e) {
@@ -17,7 +17,7 @@ SequenceController::SequenceController(std::shared_ptr<IO> io, std::shared_ptr<S
   auto off_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::Steps &&
+                     e.section == "Steps" &&
                      e.type    == GridEvent::Unpressed;
                  })
     | rx::map([] (grid_event_t e) {

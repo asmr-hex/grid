@@ -1,0 +1,57 @@
+---
+channel: 10
+pads:
+  oscillators:
+    layout:
+      x:
+        min: 0
+        max: 3
+      y: 0
+    notes:
+      - "c2"
+      - "c#2"
+      - "d2"
+      - "d#2"
+    parameters:
+      level:
+        layout:
+          x: 0
+          y: 3
+        type: continuous
+        midi_specs:
+          - >
+            sdf
+            sdf
+          - >
+            sdf
+          - >
+            df
+          - >
+            sdf
+      pan:
+        layout:
+          x: 0
+          y: 3
+        type: continuous
+        midi_specs:
+          - >
+            sdf
+            sdf
+          - >
+            sdf
+          - >
+            df
+          - >
+            sdf
+parameters:
+  delay_depth:
+    layout:
+      x: 6
+      y: 0
+    type: continuous
+  delay_time:
+    layout:
+      x: 6
+      y: 1
+    type: continuous
+...

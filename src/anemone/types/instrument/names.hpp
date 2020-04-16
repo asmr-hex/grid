@@ -8,14 +8,19 @@
 #ifndef TYPES_INSTRUMENT_NAMES_H
 #define TYPES_INSTRUMENT_NAMES_H
 
+#include <string>
 
-enum class InstrumentName { ER1,
-                            GR1,
-                            SP404,
-                            MS20,
-                            VOLCABEAT,
-                            MICROBRUTE,
-                            JUNO60,
-                            MICROGRANNY};
+
+/// @brief an instrument name is just a string.
+typedef std::string InstrumentName;
+
+// enum class InstrumentName { ER1,
+//                             GR1,
+//                             SP404,
+//                             MS20,
+//                             VOLCABEAT,
+//                             MICROBRUTE,
+//                             JUNO60,
+//                             MICROGRANNY};
 
 #endif
