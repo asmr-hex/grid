@@ -49,9 +49,21 @@ parameters:
       x: 6
       y: 0
     type: continuous
+    midi_spec: >
+      (v, c) => [
+        [175 + c, 98, 101],
+        [175 + c, 99, 2],
+        [ 175 + c, 6, v]
+      ]
   delay_time:
     layout:
       x: 6
       y: 1
     type: continuous
+    midi_spec: >
+      (v, c) => [
+        [175 + c, 98, 101],
+        [175 + c, 99, 2],
+        [ 175 + c, 6, v]
+      ]
 ...
