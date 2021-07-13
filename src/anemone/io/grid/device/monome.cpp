@@ -3,7 +3,7 @@
 #include "anemone/io/grid/device/monome.hpp"
 
 
-void Monome::connect(std::string addr = "/dev/tty.usbserial-m1000843") {
+void Monome::connect(std::string addr = "/dev/ttyUSB0") {
   // rpi : /dev/ttyUSB0
   // osx : /dev/tty.usbserial-m1000843
   if( !(monome = monome_open(addr.c_str())) ) {
