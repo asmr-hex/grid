@@ -10,8 +10,8 @@ Anemone::Anemone(std::string config_path,
   spdlog::set_level(spdlog::level::info);
   spdlog::set_pattern("[%H:%M:%S:%e] [thread %t] %^[%l]%$ %v");
 
-  spdlog::info("============= initialization ============");
-  
+  spdlog::info("============= initialization  ============");
+
   // initialize configuration
   spdlog::info("  initializing \tconfiguration");
   config = std::make_shared<Config>(config_path);
@@ -19,11 +19,11 @@ Anemone::Anemone(std::string config_path,
   // initialize plugin-manager
   spdlog::info("  initializing \tplugin manager");
   plugin_manager = std::make_shared<PluginManager>(config);
-  
+
   // initialize state
   spdlog::info("  initializing \tstate");
   state = std::make_shared<State>(State(config, plugin_manager));
-  
+
   // initialize io
   spdlog::info("  initializing \tio");
   io = std::make_shared<IO>(IO(config, grid_device, midi_device_factory, state));
@@ -41,13 +41,13 @@ void Anemone::run() {
   spdlog::info("============= connecting ================");
 
   state->connect();
-  
+
   io->connect();
 
   controllers->connect();
 
   ui->connect();
-  
+
   // TODO deal with threads....
   while (true) {
     std::this_thread::sleep_for(std::chrono::minutes(5));

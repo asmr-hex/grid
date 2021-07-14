@@ -43,3 +43,6 @@ doc/html
 
 # idk mac shit
 .DS_Store
+
+# vagrant stuff
+.vagrant

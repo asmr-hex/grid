@@ -1,3 +1,18 @@
+## Notes
+dependencies are provisioned and installed within a docker image. on linux workstations, you can just run the dev environment within docker. however on OSX workstations, you need to run a linux virtual machine which, in turn, runs the docker dev container. this is because docker cannot share devices with mac os (at time of writing this is not possible). so, we need to run a virtual machine with usb devices forwarded.
+
+this uses vagrant to spin up the docker host vm on osx. so if you are on osx, you need to install virtualbox and vagrant (and optionally vagrant manager).
+``` shell
+brew install virtualbox
+brew install virtualbox-extension-pack # for USB 2.0 support
+brew install vagrant
+brew install vagrant-manager # optional
+vagrant up
+vagrant ssh
+cd /grid
+./run.sh
+```
+
 ### Installation
 ##### Requirements
 **UPDATE: all these package requirements are now installed automatically for linux (particularly raspbian) within the `Makefile`**

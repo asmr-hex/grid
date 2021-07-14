@@ -2,8 +2,17 @@
 
 DEV_NAME=ttyUSB0
 
-docker build -t grid-dev -f dockerfiles/dev .
-docker run -it --rm -v "$PWD":/grid --privileged -v /run/udev:/run/udev:ro --device=/dev/$DEV_NAME:/dev/$DEV_NAME grid-dev /bin/bash
+#docker build -t ghcr.io/asmr-hex/grid/dev:latest -f dockerfiles/dev .
+docker run \
+       -it \
+       --rm \
+       --privileged \
+       --pull always \
+       -v "$PWD":/grid \
+       -v /run/udev:/run/udev:ro \
+       --device=/dev/$DEV_NAME:/dev/$DEV_NAME \
+       ghcr.io/asmr-hex/grid/dev:latest \
+       nodemon -L --watch src --exec "make run || exit 1" --ext hpp,cpp,h,c
 
 # NOTES:
 # the libmonome code (particularly for platform/linux_libudev) tries to resolve some
