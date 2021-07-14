@@ -24,22 +24,18 @@ void seg_fault_handler(int sig) {
 
 int main(int argc, char *argv[]) {
   signal(SIGSEGV, seg_fault_handler);
-  
+
   if ( argc != 2 ) {
     std::cout << "Error: you must provide the path to the configuration file!\n";
     return -1;
   }
 
-  // Anemone anemone(argv[1],
-  //                 std::make_shared<Monome>(),
-  //                 std::make_shared< MidiDeviceFactoryFor<RTMidi> >(),
-  //                 std::make_shared< Queue<bool> >());
 
   Anemone anemone(argv[1],
                   std::make_shared<Monome>(),
                   std::make_shared< MidiDeviceFactoryFor<RTMidiIn, RTMidiOut> >());
-  
+
   anemone.run();
-  
+
   return 0;
 }

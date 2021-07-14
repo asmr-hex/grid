@@ -11,14 +11,13 @@ CXXFLAGS            := -Wall #-Wextra -Werror
 INCLUDE_DIR         := ./vendor
 INCLUDE             := -I/usr/include/rtmidi
 
-
 ifeq ($(OS),Linux)
 	LIB_BOOST   := -lboost_system -lboost_thread
 endif
 ifeq ($(OS),Darwin)
 	LIB_BOOST   := -lboost_thread-mt
 endif
-LIBS                := -lmonome -lrtmidi -lyaml-cpp
+LIBS                := -lspdlog -lmonome -lrtmidi -lyaml-cpp -lpthread
 # LIBS                := -lmonome $(LIB_BOOST) -lrtmidi -lyaml-cpp  I don't think we need boost anymore...!
 #LDFLAGS            := -L/usr/local/include -L/usr/local/lib
 
@@ -196,4 +195,3 @@ run: build
 
 clean:
 	-@rm -rvf $(BUILD_DIR)
-

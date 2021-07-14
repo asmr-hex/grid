@@ -5,7 +5,7 @@ ports:
     in:
       - "Midi Fighter Twister"
       - "nanoKEY2 KEYBOARD"
-  grid: "/dev/tty.usbserial-m1000843"
+  grid: "/dev/ttyUSB0" #"/dev/tty.usbserial-m1000843"
 
 layouts:
   sequencer:

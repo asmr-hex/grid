@@ -1,0 +1,50 @@
+FROM gcc:latest
+
+RUN apt update -y && \
+    apt install -y \
+    git \
+    cmake \
+    python3 \
+    liblo-dev \
+    libudev-dev \
+    librtmidi-dev \
+    libyaml-cpp-dev \
+    libavahi-compat-libdnssd-dev
+
+# setup python for waf (libmonome installation tool)
+RUN ln -s $(which python3) /usr/bin/python
+
+# install libmonome
+RUN git clone https://github.com/monome/libmonome.git && \
+    cd libmonome && \
+    ./waf configure && \
+    ./waf && \
+    ./waf install
+
+# install spdlog (as static library)
+RUN git clone https://github.com/gabime/spdlog.git && \
+    cd spdlog && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make -j && \
+    mv libspdlog.a /usr/local/lib/ && \
+    mv ../include/spdlog /usr/local/include/
+
+# install serialosc
+RUN git clone https://github.com/monome/serialosc.git && \
+    cd serialosc && \
+    git submodule init && git submodule update && \
+    ./waf configure && \
+    ./waf && \
+    ./waf install
+
+# add path to system linker and update config
+RUN echo "/usr/local/lib" >> /etc/ld.so.conf
+RUN ldconfig
+
+RUN apt update -y && \
+    apt install -y \
+    setserial \
+    emacs \
+    udev
