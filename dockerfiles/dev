@@ -3,8 +3,8 @@ FROM gcc:latest
 RUN apt update -y && \
     apt install -y \
     git \
-    cmake \
     python3 \
+    python3-pip \
     liblo-dev \
     libudev-dev \
     librtmidi-dev \
@@ -13,6 +13,9 @@ RUN apt update -y && \
 
 # setup python for waf (libmonome installation tool)
 RUN ln -s $(which python3) /usr/bin/python
+
+# install cmake with pip3 (installs the most recent version of cmake usuallly)
+RUN pip3 install cmake
 
 # install libmonome
 RUN git clone https://github.com/monome/libmonome.git && \
