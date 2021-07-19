@@ -1,0 +1,22 @@
+<grid device="/dev/ttyUSB0">
+  <layout id="sequencer" x="0" y="0" width="16" height="8">
+    <section id="steps" x="0" y="0" width="8" height="2">
+      <steps type="linear" direction="ltr"/>
+    </section>
+    <section id="sequencer_ctrl" x="0" y="2" width="8" height="6">
+    </section>
+    <section id="instrument_ctrl_panel" x="8" y="0" width="8" height="8">
+      <!-- buttons can have types: select, gate, toggle -->
+      <button type="gate" id="instrument_select" target="instruments" x="8" y="2"/>
+      <section id="instrument_selection" x="9" y="2" width="7" height="6">
+        <foreach in="instruments">
+          <button type="select" target="instruments[@]" index="@"/>
+        </foreach>
+      </section>
+      <list id="instruments">
+        <section id="er1">
+        </section>
+      </list>
+    </section>
+  </layout>
+</grid>
