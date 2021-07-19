@@ -1,0 +1,2 @@
+set(instrument_controllers_src_files instrumnet.cxx)
+add_library(instrument_controllers ${instrument_controllers_src_files})

@@ -26,7 +26,7 @@ public:
   std::shared_ptr<GridLayouts>    layouts;
   std::shared_ptr<GlobalControls> controls;
   std::shared_ptr<Instruments>    instruments;
-  
+
   State(std::shared_ptr<Config>, std::shared_ptr<PluginManager>);
 
   /// @brief allows particular parts of the state to subscribe to the
