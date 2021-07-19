@@ -1,0 +1,89 @@
+<Anemone singleSubsection="true">
+
+  <Instruments>
+
+    <Instrument name="ER-1">
+
+      <Parameters>
+        <Parameter name="delay depth" type="continuous">
+          <MidiSpec>
+            <!-- (value, channel) => [ -->
+            <!--   [175 + channel, 98, 101], -->
+            <!--   [175 + channel, 99, 2], -->
+            <!--   [175 + channel, 6, value] -->
+            <!-- ] -->
+          </MidiSpec>
+        </Parameter>
+      </Parameters>
+
+    </Instrument>
+
+  </Instruments>
+
+  <Midi>
+    <!-- define midi configuration -->
+  </Midi>
+
+  <Display>
+    <!-- configure the display when it is available eventually -->
+  </Display>
+
+  <Grid address="/dev/monome.something">
+    <Section name="sequencer">
+      <Steps/>
+      <Section name="instrument panel" renderOne="true">
+        <!-- the components below define the layout of each renderable instrument component -->
+
+        <Instrument name="ER-1">
+          <Pad name="oscillator 1" x="0" y="0">
+            <Parameter name="pitch" x="0" y="2"/>
+          </Pad>
+          <Parameter name="delay depth" x="6" y="0"/>
+          <Parameter name="delay time" x="6" y="1"/>
+        </Instrument>
+
+      </Section>
+    </Section>
+
+    <Section name="parallel">
+    </Section>
+  </Grid>
+
+  <!-- EVERYTHING BELOW IS DRAFT 1 -->
+  <Section name="sequencer" default="true">
+    <!-- a Section is a generic container  -->
+    <Section name="sequence_steps" x="0:15" y="0:1">
+
+    </Section>
+
+    <!-- OR  -->
+
+    <Steps id="sequencer_steps" x="0:15" y="0:1"/>
+    <Pages x="1:6" y="2" />
+    <LastPage x="0" y="2"/>
+
+    <!-- if a section has singleSubsection="true" any subsection will inherit the dimensions (but starting at (0,0)) -->
+    <Section name="instruments" x="9:15" y="2:7" singleSubsection="true">
+
+      <Instrument name="ER-1" default="true">
+        <properties>
+        </properties>
+        <Pad name="oscillator 1" x="0" y="0">
+          <Parameters>
+
+          </Parameters>
+        </Pad>
+      </Instrument>
+
+      <Instrument name="Juno 60">
+
+      </Instrument>
+    </Section>
+  </Section>
+
+  <Layout name="patterns">
+    <Steps x="1:15" y="0:5" mode="multitimbral" orientation="vertical"/>
+    <Pages x="0" y="0:5"/>
+  </Layout>
+
+</Anemone>

@@ -5,7 +5,7 @@ InstrumentSelectController::InstrumentSelectController(std::shared_ptr<IO> io, s
   auto selection_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::InstrumentSelect &&
+                     e.section == "InstrumentSelect" &&
                      e.type    == GridEvent::Pressed;
                  })
     | rx::map([] (grid_event_t e) {

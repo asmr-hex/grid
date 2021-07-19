@@ -14,17 +14,17 @@ layouts:
     layout_file: "pattern/layout.yml"
 
 instruments:
-  sp404:
-    layout_file: "sp404_layout.yml"
-  ms20:
-    layout_file: "ms20_layout.yml"
-  gr1:
-    chan: 10
-    layout_file: "gr1_layout.yml"
-  er1:
-    layout_file: "er1_layout.yml"
-  microgranny:
-    layout_file: "microgranny_layout.yml"
+  er1: "er1/config.yml"
+  # juno60: "juno60/config.yml"
+  # sp404:
+  #   layout_file: "sp404_layout.yml"
+  # ms20:
+  #   layout_file: "ms20_layout.yml"
+  # gr1:
+  #   chan: 10
+  #   layout_file: "gr1_layout.yml"
+  # microgranny:
+  #   layout_file: "microgranny_layout.yml"
 
 controllers:
   - nanokey

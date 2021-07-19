@@ -7,14 +7,14 @@ LastStepController::LastStepController(std::shared_ptr<IO> io, std::shared_ptr<S
   auto last_step_press_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::LastStep &&
+                     e.section == "LastStep" &&
                      e.type    == GridEvent::Pressed;
                  });
 
   auto last_step_unpress_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::LastStep &&
+                     e.section == "LastStep" &&
                      e.type    == GridEvent::Unpressed;
                  });
   

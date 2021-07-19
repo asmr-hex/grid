@@ -15,7 +15,7 @@ PPQNController::PPQNController(std::shared_ptr<IO> io, std::shared_ptr<State> st
   auto on_events = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::PPQN &&
+                     e.section == "PPQN" &&
                      e.type    == GridEvent::Pressed;
                  });
 

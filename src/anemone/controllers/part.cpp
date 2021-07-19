@@ -7,7 +7,7 @@ PartController::PartController(std::shared_ptr<IO> io, std::shared_ptr<State> st
   auto selected_part_index = io->grid_events
     | rx::filter([] (grid_event_t e) {
                    return
-                     e.section == GridSectionName::Parts &&
+                     e.section == "Parts" &&
                      e.type    == GridEvent::Pressed;
                  })
     | rx::map([] (grid_event_t e) -> grid_section_index_t {
