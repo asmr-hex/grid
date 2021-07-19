@@ -1,22 +1,91 @@
-<grid device="/dev/ttyUSB0">
-  <layout id="sequencer" x="0" y="0" width="16" height="8">
-    <section id="steps" x="0" y="0" width="8" height="2">
-      <steps type="linear" direction="ltr"/>
-    </section>
-    <section id="sequencer_ctrl" x="0" y="2" width="8" height="6">
-    </section>
-    <section id="instrument_ctrl_panel" x="8" y="0" width="8" height="8">
-      <!-- buttons can have types: select, gate, toggle -->
-      <button type="gate" id="instrument_select" target="instruments" x="8" y="2"/>
-      <section id="instrument_selection" x="9" y="2" width="7" height="6">
-        <foreach in="instruments">
-          <button type="select" target="instruments[@]" index="@"/>
-        </foreach>
-      </section>
-      <list id="instruments">
-        <section id="er1">
-        </section>
-      </list>
-    </section>
-  </layout>
-</grid>
+<Interface name="anemone">
+    <!-- outputs define the actual output ports for data -->
+    <Outputs>
+        <Midi name="audiobox" device="AudioBox USB 96"></Midi>
+        <ControlVoltage name="cvout-1"></ControlVoltage>
+        <ControlVoltage name="cvout-2"></ControlVoltage>
+        <ControlVoltage name="cvout-3"></ControlVoltage>
+        <ControlVoltage name="cvout-4"></ControlVoltage>
+        <ControlVoltage name="cvout-5"></ControlVoltage>
+    </Outputs>
+
+    <!-- instruments define the configuration of instruments including
+         the output ports (midi or cv) they are hooked up on, the
+         controllable parameters
+         TODO: should this somehow be incorporated into outputs? is this
+         confusing to have them separate?
+    -->
+    <Instruments>
+        <Instrument name="ER1">
+            <!-- a global parameter controlled by Midi NRPN -->
+            <Parameter name="delay depth" type="continuous" control="midi" device="audiobox" channel="10">
+                <NRPN value="value">
+                    <message name="lsb">
+                        <byte description="cc status + channel">175 + ${channel}</byte>
+                        <byte description="98 is controller to specify nrpn LSB">98</byte>
+                        <byte description="NRPN param select LSB">101</byte>
+                    </message>
+                    <message name="msb">
+                        <byte description="cc status + channel">175 + ${channel}</byte>
+                        <byte description="99 is controller to specify nrpn MSB">99</byte>
+                        <byte description="NRPN param select MSB">2</byte>
+                    </message>
+                    <message name="data">
+                        <byte description="cc status + channel">175 + ${channel}</byte>
+                        <byte description="6 is controller to specify nrpn Data entry">6</byte>
+                        <byte description="NRPN param set">${value}</byte>
+                    </message>
+                </NRPN>
+            </Parameter>
+
+            <Voice name="Oscillator 1" control="midi" device="audiobox" channel="10" note="c2">
+                <!-- Voice specific parameter  -->
+                <Parameter name="pitch" type="continuous">
+                    <NRPN value="value">
+                        <!-- TODO  -->
+                    </NRPN>
+                </Parameter>
+            </Voice>
+        </Instrument>
+    </Instruments>
+
+    <ControlSurfaces>
+        <Grid type="monome" device="/dev/ttyUSB0" name="monome1">
+            <layout id="sequencer" x="0" y="0" width="16" height="8">
+                <section id="steps" x="0" y="0" width="8" height="2">
+                    <steps type="linear" direction="ltr"/>
+                </section>
+                <section id="sequencer_ctrl" x="0" y="2" width="8" height="6">
+                </section>
+                <section id="instrument_ctrl_panel" x="8" y="0" width="8" height="8">
+                    <!-- buttons can have types: select, gate, toggle -->
+                    <button type="gate" id="instrument_select" target="instruments" x="8" y="2"/>
+                    <section id="instrument_selection" x="9" y="2" width="7" height="6">
+                        <foreach in="instruments">
+                            <button type="select" target="instruments[@]" index="@"/>
+                        </foreach>
+                    </section>
+                    <list id="instruments">
+                        <section id="er1">
+                        </section>
+                    </list>
+                </section>
+            </layout>
+        </Grid>
+
+        <Midi device="Midi Fighter Twister" required="false">
+        </Midi>
+
+        <Midi device="nanoKEY2 KEYBOARD" required="true">
+        </Midi>
+
+        <Midi device="holo glove">
+        </Midi>
+
+        <ControlVoltage name="cvin-1"></ControlVoltage>
+        <ControlVoltage name="cvin-2"></ControlVoltage>
+    </ControlSurfaces>
+
+    <!-- console can have type: tty, led_display -->
+    <Console type="tty"></Console>
+</Interface>
