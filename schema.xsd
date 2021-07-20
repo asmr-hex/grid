@@ -19,7 +19,8 @@
     <xs:element name="Interface">
         <xs:complexType>
             <xs:sequence minOccurs="0">
-                <xs:element ref="Outputs"/>
+                <xs:element ref="Outputs" minOccurs="0"/>
+                <xs:element ref="Instruments" minOccurs="0"/>
             </xs:sequence>
             <xs:attribute ref="name" use="required"/>
         </xs:complexType>
@@ -55,6 +56,45 @@
         </xs:unique>
         <xs:unique name="UniqueControlVoltageName">
             <xs:selector xpath="ControlVoltage"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="Parameter">
+        <xs:complexType>
+            <xs:attribute ref="name" use="required"/>
+            <xs:attribute name="type" default="continuous">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="continuous"/>
+                        <xs:enumeration value="discrete"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Instrument">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Parameter" maxOccurs="unbounded"/>
+            </xs:choice>
+            <xs:attribute ref="name" use="required"/>
+        </xs:complexType>
+        <xs:unique name="UniqueInstrumentParameter">
+            <xs:selector xpath="Parameter"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="Instruments">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Instrument" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:complexType>
+        <xs:unique name="UniqueInstrumentName">
+            <xs:selector xpath="Instrument"/>
             <xs:field xpath="@name"/>
         </xs:unique>
     </xs:element>

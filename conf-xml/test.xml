@@ -2,5 +2,13 @@
     <Outputs>
         <Midi name="audiobox" device="AudioBox USB 96"/>
         <Midi name="audiobox1" device="AudioBox USB 99"/>
+        <ControlVoltage name="cv1"/>
     </Outputs>
+
+    <Instruments>
+        <Instrument name="ER1">
+            <Parameter name="delayDepth" type="discrete"/>
+        </Instrument>
+    </Instruments>
+
 </Interface>
