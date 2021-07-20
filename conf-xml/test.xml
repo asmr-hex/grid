@@ -1,0 +1,6 @@
+<Interface name="anemone">
+    <Outputs>
+        <Midi name="audiobox" device="AudioBox USB 96"/>
+        <Midi name="audiobox1" device="AudioBox USB 99"/>
+    </Outputs>
+</Interface>

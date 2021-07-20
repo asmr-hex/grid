@@ -3,6 +3,9 @@ FROM gcc:latest
 RUN apt update -y && \
     apt install -y \
     git \
+    xsdcxx \
+    libxml2 \
+    libxml2-utils \
     python3 \
     python3-pip \
     liblo-dev \

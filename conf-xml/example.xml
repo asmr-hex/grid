@@ -49,9 +49,11 @@
         </Instrument>
     </Instruments>
 
+    <Clock bpm="120"/>
+
     <ControlSurfaces>
-        <Grid type="monome" device="/dev/ttyUSB0" name="monome1">
-            <layout id="sequencer" x="0" y="0" width="16" height="8">
+        <Grid type="monome" device="/dev/ttyUSB0" name="monome1" width="16" height="8">
+            <Layout id="sequencer" x="0" y="0" width="16" height="8">
                 <section id="steps" x="0" y="0" width="8" height="2">
                     <steps type="linear" direction="ltr"/>
                 </section>
@@ -70,17 +72,18 @@
                         </section>
                     </list>
                 </section>
-            </layout>
+            </Layout>
         </Grid>
 
-        <Midi device="Midi Fighter Twister" required="false">
-        </Midi>
+        <MidiController device="Midi Fighter Twister" required="false">
 
-        <Midi device="nanoKEY2 KEYBOARD" required="true">
-        </Midi>
+        </MidiController>
 
-        <Midi device="holo glove">
-        </Midi>
+        <MidiController device="nanoKEY2 KEYBOARD" required="true">
+        </MidiController>
+
+        <MidiController device="holo glove">
+        </MidiController>
 
         <ControlVoltage name="cvin-1"></ControlVoltage>
         <ControlVoltage name="cvin-2"></ControlVoltage>

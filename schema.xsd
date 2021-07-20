@@ -1,7 +1,62 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="layout">
-  </xs:element>
+    <!-- define common named attributes -->
+    <xs:attribute name="name">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="[a-zA-Z]+([a-zA-Z0-9_])*"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+
+    <xs:attribute name="device" type="xs:string"/>
+
+    <!-- define types -->
+    <!-- TODO -->
+
+    <!-- define elements -->
+    <xs:element name="Interface">
+        <xs:complexType>
+            <xs:sequence minOccurs="0">
+                <xs:element ref="Outputs"/>
+            </xs:sequence>
+            <xs:attribute ref="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Midi">
+        <xs:complexType>
+            <xs:attribute ref="name" use="required"/>
+            <xs:attribute ref="device" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ControlVoltage">
+        <xs:complexType>
+            <xs:attribute ref="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Outputs">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Midi" maxOccurs="unbounded"/>
+                <xs:element ref="ControlVoltage" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:complexType>
+        <xs:unique name="UniqueMidiName">
+            <xs:selector xpath="Midi"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="UniqueMidiDevice">
+            <xs:selector xpath="Midi"/>
+            <xs:field xpath="@device"/>
+        </xs:unique>
+        <xs:unique name="UniqueControlVoltageName">
+            <xs:selector xpath="ControlVoltage"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
 
 </xs:schema>
