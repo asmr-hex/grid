@@ -7,7 +7,19 @@
 
     <Instruments>
         <Instrument name="ER1">
-            <Parameter name="delayDepth" type="discrete"/>
+            <!-- <MidiParam name="delayDepth" type="discrete"/> -->
+            <!-- <MidiVoice/> -->
+
+            <!-- <CvParam/> -->
+            <!-- <GateParam/> -->
+            <!-- <OscParam/> -->
+
+            <Parameter name="delayDepth">
+                <Controls>
+                    <Midi output="audiobox" channel="10"/>
+                </Controls>
+            </Parameter>
+
         </Instrument>
     </Instruments>
 
