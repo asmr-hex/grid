@@ -9,20 +9,22 @@
     </xs:simpleType>
   </xs:attribute>
   <xs:attribute name="device" type="xs:string"/>
+
   <!-- define types -->
+  <xs:complexType name="interface_t">
+      <xs:sequence>
+        <xs:element ref="Outputs"/>
+        <xs:element ref="Instruments"/>
+        <xs:element ref="ControlSurfaces"/>
+      </xs:sequence>
+      <xs:attribute ref="name" use="required"/>
+  </xs:complexType>
+
+
   <!-- TODO -->
 
   <!-- define elements -->
-  <xs:element name="Interface">
-    <xs:complexType>
-      <xs:sequence minOccurs="0">
-        <xs:element ref="Outputs" minOccurs="0"/>
-        <xs:element ref="Instruments" minOccurs="0"/>
-        <xs:element ref="ControlSurfaces" minOccurs="0"/>
-      </xs:sequence>
-      <xs:attribute ref="name" use="required"/>
-    </xs:complexType>
-
+  <xs:element name="Interface" type="interface_t">
     <!-- define keys and keyrefs -->
     <xs:key name="outputNameKey">
       <xs:selector xpath="Outputs/*"/>

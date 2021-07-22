@@ -40,126 +40,108 @@
 
 #include "schema.hpp"
 
-// name
+// interface_t
 // 
 
-
-// Interface
-// 
-
-const Interface::Outputs_optional& Interface::
+const interface_t::Outputs_type& interface_t::
 Outputs () const
 {
-  return this->Outputs_;
+  return this->Outputs_.get ();
 }
 
-Interface::Outputs_optional& Interface::
+interface_t::Outputs_type& interface_t::
 Outputs ()
 {
-  return this->Outputs_;
+  return this->Outputs_.get ();
 }
 
-void Interface::
+void interface_t::
 Outputs (const Outputs_type& x)
 {
   this->Outputs_.set (x);
 }
 
-void Interface::
-Outputs (const Outputs_optional& x)
-{
-  this->Outputs_ = x;
-}
-
-void Interface::
+void interface_t::
 Outputs (::std::unique_ptr< Outputs_type > x)
 {
   this->Outputs_.set (std::move (x));
 }
 
-const Interface::Instruments_optional& Interface::
+const interface_t::Instruments_type& interface_t::
 Instruments () const
 {
-  return this->Instruments_;
+  return this->Instruments_.get ();
 }
 
-Interface::Instruments_optional& Interface::
+interface_t::Instruments_type& interface_t::
 Instruments ()
 {
-  return this->Instruments_;
+  return this->Instruments_.get ();
 }
 
-void Interface::
+void interface_t::
 Instruments (const Instruments_type& x)
 {
   this->Instruments_.set (x);
 }
 
-void Interface::
-Instruments (const Instruments_optional& x)
-{
-  this->Instruments_ = x;
-}
-
-void Interface::
+void interface_t::
 Instruments (::std::unique_ptr< Instruments_type > x)
 {
   this->Instruments_.set (std::move (x));
 }
 
-const Interface::ControlSurfaces_optional& Interface::
+const interface_t::ControlSurfaces_type& interface_t::
 ControlSurfaces () const
 {
-  return this->ControlSurfaces_;
+  return this->ControlSurfaces_.get ();
 }
 
-Interface::ControlSurfaces_optional& Interface::
+interface_t::ControlSurfaces_type& interface_t::
 ControlSurfaces ()
 {
-  return this->ControlSurfaces_;
+  return this->ControlSurfaces_.get ();
 }
 
-void Interface::
+void interface_t::
 ControlSurfaces (const ControlSurfaces_type& x)
 {
   this->ControlSurfaces_.set (x);
 }
 
-void Interface::
-ControlSurfaces (const ControlSurfaces_optional& x)
-{
-  this->ControlSurfaces_ = x;
-}
-
-void Interface::
+void interface_t::
 ControlSurfaces (::std::unique_ptr< ControlSurfaces_type > x)
 {
   this->ControlSurfaces_.set (std::move (x));
 }
 
-const Interface::name_type& Interface::
+const interface_t::name_type& interface_t::
 name () const
 {
   return this->name_.get ();
 }
 
-Interface::name_type& Interface::
+interface_t::name_type& interface_t::
 name ()
 {
   return this->name_.get ();
 }
 
-void Interface::
+void interface_t::
 name (const name_type& x)
 {
   this->name_.set (x);
 }
 
-void Interface::
+void interface_t::
 name (::std::unique_ptr< name_type > x)
 {
   this->name_.set (std::move (x));
 }
+
+
+// name
+// 
 
 
 // Midi
@@ -1377,6 +1359,188 @@ Byte (const Byte_sequence& s)
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
+// interface_t
+//
+
+interface_t::
+interface_t (const Outputs_type& Outputs,
+             const Instruments_type& Instruments,
+             const ControlSurfaces_type& ControlSurfaces,
+             const name_type& name)
+: ::xml_schema::type (),
+  Outputs_ (Outputs, this),
+  Instruments_ (Instruments, this),
+  ControlSurfaces_ (ControlSurfaces, this),
+  name_ (name, this)
+{
+}
+
+interface_t::
+interface_t (::std::unique_ptr< Outputs_type > Outputs,
+             ::std::unique_ptr< Instruments_type > Instruments,
+             ::std::unique_ptr< ControlSurfaces_type > ControlSurfaces,
+             const name_type& name)
+: ::xml_schema::type (),
+  Outputs_ (std::move (Outputs), this),
+  Instruments_ (std::move (Instruments), this),
+  ControlSurfaces_ (std::move (ControlSurfaces), this),
+  name_ (name, this)
+{
+}
+
+interface_t::
+interface_t (const interface_t& x,
+             ::xml_schema::flags f,
+             ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Outputs_ (x.Outputs_, f, this),
+  Instruments_ (x.Instruments_, f, this),
+  ControlSurfaces_ (x.ControlSurfaces_, f, this),
+  name_ (x.name_, f, this)
+{
+}
+
+interface_t::
+interface_t (const ::xercesc::DOMElement& e,
+             ::xml_schema::flags f,
+             ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Outputs_ (this),
+  Instruments_ (this),
+  ControlSurfaces_ (this),
+  name_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
+    this->parse (p, f);
+  }
+}
+
+void interface_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Outputs
+    //
+    if (n.name () == "Outputs" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Outputs_type > r (
+        Outputs_traits::create (i, f, this));
+
+      if (!Outputs_.present ())
+      {
+        this->Outputs_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Instruments
+    //
+    if (n.name () == "Instruments" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Instruments_type > r (
+        Instruments_traits::create (i, f, this));
+
+      if (!Instruments_.present ())
+      {
+        this->Instruments_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // ControlSurfaces
+    //
+    if (n.name () == "ControlSurfaces" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< ControlSurfaces_type > r (
+        ControlSurfaces_traits::create (i, f, this));
+
+      if (!ControlSurfaces_.present ())
+      {
+        this->ControlSurfaces_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!Outputs_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Outputs",
+      "");
+  }
+
+  if (!Instruments_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "Instruments",
+      "");
+  }
+
+  if (!ControlSurfaces_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "ControlSurfaces",
+      "");
+  }
+
+  while (p.more_attributes ())
+  {
+    const ::xercesc::DOMAttr& i (p.next_attribute ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    if (n.name () == "name" && n.namespace_ ().empty ())
+    {
+      this->name_.set (name_traits::create (i, f, this));
+      continue;
+    }
+  }
+
+  if (!name_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_attribute< char > (
+      "name",
+      "");
+  }
+}
+
+interface_t* interface_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class interface_t (*this, f, c);
+}
+
+interface_t& interface_t::
+operator= (const interface_t& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->Outputs_ = x.Outputs_;
+    this->Instruments_ = x.Instruments_;
+    this->ControlSurfaces_ = x.ControlSurfaces_;
+    this->name_ = x.name_;
+  }
+
+  return *this;
+}
+
+interface_t::
+~interface_t ()
+{
+}
+
 // name
 //
 
@@ -1446,151 +1610,6 @@ _clone (::xml_schema::flags f,
 
 name::
 ~name ()
-{
-}
-
-// Interface
-//
-
-Interface::
-Interface (const name_type& name)
-: ::xml_schema::type (),
-  Outputs_ (this),
-  Instruments_ (this),
-  ControlSurfaces_ (this),
-  name_ (name, this)
-{
-}
-
-Interface::
-Interface (const Interface& x,
-           ::xml_schema::flags f,
-           ::xml_schema::container* c)
-: ::xml_schema::type (x, f, c),
-  Outputs_ (x.Outputs_, f, this),
-  Instruments_ (x.Instruments_, f, this),
-  ControlSurfaces_ (x.ControlSurfaces_, f, this),
-  name_ (x.name_, f, this)
-{
-}
-
-Interface::
-Interface (const ::xercesc::DOMElement& e,
-           ::xml_schema::flags f,
-           ::xml_schema::container* c)
-: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  Outputs_ (this),
-  Instruments_ (this),
-  ControlSurfaces_ (this),
-  name_ (this)
-{
-  if ((f & ::xml_schema::flags::base) == 0)
-  {
-    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, true);
-    this->parse (p, f);
-  }
-}
-
-void Interface::
-parse (::xsd::cxx::xml::dom::parser< char >& p,
-       ::xml_schema::flags f)
-{
-  for (; p.more_content (); p.next_content (false))
-  {
-    const ::xercesc::DOMElement& i (p.cur_element ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    // Outputs
-    //
-    if (n.name () == "Outputs" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< Outputs_type > r (
-        Outputs_traits::create (i, f, this));
-
-      if (!this->Outputs_)
-      {
-        this->Outputs_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // Instruments
-    //
-    if (n.name () == "Instruments" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< Instruments_type > r (
-        Instruments_traits::create (i, f, this));
-
-      if (!this->Instruments_)
-      {
-        this->Instruments_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    // ControlSurfaces
-    //
-    if (n.name () == "ControlSurfaces" && n.namespace_ ().empty ())
-    {
-      ::std::unique_ptr< ControlSurfaces_type > r (
-        ControlSurfaces_traits::create (i, f, this));
-
-      if (!this->ControlSurfaces_)
-      {
-        this->ControlSurfaces_.set (::std::move (r));
-        continue;
-      }
-    }
-
-    break;
-  }
-
-  while (p.more_attributes ())
-  {
-    const ::xercesc::DOMAttr& i (p.next_attribute ());
-    const ::xsd::cxx::xml::qualified_name< char > n (
-      ::xsd::cxx::xml::dom::name< char > (i));
-
-    if (n.name () == "name" && n.namespace_ ().empty ())
-    {
-      this->name_.set (name_traits::create (i, f, this));
-      continue;
-    }
-  }
-
-  if (!name_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_attribute< char > (
-      "name",
-      "");
-  }
-}
-
-Interface* Interface::
-_clone (::xml_schema::flags f,
-        ::xml_schema::container* c) const
-{
-  return new class Interface (*this, f, c);
-}
-
-Interface& Interface::
-operator= (const Interface& x)
-{
-  if (this != &x)
-  {
-    static_cast< ::xml_schema::type& > (*this) = x;
-    this->Outputs_ = x.Outputs_;
-    this->Instruments_ = x.Instruments_;
-    this->ControlSurfaces_ = x.ControlSurfaces_;
-    this->name_ = x.name_;
-  }
-
-  return *this;
-}
-
-Interface::
-~Interface ()
 {
 }
 
@@ -3996,10 +4015,10 @@ note::
 #include <xsd/cxx/xml/sax/std-input-source.hxx>
 #include <xsd/cxx/tree/error-handler.hxx>
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::std::string& u,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (const ::std::string& u,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
@@ -4013,16 +4032,16 @@ Interface_ (const ::std::string& u,
 
   h.throw_if_failed< ::xsd::cxx::tree::parsing< char > > ();
 
-  return ::std::unique_ptr< ::Interface > (
-    ::Interface_ (
+  return ::std::unique_ptr< ::interface_t > (
+    ::Interface (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::std::string& u,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (const ::std::string& u,
+           ::xml_schema::error_handler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
@@ -4035,16 +4054,16 @@ Interface_ (const ::std::string& u,
   if (!d.get ())
     throw ::xsd::cxx::tree::parsing< char > ();
 
-  return ::std::unique_ptr< ::Interface > (
-    ::Interface_ (
+  return ::std::unique_ptr< ::interface_t > (
+    ::Interface (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::std::string& u,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (const ::std::string& u,
+           ::xercesc::DOMErrorHandler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
@@ -4053,92 +4072,92 @@ Interface_ (const ::std::string& u,
   if (!d.get ())
     throw ::xsd::cxx::tree::parsing< char > ();
 
-  return ::std::unique_ptr< ::Interface > (
-    ::Interface_ (
+  return ::std::unique_ptr< ::interface_t > (
+    ::Interface (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is);
-  return ::Interface_ (isrc, f, p);
+  return ::Interface (isrc, f, p);
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           ::xml_schema::error_handler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is);
-  return ::Interface_ (isrc, h, f, p);
+  return ::Interface (isrc, h, f, p);
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           ::xercesc::DOMErrorHandler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::sax::std_input_source isrc (is);
-  return ::Interface_ (isrc, h, f, p);
+  return ::Interface (isrc, h, f, p);
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            const ::std::string& sid,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           const ::std::string& sid,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
-  return ::Interface_ (isrc, f, p);
+  return ::Interface (isrc, f, p);
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            const ::std::string& sid,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           const ::std::string& sid,
+           ::xml_schema::error_handler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::auto_initializer i (
     (f & ::xml_schema::flags::dont_initialize) == 0,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
-  return ::Interface_ (isrc, h, f, p);
+  return ::Interface (isrc, h, f, p);
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            const ::std::string& sid,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           const ::std::string& sid,
+           ::xercesc::DOMErrorHandler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::xml::sax::std_input_source isrc (is, sid);
-  return ::Interface_ (isrc, h, f, p);
+  return ::Interface (isrc, h, f, p);
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xercesc::InputSource& i,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::xercesc::InputSource& i,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xsd::cxx::tree::error_handler< char > h;
 
@@ -4148,16 +4167,16 @@ Interface_ (::xercesc::InputSource& i,
 
   h.throw_if_failed< ::xsd::cxx::tree::parsing< char > > ();
 
-  return ::std::unique_ptr< ::Interface > (
-    ::Interface_ (
+  return ::std::unique_ptr< ::interface_t > (
+    ::Interface (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xercesc::InputSource& i,
-            ::xml_schema::error_handler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::xercesc::InputSource& i,
+           ::xml_schema::error_handler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
@@ -4166,16 +4185,16 @@ Interface_ (::xercesc::InputSource& i,
   if (!d.get ())
     throw ::xsd::cxx::tree::parsing< char > ();
 
-  return ::std::unique_ptr< ::Interface > (
-    ::Interface_ (
+  return ::std::unique_ptr< ::interface_t > (
+    ::Interface (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xercesc::InputSource& i,
-            ::xercesc::DOMErrorHandler& h,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (::xercesc::InputSource& i,
+           ::xercesc::DOMErrorHandler& h,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
@@ -4184,23 +4203,23 @@ Interface_ (::xercesc::InputSource& i,
   if (!d.get ())
     throw ::xsd::cxx::tree::parsing< char > ();
 
-  return ::std::unique_ptr< ::Interface > (
-    ::Interface_ (
+  return ::std::unique_ptr< ::interface_t > (
+    ::Interface (
       std::move (d), f | ::xml_schema::flags::own_dom, p));
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::xercesc::DOMDocument& doc,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties& p)
+::std::unique_ptr< ::interface_t >
+Interface (const ::xercesc::DOMDocument& doc,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties& p)
 {
   if (f & ::xml_schema::flags::keep_dom)
   {
     ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d (
       static_cast< ::xercesc::DOMDocument* > (doc.cloneNode (true)));
 
-    return ::std::unique_ptr< ::Interface > (
-      ::Interface_ (
+    return ::std::unique_ptr< ::interface_t > (
+      ::Interface (
         std::move (d), f | ::xml_schema::flags::own_dom, p));
   }
 
@@ -4211,8 +4230,8 @@ Interface_ (const ::xercesc::DOMDocument& doc,
   if (n.name () == "Interface" &&
       n.namespace_ () == "")
   {
-    ::std::unique_ptr< ::Interface > r (
-      ::xsd::cxx::tree::traits< ::Interface, char >::create (
+    ::std::unique_ptr< ::interface_t > r (
+      ::xsd::cxx::tree::traits< ::interface_t, char >::create (
         e, f, 0));
     return r;
   }
@@ -4224,10 +4243,10 @@ Interface_ (const ::xercesc::DOMDocument& doc,
     "");
 }
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
-            ::xml_schema::flags f,
-            const ::xml_schema::properties&)
+::std::unique_ptr< ::interface_t >
+Interface (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
+           ::xml_schema::flags f,
+           const ::xml_schema::properties&)
 {
   ::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > c (
     ((f & ::xml_schema::flags::keep_dom) &&
@@ -4249,8 +4268,8 @@ Interface_ (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
   if (n.name () == "Interface" &&
       n.namespace_ () == "")
   {
-    ::std::unique_ptr< ::Interface > r (
-      ::xsd::cxx::tree::traits< ::Interface, char >::create (
+    ::std::unique_ptr< ::interface_t > r (
+      ::xsd::cxx::tree::traits< ::interface_t, char >::create (
         e, f, 0));
     return r;
   }

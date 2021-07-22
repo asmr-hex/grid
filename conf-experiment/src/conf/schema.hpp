@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef SCHEMA_HPP
-#define SCHEMA_HPP
+#ifndef CXX___SCHEMA_HPP
+#define CXX___SCHEMA_HPP
 
 #ifndef XSD_CXX11
 #define XSD_CXX11
@@ -226,8 +226,8 @@ namespace xml_schema
 
 // Forward declarations.
 //
+class interface_t;
 class name;
-class Interface;
 class Midi;
 class Osc;
 class Voltage;
@@ -265,6 +265,121 @@ class note;
 
 #include <xsd/cxx/xml/dom/parsing-header.hxx>
 
+class interface_t: public ::xml_schema::type
+{
+  public:
+  // Outputs
+  //
+  typedef ::Outputs Outputs_type;
+  typedef ::xsd::cxx::tree::traits< Outputs_type, char > Outputs_traits;
+
+  const Outputs_type&
+  Outputs () const;
+
+  Outputs_type&
+  Outputs ();
+
+  void
+  Outputs (const Outputs_type& x);
+
+  void
+  Outputs (::std::unique_ptr< Outputs_type > p);
+
+  // Instruments
+  //
+  typedef ::Instruments Instruments_type;
+  typedef ::xsd::cxx::tree::traits< Instruments_type, char > Instruments_traits;
+
+  const Instruments_type&
+  Instruments () const;
+
+  Instruments_type&
+  Instruments ();
+
+  void
+  Instruments (const Instruments_type& x);
+
+  void
+  Instruments (::std::unique_ptr< Instruments_type > p);
+
+  // ControlSurfaces
+  //
+  typedef ::ControlSurfaces ControlSurfaces_type;
+  typedef ::xsd::cxx::tree::traits< ControlSurfaces_type, char > ControlSurfaces_traits;
+
+  const ControlSurfaces_type&
+  ControlSurfaces () const;
+
+  ControlSurfaces_type&
+  ControlSurfaces ();
+
+  void
+  ControlSurfaces (const ControlSurfaces_type& x);
+
+  void
+  ControlSurfaces (::std::unique_ptr< ControlSurfaces_type > p);
+
+  // name
+  //
+  typedef ::name name_type;
+  typedef ::xsd::cxx::tree::traits< name_type, char > name_traits;
+
+  const name_type&
+  name () const;
+
+  name_type&
+  name ();
+
+  void
+  name (const name_type& x);
+
+  void
+  name (::std::unique_ptr< name_type > p);
+
+  // Constructors.
+  //
+  interface_t (const Outputs_type&,
+               const Instruments_type&,
+               const ControlSurfaces_type&,
+               const name_type&);
+
+  interface_t (::std::unique_ptr< Outputs_type >,
+               ::std::unique_ptr< Instruments_type >,
+               ::std::unique_ptr< ControlSurfaces_type >,
+               const name_type&);
+
+  interface_t (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f = 0,
+               ::xml_schema::container* c = 0);
+
+  interface_t (const interface_t& x,
+               ::xml_schema::flags f = 0,
+               ::xml_schema::container* c = 0);
+
+  virtual interface_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  interface_t&
+  operator= (const interface_t& x);
+
+  virtual 
+  ~interface_t ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< Outputs_type > Outputs_;
+  ::xsd::cxx::tree::one< Instruments_type > Instruments_;
+  ::xsd::cxx::tree::one< ControlSurfaces_type > ControlSurfaces_;
+  ::xsd::cxx::tree::one< name_type > name_;
+};
+
 class name: public ::xml_schema::string
 {
   public:
@@ -301,125 +416,6 @@ class name: public ::xml_schema::string
 
   virtual 
   ~name ();
-};
-
-class Interface: public ::xml_schema::type
-{
-  public:
-  // Outputs
-  //
-  typedef ::Outputs Outputs_type;
-  typedef ::xsd::cxx::tree::optional< Outputs_type > Outputs_optional;
-  typedef ::xsd::cxx::tree::traits< Outputs_type, char > Outputs_traits;
-
-  const Outputs_optional&
-  Outputs () const;
-
-  Outputs_optional&
-  Outputs ();
-
-  void
-  Outputs (const Outputs_type& x);
-
-  void
-  Outputs (const Outputs_optional& x);
-
-  void
-  Outputs (::std::unique_ptr< Outputs_type > p);
-
-  // Instruments
-  //
-  typedef ::Instruments Instruments_type;
-  typedef ::xsd::cxx::tree::optional< Instruments_type > Instruments_optional;
-  typedef ::xsd::cxx::tree::traits< Instruments_type, char > Instruments_traits;
-
-  const Instruments_optional&
-  Instruments () const;
-
-  Instruments_optional&
-  Instruments ();
-
-  void
-  Instruments (const Instruments_type& x);
-
-  void
-  Instruments (const Instruments_optional& x);
-
-  void
-  Instruments (::std::unique_ptr< Instruments_type > p);
-
-  // ControlSurfaces
-  //
-  typedef ::ControlSurfaces ControlSurfaces_type;
-  typedef ::xsd::cxx::tree::optional< ControlSurfaces_type > ControlSurfaces_optional;
-  typedef ::xsd::cxx::tree::traits< ControlSurfaces_type, char > ControlSurfaces_traits;
-
-  const ControlSurfaces_optional&
-  ControlSurfaces () const;
-
-  ControlSurfaces_optional&
-  ControlSurfaces ();
-
-  void
-  ControlSurfaces (const ControlSurfaces_type& x);
-
-  void
-  ControlSurfaces (const ControlSurfaces_optional& x);
-
-  void
-  ControlSurfaces (::std::unique_ptr< ControlSurfaces_type > p);
-
-  // name
-  //
-  typedef ::name name_type;
-  typedef ::xsd::cxx::tree::traits< name_type, char > name_traits;
-
-  const name_type&
-  name () const;
-
-  name_type&
-  name ();
-
-  void
-  name (const name_type& x);
-
-  void
-  name (::std::unique_ptr< name_type > p);
-
-  // Constructors.
-  //
-  Interface (const name_type&);
-
-  Interface (const ::xercesc::DOMElement& e,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  Interface (const Interface& x,
-             ::xml_schema::flags f = 0,
-             ::xml_schema::container* c = 0);
-
-  virtual Interface*
-  _clone (::xml_schema::flags f = 0,
-          ::xml_schema::container* c = 0) const;
-
-  Interface&
-  operator= (const Interface& x);
-
-  virtual 
-  ~Interface ();
-
-  // Implementation.
-  //
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
-
-  protected:
-  Outputs_optional Outputs_;
-  Instruments_optional Instruments_;
-  ControlSurfaces_optional ControlSurfaces_;
-  ::xsd::cxx::tree::one< name_type > name_;
 };
 
 class Midi: public ::xml_schema::type
@@ -2113,95 +2109,95 @@ class note: public ::xml_schema::string
 // Parse a URI or a local file.
 //
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::std::string& uri,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (const ::std::string& uri,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::std::string& uri,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (const ::std::string& uri,
+           ::xml_schema::error_handler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::std::string& uri,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (const ::std::string& uri,
+           ::xercesc::DOMErrorHandler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse std::istream.
 //
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           ::xml_schema::error_handler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           ::xercesc::DOMErrorHandler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            const ::std::string& id,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           const ::std::string& id,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            const ::std::string& id,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           const ::std::string& id,
+           ::xml_schema::error_handler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::std::istream& is,
-            const ::std::string& id,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::std::istream& is,
+           const ::std::string& id,
+           ::xercesc::DOMErrorHandler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse xercesc::InputSource.
 //
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xercesc::InputSource& is,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::xercesc::InputSource& is,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xercesc::InputSource& is,
-            ::xml_schema::error_handler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::xercesc::InputSource& is,
+           ::xml_schema::error_handler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xercesc::InputSource& is,
-            ::xercesc::DOMErrorHandler& eh,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::xercesc::InputSource& is,
+           ::xercesc::DOMErrorHandler& eh,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse xercesc::DOMDocument.
 //
 
-::std::unique_ptr< ::Interface >
-Interface_ (const ::xercesc::DOMDocument& d,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (const ::xercesc::DOMDocument& d,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
-::std::unique_ptr< ::Interface >
-Interface_ (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
-            ::xml_schema::flags f = 0,
-            const ::xml_schema::properties& p = ::xml_schema::properties ());
+::std::unique_ptr< ::interface_t >
+Interface (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
+           ::xml_schema::flags f = 0,
+           const ::xml_schema::properties& p = ::xml_schema::properties ());
 
 // Parse a URI or a local file.
 //
@@ -3140,4 +3136,4 @@ ControlSurfaces_ (::xml_schema::dom::unique_ptr< ::xercesc::DOMDocument > d,
 //
 // End epilogue.
 
-#endif // SCHEMA_HPP
+#endif // CXX___SCHEMA_HPP
