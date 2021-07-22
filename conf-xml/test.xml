@@ -43,4 +43,13 @@
     </Instrument>
   </Instruments>
 
+  <ControlSurfaces>
+      <Grid name="monome" type="monome" device="/dev/ttyUSB0">
+          <Dimensions width="16" height="8"/>
+          <Layouts>
+          </Layouts>
+      </Grid>
+
+  </ControlSurfaces>
+
 </Interface>

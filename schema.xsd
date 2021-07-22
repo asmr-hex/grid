@@ -18,9 +18,11 @@
       <xs:sequence minOccurs="0">
         <xs:element ref="Outputs" minOccurs="0"/>
         <xs:element ref="Instruments" minOccurs="0"/>
+        <xs:element ref="ControlSurfaces" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute ref="name" use="required"/>
     </xs:complexType>
+
     <!-- define keys and keyrefs -->
     <xs:key name="outputNameKey">
       <xs:selector xpath="Outputs/*"/>
@@ -170,6 +172,7 @@
       <xs:field xpath="@name"/>
     </xs:unique>
   </xs:element>
+
   <xs:element name="Instruments">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -181,4 +184,49 @@
       <xs:field xpath="@name"/>
     </xs:unique>
   </xs:element>
+
+  <xs:element name="Layout">
+      <xs:complexType>
+          <xs:attribute ref="name" use="required"/>
+      </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ControlSurfaces">
+      <xs:complexType>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Midi" maxOccurs="unbounded"/>
+              <xs:element name="Voltage" maxOccurs="unbounded"/>
+              <xs:element name="Grid" maxOccurs="unbounded">
+                  <xs:complexType>
+                      <xs:all>
+                          <xs:element name="Dimensions">
+                              <xs:complexType>
+                                  <xs:attribute name="width" type="xs:integer" use="required"/>
+                                  <xs:attribute name="height" type="xs:integer" use="required"/>
+                              </xs:complexType>
+                          </xs:element>
+                          <xs:element name="Layouts">
+                              <xs:complexType>
+                                  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                      <xs:element ref="Layout"/>
+                                  </xs:sequence>
+                              </xs:complexType>
+                          </xs:element>
+                      </xs:all>
+                      <xs:attribute ref="name" use="required"/>
+                      <xs:attribute name="type" use="required">
+                          <xs:simpleType>
+                              <xs:restriction base="xs:string">
+                                  <xs:enumeration value="monome"/>
+                              </xs:restriction>
+                          </xs:simpleType>
+                      </xs:attribute>
+                      <xs:attribute name="device" type="xs:string" use="required"/>
+                  </xs:complexType>
+              </xs:element>
+          </xs:choice>
+      </xs:complexType>
+  </xs:element>
+
+
 </xs:schema>
