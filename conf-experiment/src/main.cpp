@@ -1,6 +1,9 @@
 #include <iostream>
 #include "conf/schema.hpp"
 
+// FOLLOW THIS GUIDE
+// https://www.codesynthesis.com/projects/xsd/documentation/cxx/tree/guide/
+
 int main (int argc, char* argv[]) {
     try {
         std::unique_ptr<Interface> i = Interface_("../conf-xml/test.xml");
