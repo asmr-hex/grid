@@ -1,26 +1,46 @@
+<?xml version="1.0"?>
 <Interface name="anemone">
-    <Outputs>
-        <Midi name="audiobox" device="AudioBox USB 96"/>
-        <Midi name="audiobox1" device="AudioBox USB 99"/>
-        <ControlVoltage name="cv1"/>
-    </Outputs>
 
-    <Instruments>
-        <Instrument name="ER1">
-            <!-- <MidiParam name="delayDepth" type="discrete"/> -->
-            <!-- <MidiVoice/> -->
+  <Outputs>
+    <Midi name="audiobox" device="AudioBox USB 96"/>
+    <Midi name="audiobox1" device="AudioBox USB 99"/>
+    <Voltage name="cv1" port="A"/>
+    <Osc name="osc1" host="localhost" port="8080"/>
+  </Outputs>
 
-            <!-- <CvParam/> -->
-            <!-- <GateParam/> -->
-            <!-- <OscParam/> -->
+  <Instruments>
+    <Instrument name="ER1">
+      <Parameter name="delayDepth">
+        <Control>
+          <Midi output="audiobox" channel="10" arg="value">
+            <Message>
+              <Byte>175 + ${channel}</Byte>
+              <Byte>98</Byte>
+              <Byte>101</Byte>
+            </Message>
+            <Message>
+              <Byte>175 + ${channel}</Byte>
+              <Byte>99</Byte>
+              <Byte>2</Byte>
+            </Message>
+            <Message>
+              <Byte>175 + ${channel}</Byte>
+              <Byte>6</Byte>
+              <Byte>${value}</Byte>
+            </Message>
+          </Midi>
+          <Voltage output="cv1"/>
+          <Osc output="osc1"/>
+        </Control>
+      </Parameter>
 
-            <Parameter name="delayDepth">
-                <Controls>
-                    <Midi output="audiobox" channel="10"/>
-                </Controls>
-            </Parameter>
-
-        </Instrument>
-    </Instruments>
+      <Voice name="oscillator1">
+        <Control>
+          <Midi note="c#3" output="audiobox" channel="10"/>
+          <Voltage output="cv1"/>
+        </Control>
+      </Voice>
+    </Instrument>
+  </Instruments>
 
 </Interface>

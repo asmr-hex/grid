@@ -1,114 +1,150 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- define common named attributes -->
+  <xs:attribute name="name">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[a-zA-Z]+([a-zA-Z0-9_])*"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
+  <xs:attribute name="device" type="xs:string"/>
+  <!-- define types -->
+  <!-- TODO -->
 
-    <!-- define common named attributes -->
-    <xs:attribute name="name">
+  <!-- define elements -->
+  <xs:element name="Interface">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="Outputs" minOccurs="0"/>
+        <xs:element ref="Instruments" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+    <!-- define keys and keyrefs -->
+    <xs:key name="outputNameKey">
+      <xs:selector xpath="Outputs/*"/>
+      <xs:field xpath="@name"/>
+    </xs:key>
+    <xs:keyref name="outputNameKeyRef" refer="outputNameKey">
+      <xs:selector xpath="Instruments/Instrument/Parameter/Control/*"/>
+      <xs:field xpath="@output"/>
+    </xs:keyref>
+  </xs:element>
+
+  <xs:element name="Midi">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="device" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Osc">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute name="host" type="xs:string" use="required"/>
+      <xs:attribute name="port" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Voltage">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute name="type" default="control">
         <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:pattern value="[a-zA-Z]+([a-zA-Z0-9_])*"/>
-            </xs:restriction>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="control"/>
+            <xs:enumeration value="gate"/>
+            <xs:enumeration value="trigger"/>
+          </xs:restriction>
         </xs:simpleType>
-    </xs:attribute>
+      </xs:attribute>
+      <xs:attribute name="port" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
 
-    <xs:attribute name="device" type="xs:string"/>
+  <xs:element name="Outputs">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="Midi" maxOccurs="unbounded"/>
+        <xs:element ref="Voltage" maxOccurs="unbounded"/>
+        <xs:element ref="Osc" maxOccurs="unbounded"/>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="UniqueMidiName">
+      <xs:selector xpath="Midi"/>
+      <xs:field xpath="@name"/>
+    </xs:unique>
+    <xs:unique name="UniqueMidiDevice">
+      <xs:selector xpath="Midi"/>
+      <xs:field xpath="@device"/>
+    </xs:unique>
+    <xs:unique name="UniqueVoltageName">
+      <xs:selector xpath="Voltage"/>
+      <xs:field xpath="@name"/>
+    </xs:unique>
+  </xs:element>
 
-    <!-- define types -->
-    <!-- TODO -->
-
-    <!-- define elements -->
-    <xs:element name="Interface">
-        <xs:complexType>
-            <xs:sequence minOccurs="0">
-                <xs:element ref="Outputs" minOccurs="0"/>
-                <xs:element ref="Instruments" minOccurs="0"/>
-            </xs:sequence>
-            <xs:attribute ref="name" use="required"/>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Midi">
-        <xs:complexType>
-            <xs:attribute ref="name" use="required"/>
-            <xs:attribute ref="device" use="required"/>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="ControlVoltage">
-        <xs:complexType>
-            <xs:attribute ref="name" use="required"/>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Outputs">
-        <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="Midi" maxOccurs="unbounded"/>
-                <xs:element ref="ControlVoltage" maxOccurs="unbounded"/>
-            </xs:choice>
-        </xs:complexType>
-        <xs:unique name="UniqueMidiName">
-            <xs:selector xpath="Midi"/>
-            <xs:field xpath="@name"/>
-        </xs:unique>
-        <xs:unique name="UniqueMidiDevice">
-            <xs:selector xpath="Midi"/>
-            <xs:field xpath="@device"/>
-        </xs:unique>
-        <xs:unique name="UniqueControlVoltageName">
-            <xs:selector xpath="ControlVoltage"/>
-            <xs:field xpath="@name"/>
-        </xs:unique>
-    </xs:element>
-
-    <xs:element name="Parameter">
-        <xs:complexType>
+  <xs:element name="Parameter">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Control">
+          <xs:complexType>
             <xs:all>
-                <xs:element name="Controls">
-                    <xs:complexType>
-                        <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="Midi" maxOccurs="unbounded">
-
-                            </xs:element>
-                        </xs:choice>
-                    </xs:complexType>
-                </xs:element>
+              <xs:element name="Midi">
+                <xs:complexType>
+                  <xs:sequence maxOccurs="unbounded">
+                    <xs:element name="Message">
+                      <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded">
+                          <xs:element name="Byte" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="output" type="xs:string" use="required"/>
+                  <xs:attribute name="channel" type="xs:integer" use="required"/>
+                  <xs:attribute name="arg" type="xs:string" use="required"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Voltage"></xs:element>
+              <xs:element name="Osc">
+                <!-- TODO  -->
+              </xs:element>
             </xs:all>
-            <xs:attribute ref="name" use="required"/>
-            <xs:attribute name="type" default="continuous">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="continuous"/>
-                        <xs:enumeration value="discrete"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:attribute>
-
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Instrument">
-        <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="Parameter" maxOccurs="unbounded"/>
-            </xs:choice>
-            <xs:attribute ref="name" use="required"/>
-        </xs:complexType>
-        <xs:unique name="UniqueInstrumentParameter">
-            <xs:selector xpath="Parameter"/>
-            <xs:field xpath="@name"/>
-        </xs:unique>
-    </xs:element>
-
-    <xs:element name="Instruments">
-        <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="Instrument" maxOccurs="unbounded"/>
-            </xs:choice>
-        </xs:complexType>
-        <xs:unique name="UniqueInstrumentName">
-            <xs:selector xpath="Instrument"/>
-            <xs:field xpath="@name"/>
-        </xs:unique>
-    </xs:element>
-
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute name="type" default="continuous">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="continuous"/>
+            <xs:enumeration value="discrete"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Instrument">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="Parameter" maxOccurs="unbounded"/>
+      </xs:choice>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+    <xs:unique name="UniqueInstrumentParameter">
+      <xs:selector xpath="Parameter"/>
+      <xs:field xpath="@name"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="Instruments">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="Instrument" maxOccurs="unbounded"/>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="UniqueInstrumentName">
+      <xs:selector xpath="Instrument"/>
+      <xs:field xpath="@name"/>
+    </xs:unique>
+  </xs:element>
 </xs:schema>
