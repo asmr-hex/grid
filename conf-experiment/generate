@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# remove all old generated code
+rm conf-experiment/src/conf/*
+
+# compile the XML Schema into C++ code
+xsdcxx cxx-tree \
+       --std c++11 \
+       --hxx-suffix .hpp \
+       --cxx-suffix .cpp \
+       --output-dir conf-experiment/src/conf \
+       schema.xsd

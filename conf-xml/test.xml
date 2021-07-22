@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<Interface name="anemone">
+<Interface name="anemone"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="/grid/schema.xsd">
 
   <Outputs>
     <Midi name="audiobox" device="AudioBox USB 96"/>
