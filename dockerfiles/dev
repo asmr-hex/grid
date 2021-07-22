@@ -62,4 +62,9 @@ RUN apt update -y && \
 # (we can't use something that uses inofity because that will not work in docker in a VM.)
 RUN npm install -g nodemon
 
+# install xsd parser (xerces)
+RUN apt update -y && \
+    apt install -y \
+    libxerces-c-dev
+
 WORKDIR /grid
