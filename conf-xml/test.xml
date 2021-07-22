@@ -36,7 +36,7 @@
 
       <Voice name="oscillator1">
         <Control>
-          <Midi note="c#3" output="audiobox" channel="10"/>
+          <Midi note="all" output="audiobox" channel="10"/>
           <Voltage output="cv1"/>
         </Control>
       </Voice>

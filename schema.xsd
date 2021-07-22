@@ -26,8 +26,12 @@
       <xs:selector xpath="Outputs/*"/>
       <xs:field xpath="@name"/>
     </xs:key>
-    <xs:keyref name="outputNameKeyRef" refer="outputNameKey">
+    <xs:keyref name="paramOutputNameKeyRef" refer="outputNameKey">
       <xs:selector xpath="Instruments/Instrument/Parameter/Control/*"/>
+      <xs:field xpath="@output"/>
+    </xs:keyref>
+    <xs:keyref name="voiceOutputNameKeyRef" refer="outputNameKey">
+      <xs:selector xpath="Instruments/Instrument/Voice/Control/*"/>
       <xs:field xpath="@output"/>
     </xs:keyref>
   </xs:element>
@@ -124,10 +128,40 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="Voice">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Control">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="Midi">
+                <xs:complexType>
+                  <xs:attribute name="note" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:pattern value="([cdefgabCDEFGAB]#?((-[1-2])|([0-8])))|all"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="output" type="xs:string" use="required"/>
+                  <xs:attribute name="channel" type="xs:string" use="required"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Voltage"></xs:element>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+      </xs:all>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="Instrument">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="Parameter" maxOccurs="unbounded"/>
+        <xs:element ref="Voice" maxOccurs="unbounded"/>
       </xs:choice>
       <xs:attribute ref="name" use="required"/>
     </xs:complexType>
