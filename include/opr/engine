@@ -1,0 +1,17 @@
+/**
+ * @file   engine
+ * @brief  engine header
+ * @author coco
+ * @date   2021-07-23
+ *************************************************/
+
+
+#ifndef OPR_ENGINE_H
+#define OPR_ENGINE_H
+
+class Engine {
+public:
+  void connect();
+};
+
+#endif

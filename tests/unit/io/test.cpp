@@ -1,7 +1,11 @@
 #include <catch2/catch.hpp>
 
+#include <opr/engine>
+
 
 TEST_CASE("TESTING") {
+    Engine* e = new Engine();
+    e->connect();
     REQUIRE( 1 == 1);
 }
 
