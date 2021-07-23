@@ -21,7 +21,7 @@ include(FetchContent)
 # TODO fetch dependencies
 
 # add library source code
-add_subdirectory(src)
+#add_subdirectory(src)
 
 # TODO add main executable source code
 #add_subdirectory(app)

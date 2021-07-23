@@ -5,6 +5,12 @@ FetchContent_Declare(
   GIT_TAG v2.13.6)
 FetchContent_MakeAvailable(catch)
 
+# add Catch2 cmake modules to cmake module path
+list(APPEND CMAKE_MODULE_PATH ${catch_SOURCE_DIR}/contrib)
+
+# include Catch CMake module
+include(Catch)
+
 # TODO download trompeloeil.hpp
 
 # include unit test source code

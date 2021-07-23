@@ -97,12 +97,14 @@ function run {
   if [ "$BUILD" = true ]
   then
     build
+    exit 0
   fi
 
   # run install if specified
   if [ "$INSTALL" = true ]
   then
     install
+    exit 0
   fi
 
   if [ "$WATCH" = true ]
