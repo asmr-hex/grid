@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14...3.21)
 project(
   Operator
   VERSION 3.0
-  DESCRIPTION "multimodal, tentacled, sonic controller"
+  DESCRIPTION "multimodal, tendrilled, sonic controller"
   LANGUAGES CXX)
 
 # actions only to be performed in the current project

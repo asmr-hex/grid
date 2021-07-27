@@ -1,13 +1,13 @@
 # engine src files
 set(
-  oprlib_engine_src
+  opr_engine_src
   engine.cpp)
 
 # add engine library
-add_library(oprlib_engine ${oprlib_engine_src})
+add_library(opr-engine ${opr_engine_src})
 
 # include headers and make all library users include also
-target_include_directories(oprlib_engine PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(opr-engine PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # link engine to oprlib
-target_link_libraries(oprlib INTERFACE oprlib_engine)
+target_link_libraries(opr INTERFACE opr-engine)

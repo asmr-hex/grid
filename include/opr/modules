@@ -1,0 +1,21 @@
+/**
+ * @file   engine
+ * @brief  engine header
+ * @author coco
+ * @date   2021-07-23
+ *************************************************/
+
+
+#ifndef OPR_MODULES_H
+#define OPR_MODULES_H
+
+/// @brief Sequencer Module.
+///
+/// @details This module is a multi-voice, polyphonic, step sequencer.
+/// Each voice is routed to an
+class Sequencer {
+public:
+  void connect();
+};
+
+#endif

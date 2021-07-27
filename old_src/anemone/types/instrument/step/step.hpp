@@ -47,11 +47,11 @@ typedef unsigned int granular_step_idx_t;
 /// to the page it is on.
 ///
 typedef unsigned int page_relative_step_idx_t;
-    
+
 /// @brief paged step index. provides the page index and page-relative step index.
 ///
 /// @details
-/// 
+///
 struct paged_step_idx_t {
   page_idx_t               page;
   page_relative_step_idx_t step;

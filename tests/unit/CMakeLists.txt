@@ -9,7 +9,7 @@ add_executable(unittests main.cpp ${unittests_src})
 target_compile_features(unittests PRIVATE cxx_std_17)
 
 # link libraries
-target_link_libraries(unittests PRIVATE oprlib Catch2::Catch2)
+target_link_libraries(unittests PRIVATE opr Catch2::Catch2)
 
 # TODO set include directory (maybe done in top level)???
 
