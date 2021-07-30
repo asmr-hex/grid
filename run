@@ -43,6 +43,7 @@ function run_shell {
          -it \
          --rm \
          --privileged \
+         --pull always \
          -v "$PWD":/grid \
          -v /run/udev:/run/udev:ro \
          --device=/dev/$DEV_NAME:/dev/$DEV_NAME \
@@ -135,7 +136,7 @@ function run {
     exit 0
   fi
 
-  
+
   run_shell
 }
 
@@ -144,6 +145,10 @@ function parse_args {
   do
     local next_arg="$1"
     case $next_arg in
+      -h|--help)
+        usage
+        exit 0
+        ;;
       build)
         BUILD=true
         shift

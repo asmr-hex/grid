@@ -26,7 +26,7 @@ namespace opr {
 
 
     // class MemoryBlock {
-  
+
     // };
 
     /// @brief Sequence Module.
@@ -43,7 +43,7 @@ namespace opr {
     // class Sequence {
     //   void insert(); // TODO make this accept the template type
     // };
-    
+
     /// @brief Sequencer Module.
     ///
     /// @details This module is a multi-voice, polyphonic, step sequencer.
@@ -69,34 +69,33 @@ namespace opr {
     ///
     /// input - tick
     /// output - index
-    /// parameters - playback_state, stride (ppqn), last step, current step, 
+    /// parameters - playback_state, stride (ppqn), last step, current step,
     class Sequencer {
     public:
-      // Sequencer();
-      void connect();
-      
-      void sync(std::string, rx::observable<bool>);
-      void unsync(std::string);
-      
-      struct Step {
-        void current(step_idx_t);
-        step_idx_t current();
-        
-        rx::behavior<step_idx_t> last = rx::behavior<step_idx_t>(8);
-        rx::behavior<ppqn_t> stride = rx::behavior<step_idx_t>(1);
-      private:
-        rx::behavior<step_idx_t> current_m = rx::behavior<step_idx_t>(0);
-      };
-      
-      Step step;
-    private:
-      std::map<std::string, rx::observable<bool>> clocks;
-      rx::subscription clocks_subscription;
-      rx::observable<bool> merged_clocks_observable;
+      Sequencer();
 
-      void subscribe_to_clocks();
+      struct Clock {
+        Clock(Sequencer&);
+        void sync(std::string, rx::observable<bool>);
+        void unsync(std::string);
+        void list();
+      private:
+        Sequencer& sequencer;
+        rx::subscription subscription;
+        rx::observable<bool> observable;
+        std::map<std::string, rx::observable<bool>> clocks;
+        void subscribe();
+      };
+
+      struct Step {
+        rx::behavior<step_idx_t> current = rx::behavior<step_idx_t>(0);
+        rx::behavior<step_idx_t> last    = rx::behavior<step_idx_t>(8);
+        rx::behavior<ppqn_t>     stride  = rx::behavior<step_idx_t>(1);
+      };
+
+      Step step;
+      Clock clock;
     };
-    
   }
 }
 
