@@ -10,6 +10,7 @@
 #define OPR_MODULES_H
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include "rx.hpp"
@@ -78,7 +79,7 @@ namespace opr {
         Clock(Sequencer&);
         void sync(std::string, rx::observable<bool>);
         void unsync(std::string);
-        void list();
+        std::vector<std::string> list();
       private:
         Sequencer& sequencer;
         rx::subscription subscription;
@@ -93,8 +94,22 @@ namespace opr {
         rx::behavior<ppqn_t>     stride  = rx::behavior<step_idx_t>(1);
       };
 
-      Step step;
-      Clock clock;
+      struct Playback {
+        rx::behavior<bool> playing = rx::behavior<bool>(false);
+        rx::behavior<bool> stopped = rx::behavior<bool>(true);
+        rx::behavior<bool> paused  = rx::behavior<bool>(false);
+      };
+
+      // TODO add Randomization
+      // TODO add complex periodic stride patterns
+
+      Step     step;
+      Clock    clock;
+      Playback playback;
+
+      void play();
+      void stop();
+      void pause();
     };
   }
 }
