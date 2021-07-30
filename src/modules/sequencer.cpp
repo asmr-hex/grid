@@ -26,14 +26,14 @@ void Sequencer::pause() {
 
 Sequencer::Clock::Clock(Sequencer& s) : sequencer(s) {}
 
-void Sequencer::Clock::sync(std::string name, rx::observable<bool> clk) {
+void Sequencer::Clock::sync(std::string name, rx::observable<tick_t> clk) {
     // add new clock to clocks mapping
     clocks[name] = clk;
 
     // merge clock streams
     observable = clocks.size() == 1
         ? clk
-        : static_cast<rx::observable<bool>>(observable.merge(clk));
+        : static_cast<rx::observable<tick_t>>(observable.merge(clk));
 
     subscribe();
 }
@@ -69,7 +69,7 @@ void Sequencer::Clock::subscribe() {
 
   // subscribe to clock ticks
   subscription = observable
-    .subscribe([this] (bool _) {
+    .subscribe([this] (tick_t _) {
       if (!sequencer.playback.playing.get_value()) return;
       auto current = sequencer.step.current.get_value();
       auto stride  = sequencer.step.stride.get_value();

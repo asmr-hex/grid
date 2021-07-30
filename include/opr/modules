@@ -16,10 +16,15 @@
 #include "rx.hpp"
 
 namespace opr {
-  namespace module {
 
-    typedef unsigned int step_idx_t;
-    typedef unsigned int ppqn_t;
+  // TODO put these in some common types header.
+  struct tick_t {};
+
+  typedef unsigned int step_idx_t;
+  typedef unsigned int ppqn_t;
+
+
+  namespace module {
 
     /// @brief base virtual? class for all modules.
     // class Module {
@@ -77,14 +82,14 @@ namespace opr {
 
       struct Clock {
         Clock(Sequencer&);
-        void sync(std::string, rx::observable<bool>);
+        void sync(std::string, rx::observable<tick_t>);
         void unsync(std::string);
         std::vector<std::string> list();
       private:
         Sequencer& sequencer;
         rx::subscription subscription;
-        rx::observable<bool> observable;
-        std::map<std::string, rx::observable<bool>> clocks;
+        rx::observable<tick_t> observable;
+        std::map<std::string, rx::observable<tick_t>> clocks;
         void subscribe();
       };
 
