@@ -11,6 +11,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   # enable testing
   include(CTest)
 
+  list(APPEND CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+
   # TODO add Doxygen support
   # see https://gitlab.com/CLIUtils/modern-cmake/-/blob/master/examples/extended-project/CMakeLists.txt#L29
 endif()
@@ -19,6 +21,7 @@ endif()
 include(FetchContent)
 
 # TODO fetch dependencies
+include(cmake/rxcpp.cmake)
 
 # add library source code
 add_subdirectory(src)

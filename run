@@ -7,6 +7,7 @@ BUILD=false
 INSTALL=false
 CONTAINER=false
 TEST_XML=false
+TEST_WATCH=false
 
 function usage {
   echo "'run' generates build system files and installs builds."
@@ -18,6 +19,7 @@ function usage {
   echo "  install          installs built src (run inside container)"
   echo "  container        builds and pushes the dev envireonment Docker container (run on host)"
   echo "  test-xml         tests xml schema in watch mode"
+  echo "  test-watch       run tests in watch mode"
 }
 
 function build {
@@ -41,7 +43,6 @@ function run_shell {
          -it \
          --rm \
          --privileged \
-         --pull always \
          -v "$PWD":/grid \
          -v /run/udev:/run/udev:ro \
          --device=/dev/$DEV_NAME:/dev/$DEV_NAME \
@@ -60,6 +61,15 @@ function run_watch {
          --device=/dev/$DEV_NAME:/dev/$DEV_NAME \
          ghcr.io/asmr-hex/grid/dev:latest \
          nodemon -L --watch src --exec "make run || exit 1" --ext hpp,cpp,h,c
+}
+
+function unittest_watch {
+  nodemon -L \
+          --watch src/ \
+          --watch tests/unit \
+          --watch include/ \
+          --exec "cmake -S . -B build && cmake --build build && cmake --build build -t test || exit 1" \
+          --ext '*'
 }
 
 function test_xml {
@@ -119,6 +129,13 @@ function run {
     exit 0
   fi
 
+  if [ "$TEST_WATCH" = true ]
+  then
+    unittest_watch
+    exit 0
+  fi
+
+  
   run_shell
 }
 
@@ -145,6 +162,10 @@ function parse_args {
         ;;
       test-xml)
         TEST_XML=true
+        shift
+        ;;
+      test-watch)
+        TEST_WATCH=true
         shift
         ;;
     esac

@@ -67,4 +67,12 @@ RUN apt update -y && \
     apt install -y \
     libxerces-c-dev
 
+# install RxCpp (since we couldn't get it to play nice with CMake FetchContent)
+RUN git clone https://github.com/ReactiveX/RxCpp.git && \
+    cd RxCpp && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make install
+
 WORKDIR /grid

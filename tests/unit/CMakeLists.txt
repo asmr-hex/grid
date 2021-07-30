@@ -1,6 +1,7 @@
 # add all unit test src code
 set(unittests_src
-  io/test.cpp)
+  io/test.cpp
+  modules/test_sequencer.cpp)
 
 # add main unit test executable (main.cpp defines the Catch2 config)
 add_executable(unittests main.cpp ${unittests_src})
