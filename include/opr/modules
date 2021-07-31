@@ -35,6 +35,14 @@ namespace opr {
 
     // };
 
+   // TODO make a template class...for sequence data
+   template <typename T>
+   class Sequence {
+   public:
+     // TODO begin making sequence model
+
+   };
+
     /// @brief Sequence Module.
     ///
     /// @details This module is a basic building block which provides
