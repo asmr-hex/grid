@@ -23,7 +23,8 @@ namespace opr {
   typedef unsigned int step_idx_t;
   typedef unsigned int ppqn_t;
 
-
+  typedef unsigned short step_data_id_t;
+  
   namespace module {
 
     /// @brief base virtual? class for all modules.
@@ -39,8 +40,23 @@ namespace opr {
    template <typename T>
    class Sequence {
    public:
-     // TODO begin making sequence model
-
+     typedef std::vector<T> data_t;
+     typedef std::map<step_data_id_t, data_t> step_t;
+     typedef std::map<step_idx_t, step_t> sequence_t;
+     rx::observable<T> events;
+     rx::observable<T> added;
+     rx::observable<T> removed;
+     Sequence() = default;
+     Sequence(sequence_t);
+     void sync(rx::observable<tick_t>);
+     data_t at(step_idx_t) noexcept;
+     data_t at(step_idx_t, step_data_id_t) noexcept;
+     data_t at(step_idx_t, const std::vector<step_data_id_t>&) noexcept;
+   private:
+     rx::subject<T> events_subj;
+     rx::subject<T> added_subj;
+     rx::subject<T> removed_subj;
+     sequence_t sequence;
    };
 
     /// @brief Sequence Module.
@@ -124,6 +140,8 @@ namespace opr {
       void stop();
       void pause();
     };
+
+    #include "modules.tpp"
   }
 }
 
