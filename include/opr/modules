@@ -36,7 +36,6 @@ namespace opr {
 
     // };
 
-   // TODO make a template class...for sequence data
    template <typename T>
    class Sequence {
    public:
@@ -49,14 +48,23 @@ namespace opr {
      Sequence() = default;
      Sequence(sequence_t);
      void sync(rx::observable<tick_t>);
+     int size();
      data_t at(step_idx_t) noexcept;
      data_t at(step_idx_t, step_data_id_t) noexcept;
      data_t at(step_idx_t, const std::vector<step_data_id_t>&) noexcept;
+     step_t operator[](step_idx_t); // honestly, do we need this?
+     step_t& operator[](step_idx_t) const; // honestly, do we need this?
+     void insert(step_idx_t, step_t);
+     void merge(step_idx_t, step_t);
+     void clear();
+     void clear(step_idx_t);
+     void clear(step_idx_t, step_data_id_t);
    private:
      rx::subject<T> events_subj;
      rx::subject<T> added_subj;
      rx::subject<T> removed_subj;
      sequence_t sequence;
+
    };
 
     /// @brief Sequence Module.

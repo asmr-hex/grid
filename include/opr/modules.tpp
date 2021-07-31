@@ -5,6 +5,11 @@ template <typename T>
 Sequence<T>::Sequence(sequence_t sequence) : sequence(sequence) {};
 
 template <typename T>
+int Sequence<T>::size() {
+  return sequence.size();
+}
+
+template <typename T>
 typename Sequence<T>::data_t Sequence<T>::at(step_idx_t step) noexcept {
   data_t results;
 
@@ -49,5 +54,38 @@ typename Sequence<T>::data_t Sequence<T>::at(step_idx_t step, const std::vector<
   
   return results;
 };
+
+template <typename T>
+typename Sequence<T>::step_t Sequence<T>::operator[](step_idx_t step) {
+  return sequence[step];
+}
+
+template <typename T>
+void Sequence<T>::insert(step_idx_t idx, step_t step) {
+  sequence[idx] = step;
+}
+
+template <typename T>
+void Sequence<T>::merge(step_idx_t idx, step_t step) {
+  for (auto itr : step) {
+    sequence[idx][itr.first] = itr.second;
+  }
+}
+
+template <typename T>
+void Sequence<T>::clear() {
+  sequence.clear();
+}
+
+template <typename T>
+void Sequence<T>::clear(step_idx_t idx) {
+  sequence.erase(idx);
+}
+
+template <typename T>
+void Sequence<T>::clear(step_idx_t idx, step_data_id_t id) {
+  sequence[idx].erase(id);
+}
+
 
 #endif
