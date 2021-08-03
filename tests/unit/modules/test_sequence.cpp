@@ -4,6 +4,7 @@
 
 using namespace opr;
 
+
 TEST_CASE( "opr::module::Sequence(...)" ) {
   SECTION( "(sequence_t)" ) {
     GIVEN( "a predefined sequence_t" ) {
@@ -136,7 +137,7 @@ TEST_CASE( "opr::module::Sequence.[...] (read)" ) {
           THEN( "the data map is returned" ) {
             REQUIRE( data.size() == 2 );
             REQUIRE( data[0] == 55 );
-            REQUIRE( data[1] == 66 );          
+            REQUIRE( data[1] == 66 );
           }
         }
         WHEN( "a valid step index is accessed with an invalid data id" ) {
@@ -169,7 +170,7 @@ TEST_CASE( "opr::module::Sequence.insert(...)" ) {
   }
 }
 
-TEST_CASE( "opr::module::merge(...)" ) {
+TEST_CASE( "opr::module::Sequence.merge(...)" ) {
   SECTION( "(step_idx_t)" ) {
     GIVEN( "an empty Sequence" ) {
       opr::module::Sequence<int> s;
@@ -211,7 +212,7 @@ TEST_CASE( "opr::module::merge(...)" ) {
   }
 }
 
-TEST_CASE( "opr::module::clear(...)" ) {
+TEST_CASE( "opr::module::Sequence.clear(...)" ) {
   SECTION( "()" ) {
     GIVEN( "an empty Sequence" ) {
       opr::module::Sequence<int> s;
@@ -260,6 +261,49 @@ TEST_CASE( "opr::module::clear(...)" ) {
           REQUIRE( s[2][5].size() == 3 );
         }
       }
+    }
+  }
+}
+
+SCENARIO( "Subscribing to opr::module::Sequence.events()" ) {
+  rx::subject<opr::step_idx_t> sequencer;
+  GIVEN( "an empty Sequence and a sequencer" ) {
+    opr::module::Sequence<int> s;
+    WHEN( "the sequence is synced to the sequencer and the sequencer triggers on an index" ) {
+      s.sync(sequencer.get_observable());
+      std::vector<int> results;
+      s.events().subscribe([&results] (int i) { results.push_back(i); });
+      sequencer.get_subscriber().on_next(0);
+      THEN( "subscribers to events() will receive nothing" ) {
+        REQUIRE( results.size() == 0 );
+      }
+    }
+  }
+  GIVEN( "a populated Sequence" ) {
+    opr::module::Sequence<int> s({ {2, { {5, {1, 2, 3}}, {6, {11, 22, 33}} }} });
+    WHEN( "the sequence is synced to the sequencer and the sequencer triggers on an invalid index" ) {
+      s.sync(sequencer.get_observable());
+      std::vector<int> results;
+      s.events().subscribe([&results] (int i) { results.push_back(i); });
+      sequencer.get_subscriber().on_next(0);
+      THEN( "subscribers to events() will receive nothing" ) {
+        REQUIRE( results.size() == 0 );
+      }
+    }
+    WHEN( "the sequence is synced to the sequencer and the sequencer triggers on a valid index" ) {
+        s.sync(sequencer.get_observable());
+        std::vector<int> results;
+        s.events().subscribe([&results] (int i) { results.push_back(i); });
+        sequencer.get_subscriber().on_next(2);
+        THEN( "subscribers to events() will receive all the events at that step" ) {
+            REQUIRE( results.size() == 6 );
+            REQUIRE( results[0] == 1 );
+            REQUIRE( results[1] == 2 );
+            REQUIRE( results[2] == 3 );
+            REQUIRE( results[3] == 11 );
+            REQUIRE( results[4] == 22 );
+            REQUIRE( results[5] == 33 );
+        }
     }
   }
 }

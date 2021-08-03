@@ -24,16 +24,11 @@ namespace opr {
   typedef unsigned int ppqn_t;
 
   typedef unsigned short step_data_id_t;
-  
+
   namespace module {
 
     /// @brief base virtual? class for all modules.
     // class Module {
-    // };
-
-
-    // class MemoryBlock {
-
     // };
 
    template <typename T>
@@ -61,54 +56,17 @@ namespace opr {
      void clear(step_idx_t);
      void clear(step_idx_t, step_data_id_t);
    private:
-     rx::subject<T> events_subj = rx::subject<T>();
+     rx::subject<T> events_subj;
      rx::subject<T> added_subj;
      rx::subject<T> removed_subj;
      rx::subscription subscription;
      sequence_t sequence;
    };
 
-    /// @brief Sequence Module.
-    ///
-    /// @details This module is a basic building block which provides
-    /// sequential addressable memory. The contents of the memory can be
-    /// anything from Midi Events, OSC Events, CV Events, or even program
-    /// instructions! TODO (impl as a template class?)
-    /// This allows this class to not just be a sequence, but more flexible
-    /// like the tape on a turing machine...
-    ///
-    /// IMPORTANT: has no concept of time dynamics-- no current pointer, literally
-    /// just sequential address space with a length.
-    // class Sequence {
-    //   void insert(); // TODO make this accept the template type
-    // };
-
     /// @brief Sequencer Module.
     ///
     /// @details This module is a multi-voice, polyphonic, step sequencer.
     /// Each voice is routed to an
-    ///
-    /// inputs (per voice????): clocks, start/stop/pause, insert, delete, set last step, change ppqn (stride)
-    ///
-    /// questions: for Modules built on smaller modules...do we expose the interface for
-    /// the smaller components?.....a reminder: continue thinking about it like modular
-    /// synthesis-- expose the relevant apis from the encapsulating module.
-    /// REMEMBER: these modules are MEANT to be composed! (composition over inheritance)
-    /// AND larger modular systems are to be constructed from these modules....so in the
-    /// app binary...we can construct the larger systems! EACH module should be able to
-    /// serve its purpose independently!
-    ///
-    /// EACH VOICE gets its own sequencer.
-    /// but what does voice mean....scenarios:
-    ///  * (mono) pad-based instrument (drum machine e.g.)where each pad is its own voice (sequencer) because it should have its own clock, stride
-    ///  * (poly) keyboard-based instrument where each note is its own pitch of the same voice. are there circumstances in which we would like to treat different pitches as different sequencers?
-    ///  * parameter based sequences (cv/gate/toggle, midi cc, osc)
-    ///  * instructions -- what does it mean to have instructions as a sequence....????
-    ///
-    ///
-    /// input - tick
-    /// output - index
-    /// parameters - playback_state, stride (ppqn), last step, current step,
     class Sequencer {
     public:
       Sequencer();

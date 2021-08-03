@@ -26,7 +26,9 @@ void Sequence<T>::sync(rx::observable<step_idx_t> observable) {
 
   observable
     .subscribe([this] (step_idx_t index) {
-      events_subj.get_subscriber().on_next(at(index));
+      for (auto event : at(index)) {
+        events_subj.get_subscriber().on_next(event);
+      }
     });
 }
 
@@ -66,7 +68,7 @@ typename Sequence<T>::data_t Sequence<T>::at(step_idx_t step, step_data_id_t id)
       results = data_at_step.at(id);
     } catch (std::out_of_range &error) { /* no data with  this data id...carry on. */ }
   } catch (std::out_of_range &error) { /* no data at this step...carry on. */ }
-  
+
   return results;
 };
 
@@ -79,10 +81,10 @@ typename Sequence<T>::data_t Sequence<T>::at(step_idx_t step, const std::vector<
     for (auto id : ids) {
       try {
         results.insert(results.end(), data_at_step.at(id).begin(), data_at_step.at(id).end());
-      } catch (std::out_of_range &error) { /* no data with  this data id...carry on. */ } 
+      } catch (std::out_of_range &error) { /* no data with  this data id...carry on. */ }
     }
   } catch (std::out_of_range &error) { /* no data at this step...carry on. */ }
-  
+
   return results;
 };
 
