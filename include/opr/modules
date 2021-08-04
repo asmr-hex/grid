@@ -25,6 +25,8 @@ namespace opr {
 
   typedef unsigned short step_data_id_t;
 
+  enum class protocol { Midi, Osc, Voltage };
+
   namespace module {
 
     /// @brief base virtual? class for all modules.
@@ -108,7 +110,18 @@ namespace opr {
       void pause();
     };
 
-    #include "modules.tpp"
+    template <protocol T>
+    class Output {
+    public:
+    };
+
+    template<>
+    class Output<protocol::Midi> {
+    public:
+    };
+
+    #include "modules_sequence.tpp"
+    #include "modules_output.tpp"
   }
 }
 

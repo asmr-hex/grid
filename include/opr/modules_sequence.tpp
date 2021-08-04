@@ -1,5 +1,5 @@
-#ifndef OPR_MODULES_TPP
-#define OPR_MODULES_TPP
+#ifndef OPR_MODULES_SEQUENCE_TPP
+#define OPR_MODULES_SEQUENCE_TPP
 
 
 template <typename T>

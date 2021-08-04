@@ -1,0 +1,6 @@
+#ifndef OPR_MODULES_OUTPUT_TPP
+#define OPR_MODULES_OUTPUT_TPP
+
+// TODO IMPLEMENT ME!
+
+#endif
