@@ -120,6 +120,16 @@ namespace opr {
     public:
     };
 
+    template<>
+    class Output<protocol::Osc> {
+    public:
+    };
+
+    template<>
+    class Output<protocol::Voltage> {
+    public:
+    };
+
     #include "modules_sequence.tpp"
     #include "modules_output.tpp"
   }
