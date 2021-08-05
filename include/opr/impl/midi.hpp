@@ -28,14 +28,11 @@ namespace opr {
       class RtMidiOutputDevice : public module::Output<protocol::Midi>::Device {
       public:
         INJECT(RtMidiOutputDevice(midi_port_t));
+        virtual void connect() override;
         virtual void emit(midi_data_t) override;
       };
 
-      fruit::Component<module::Output<protocol::Midi>::Device> getOutputMidiDevice(midi_port_t port) {
-          return fruit::createComponent()
-              .bind<module::Output<protocol::Midi>::Device, RtMidiOutputDevice>()
-              .bindInstance(port);
-      }
+      fruit::Component<module::Output<protocol::Midi>::Device> getOutputMidiDevice(midi_port_t);
     }
   }
 }

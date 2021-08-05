@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "rx.hpp"
 #include "types.hpp"
@@ -109,15 +110,16 @@ namespace opr {
     template<>
     class Output<protocol::Midi> {
     public:
-      Output(midi_port_t);
-      void emit(midi_data_t);
-      void emit(std::vector<midi_data_t>&);
       class Device {
       public:
         virtual ~Device() = default;
         virtual void connect() = 0;
         virtual void emit(midi_data_t) = 0;
       };
+      Output(std::unique_ptr<Device>);
+      Output(midi_port_t);
+      void emit(midi_data_t);
+      void emit(std::vector<midi_data_t>&);
     private:
       std::unique_ptr<Device> device;
     };

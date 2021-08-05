@@ -1,8 +1,13 @@
 #include <opr/modules>
-#include <opr/impl/midi.hpp>
+// #include <opr/impl/midi.hpp>
 
 using namespace opr;
 using namespace opr::module;
+
+
+Output<protocol::Midi>::Output(std::unique_ptr<Output<protocol::Midi>::Device> device)
+    : device(std::move(device))
+{}
 
 
 Output<protocol::Midi>::Output(midi_port_t port) {
