@@ -1,7 +1,9 @@
 # module src files
 set(
   opr_modules_src
-  sequencer.cpp)
+  sequencer.cpp
+  output.cpp
+  output_midi_impl.cpp)
 
 # add modules library
 add_library(opr-modules ${opr_modules_src})

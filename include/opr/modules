@@ -14,18 +14,9 @@
 #include <string>
 
 #include "rx.hpp"
+#include "types.hpp"
 
 namespace opr {
-
-  // TODO put these in some common types header.
-  struct tick_t {};
-
-  typedef unsigned int step_idx_t;
-  typedef unsigned int ppqn_t;
-
-  typedef unsigned short step_data_id_t;
-
-  enum class protocol { Midi, Osc, Voltage };
 
   namespace module {
 
@@ -118,6 +109,17 @@ namespace opr {
     template<>
     class Output<protocol::Midi> {
     public:
+      Output(midi_port_t);
+      void emit(midi_data_t);
+      void emit(std::vector<midi_data_t>&);
+      class Device {
+      public:
+        virtual ~Device() = default;
+        virtual void connect() = 0;
+        virtual void emit(midi_data_t) = 0;
+      };
+    private:
+      std::unique_ptr<Device> device;
     };
 
     template<>
@@ -131,7 +133,6 @@ namespace opr {
     };
 
     #include "modules_sequence.tpp"
-    #include "modules_output.tpp"
   }
 }
 

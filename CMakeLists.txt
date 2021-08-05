@@ -26,6 +26,10 @@ include(cmake/rxcpp.cmake)
 # add library source code
 add_subdirectory(src)
 
+# link target libraries to main opr lib
+# NOTE: LD_LIBRARY_PATH must include /usr/local/lib
+target_link_libraries(opr INTERFACE fruit)
+
 # TODO add main executable source code
 #add_subdirectory(app)
 
