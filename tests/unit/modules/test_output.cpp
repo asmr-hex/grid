@@ -3,6 +3,7 @@
 #include "mocks/device/midi.hpp"
 
 #include <opr/modules>
+#include <opr/impl/midi.hpp>
 
 using namespace opr;
 using namespace opr::module;
@@ -19,12 +20,20 @@ TEST_CASE( "opr::module::Output<protocol::Midi>(...)" ) {
     }
   }
   SECTION( "(std::shared_ptr<Output<protocol::Midi>::Device>)" ) {
-    GIVEN( "a output midi device" ) {
+    GIVEN( "a mock output midi device" ) {
       std::shared_ptr<Output<protocol::Midi>::Device> device(new mock::Output<protocol::Midi>::Device());
       WHEN( "a midi output is instantiated" ) {
         auto out = opr::module::Output<protocol::Midi>(device);
         THEN( "the output is initialized properly" ) {}
       }
+    }
+    GIVEN( "an rtmidi output midi device" ) {
+        std::shared_ptr<Output<protocol::Midi>::Device::Manager> deviceManager(new opr::impl::Output<protocol::Midi>::Device::Manager::RtMidi());
+        WHEN( "a midi output is instantiated" ) {
+            THEN( "the output is initialized properly" ) {}
+            REQUIRE( deviceManager->list().size() == 1 );
+            REQUIRE( deviceManager->list()[0] == "haha" );
+        }
     }
   }
 }

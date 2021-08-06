@@ -14,6 +14,7 @@
 #include <string>
 
 #include <fruit/fruit.h>
+#include <rtmidi/RtMidi.h>
 
 #include "../rx.hpp"
 #include "../types.hpp"
@@ -34,6 +35,18 @@ namespace opr {
         public:
           virtual void connect() override;
           virtual void emit(midi_data_t) override;
+        private:
+          std::unique_ptr<RtMidiOut> output;
+        };
+        class Manager {
+        public:
+          class RtMidi : public opr::module::Output<protocol::Midi>::Device::Manager {
+          public:
+            virtual std::vector<opr::device_name_t> list() override;
+            virtual std::shared_ptr<opr::module::Output<protocol::Midi>::Device> get(device_name_t) override;
+          private:
+            std::unique_ptr<RtMidiOut> midi;
+          };
         };
       };
     };

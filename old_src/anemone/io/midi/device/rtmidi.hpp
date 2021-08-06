@@ -46,20 +46,20 @@ public:
   /// @return devices   a map from device name to device port.
   ///
   virtual std::map<std::string, unsigned int> list_devices() override;
-  
+
   /// @brief listens to incoming midi messages.
   virtual void listen() override;
 
   /// @returns the name of the midi device.
   virtual std::string name() override;
-  
+
   /// @brief the midi input message stream.
   rx::subscriber<midi_event_t> input_stream;
 
 private:
   /// @brief midi in device name.
   std::string device_name;
-  
+
   std::unique_ptr<RtMidiIn> input;
 };
 
@@ -68,7 +68,7 @@ private:
 class RTMidiOut : public MidiOutputDevice {
 public:
   RTMidiOut(std::string);
-  
+
   /// @brief connects to the midi output device with retries.
   ///
   /// @description this methods blocks while it attempts to connect to the
@@ -89,11 +89,11 @@ public:
 
   /// @returns the name of the midi device.
   virtual std::string name() override;
-  
+
 private:
   /// @brief midi out device name.
   std::string device_name;
-  
+
   std::unique_ptr<RtMidiOut> output;
 };
 

@@ -28,7 +28,8 @@ add_subdirectory(src)
 
 # link target libraries to main opr lib
 # NOTE: LD_LIBRARY_PATH must include /usr/local/lib
-target_link_libraries(opr INTERFACE fruit)
+target_link_libraries(opr INTERFACE fruit rtmidi)
+
 
 # TODO add main executable source code
 #add_subdirectory(app)
