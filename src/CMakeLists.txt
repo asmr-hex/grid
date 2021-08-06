@@ -5,6 +5,7 @@ add_library(opr INTERFACE)
 add_subdirectory(engine)
 add_subdirectory(io)
 add_subdirectory(modules)
+add_subdirectory(impl)
 
 # include headers and make all library users include also
 # target_include_directories(oprlib INTERFACE ${PROJECT_SOURCE_DIR}/include)

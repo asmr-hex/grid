@@ -2,8 +2,7 @@
 set(
   opr_modules_src
   sequencer.cpp
-  output.cpp
-  output_midi_impl.cpp)
+  output.cpp)
 
 # add modules library
 add_library(opr-modules ${opr_modules_src})

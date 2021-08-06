@@ -20,20 +20,24 @@
 #include "../modules"
 
 namespace opr {
+  namespace impl {
 
-  namespace module {
+    template<protocol T>
+    class Output {};
 
-    namespace impl {
-
-      class RtMidiOutputDevice : public module::Output<protocol::Midi>::Device {
+    template<>
+    class Output<protocol::Midi> {
+    public:
+      class Device {
       public:
-        INJECT(RtMidiOutputDevice(midi_port_t));
-        virtual void connect() override;
-        virtual void emit(midi_data_t) override;
+        class RtMidi : public opr::module::Output<protocol::Midi>::Device {
+        public:
+          virtual void connect() override;
+          virtual void emit(midi_data_t) override;
+        };
       };
+    };
 
-      fruit::Component<module::Output<protocol::Midi>::Device> getOutputMidiDevice(midi_port_t);
-    }
   }
 }
 

@@ -5,13 +5,13 @@ using namespace opr;
 using namespace opr::module;
 
 
-Output<protocol::Midi>::Output(std::unique_ptr<Output<protocol::Midi>::Device> device)
-    : device(std::move(device))
+Output<protocol::Midi>::Output(std::shared_ptr<Output<protocol::Midi>::Device> device)
+  : device(device)
 {}
 
 
 Output<protocol::Midi>::Output(midi_port_t port) {
-    // dependency injection!
+    // dependency injection!?
 }
 
 void Output<protocol::Midi>::emit(midi_data_t event) {

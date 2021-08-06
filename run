@@ -68,6 +68,7 @@ function unittest_watch {
   nodemon -L \
           --watch src/ \
           --watch tests/unit \
+          --watch tests/mocks \
           --watch include/ \
           --exec "cmake -S . -B build && cmake --build build && cmake --build build -t test || exit 1" \
           --ext '*'

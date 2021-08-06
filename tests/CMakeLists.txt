@@ -11,10 +11,16 @@ list(APPEND CMAKE_MODULE_PATH ${catch_SOURCE_DIR}/contrib)
 # include Catch CMake module
 include(Catch)
 
-# TODO download trompeloeil.hpp
+# TODO download trompeloeil.hpp?
+
+# include test mocks
+add_subdirectory(mocks)
 
 # include unit test source code
 add_subdirectory(unit)
 
 # TODO include integration test source code
 #add_subdirectory(integration)
+
+# include current directory for unittests (for access to mock headers)
+target_include_directories(unittests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
