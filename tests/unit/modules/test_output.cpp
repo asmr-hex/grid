@@ -31,8 +31,8 @@ TEST_CASE( "opr::module::Output<protocol::Midi>(...)" ) {
         std::shared_ptr<Output<protocol::Midi>::Device::Manager> deviceManager(new opr::impl::Output<protocol::Midi>::Device::Manager::RtMidi());
         WHEN( "a midi output is instantiated" ) {
             THEN( "the output is initialized properly" ) {}
-            REQUIRE( deviceManager->list().size() == 1 );
-            REQUIRE( deviceManager->list()[0] == "haha" );
+            REQUIRE( deviceManager->list().size() == 2 );
+            REQUIRE( deviceManager->list()[1] == "haha" );
         }
     }
   }

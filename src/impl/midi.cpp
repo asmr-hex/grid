@@ -32,6 +32,12 @@ std::vector<opr::device_name_t> opr::impl::Output<protocol::Midi>::Device::Manag
         devices.push_back(midi->getPortName(i));
     }
 
+    // TESTING
+    midi->openPort(1);
+    std::vector<unsigned char> message{144, 77, 90};
+    midi->sendMessage(&message);
+
+
     return devices;
 }
 

@@ -14,10 +14,20 @@ Vagrant.configure("2") do |config|
     # use `VBoxManage list usbhost` to list host usb devices
     v.customize ["modifyvm", :id, "--usb", "on"]
     v.customize ["modifyvm", :id, "--usbehci", "on"]
+    v.customize ["modifyvm", :id, "--audio", "coreaudio"]
+
+    # add usbfilters to add usb devices
+    # execute `VBoxManage list usbhost` on host for usb device info
+    # NOTE: these devices will NOT be accessible from host.
     v.customize ["usbfilter", "add", "0",
                  "--target", :id,
                  "--name", "Monome",
                  "--manufacturer", "monome",
                  "--product", "monome"]
+    v.customize ["usbfilter", "add", "1",
+                 "--target", :id,
+                 "--name", "AudioBox Interface",
+                 "--manufacturer", "PreSonus",
+                 "--product", "AudioBox USB 96"]
   end
 end
